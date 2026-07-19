@@ -577,14 +577,14 @@ export default function ProductsPage() {
                     return (
                       <div
                         key={img.id}
-                        className={`relative group rounded-xl overflow-hidden border transition-all aspect-square bg-neutral-900 ${
+                        className={`relative group rounded-xl overflow-hidden border transition-all duration-300 aspect-square bg-neutral-900 ${
                           isSelected
                             ? "border-purple-400 shadow-[0_0_10px_rgba(139,92,246,0.4)]"
                             : img.active
                               ? isPrimary
                                 ? "border-purple-500/50"
                                 : "border-white/[0.08]"
-                              : "border-white/[0.04] opacity-35 grayscale"
+                              : "border-white/[0.04]"
                         }`}
                       >
                         {/* Clickable image — tıklanınca büyük önizlemeyi günceller */}
@@ -593,7 +593,13 @@ export default function ProductsPage() {
                           onClick={() => setLargePreviewUrl(img.url)}
                           className="absolute inset-0 w-full h-full cursor-pointer z-0"
                         >
-                          <img src={img.url} alt={`Listing thumbnail ${index}`} className="w-full h-full object-cover" />
+                          <img
+                            src={img.url}
+                            alt={`Listing thumbnail ${index}`}
+                            className={`w-full h-full object-cover transition-[filter,opacity] duration-300 ease-in-out ${
+                              img.active ? "grayscale-0 opacity-100" : "grayscale opacity-30"
+                            }`}
+                          />
                         </button>
 
                         {/* Top badges — pointer-events-none so they don't block click */}
