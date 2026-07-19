@@ -19,8 +19,8 @@ const navItems = [
     label: "Core Platform",
     items: [
       { icon: LayoutDashboard, label: "Satıcı Dashboard", href: "/" },
-      { icon: ShoppingBag, label: "Siparişler", href: "/orders" },
       { icon: LayoutDashboard, label: "Üretici Dashboard", href: "/producer-dashboard" },
+      { icon: ShoppingBag, label: "Siparişler", href: "/orders" },
       { icon: Search, label: "Product Research", href: "/product-research" },
       { icon: Sparkles, label: "AI Design Studio", href: "/ai-design-studio" },
       { icon: Library, label: "Design Library", href: "/design-library" },
