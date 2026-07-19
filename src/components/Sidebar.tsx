@@ -48,13 +48,10 @@ export default function Sidebar() {
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!isLoading && !user && pathname !== "/login") {
+    if (!isLoading && !user) {
       router.replace("/login");
     }
-  }, [user, isLoading, pathname, router]);
-
-  // Don't render sidebar on login page
-  if (pathname === "/login") return null;
+  }, [user, isLoading, router]);
 
   // Show minimal loading state while checking auth
   if (isLoading) {
