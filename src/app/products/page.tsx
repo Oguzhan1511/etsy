@@ -16,14 +16,24 @@ import {
   ShoppingBag,
   CheckCircle,
   X,
-  AlertCircle
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Plus
 } from "lucide-react";
+
+interface ProductImage {
+  id: string;
+  url: string;
+  active: boolean;
+}
 
 interface ListingProduct {
   id: string;
   title: string;
   sku: string;
-  image: string;
+  image: string; // primary thumbnail
   salesCount: number;
   cartCount: number;
   favoritesCount: number;
@@ -32,6 +42,7 @@ interface ListingProduct {
   status: "Active" | "Inactive";
   description: string;
   tags: string[];
+  images: ProductImage[];
 }
 
 const initialProducts: ListingProduct[] = [
@@ -47,7 +58,13 @@ const initialProducts: ListingProduct[] = [
     profit: 1980,
     status: "Active",
     description: "High quality organic cotton canvas tote bag featuring a beautiful wildflower print. Durable handles and spacious design perfect for daily grocery shopping, beach outings, or travel.",
-    tags: ["tote bag", "canvas tote", "wildflowers", "custom bag", "eco friendly"]
+    tags: ["tote bag", "canvas tote", "wildflowers", "custom bag", "eco friendly"],
+    images: [
+      { id: "img-1-1", url: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=400&q=80", active: true },
+      { id: "img-1-2", url: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=400&q=80", active: true },
+      { id: "img-1-3", url: "https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&w=400&q=80", active: true },
+      { id: "img-1-4", url: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80", active: true }
+    ]
   },
   {
     id: "2",
@@ -61,7 +78,12 @@ const initialProducts: ListingProduct[] = [
     profit: 820,
     status: "Active",
     description: "Beautiful golden wildflower printed mug. 11oz capacity, ceramic construction, microwave and dishwasher safe. A perfect morning coffee companion.",
-    tags: ["wildflower mug", "ceramic mug", "coffee mug", "gift for her", "golden meadows"]
+    tags: ["wildflower mug", "ceramic mug", "coffee mug", "gift for her", "golden meadows"],
+    images: [
+      { id: "img-2-1", url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=400&q=80", active: true },
+      { id: "img-2-2", url: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80", active: true },
+      { id: "img-2-3", url: "https://images.unsplash.com/photo-1517256064527-09c53b2d0bc6?auto=format&fit=crop&w=400&q=80", active: true }
+    ]
   },
   {
     id: "3",
@@ -75,7 +97,12 @@ const initialProducts: ListingProduct[] = [
     profit: 1150,
     status: "Active",
     description: "Super soft Bella+Canvas 3001 unisex t-shirt featuring a retro botanical print. Available in multiple colors and sizes. Made with premium lightweight ringspun cotton.",
-    tags: ["botanical tee", "unisex shirt", "retro t-shirt", "bella canvas", "floral graphic"]
+    tags: ["botanical tee", "unisex shirt", "retro t-shirt", "bella canvas", "floral graphic"],
+    images: [
+      { id: "img-3-1", url: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=80", active: true },
+      { id: "img-3-2", url: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80", active: true },
+      { id: "img-3-3", url: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=400&q=80", active: true }
+    ]
   },
   {
     id: "4",
@@ -89,7 +116,12 @@ const initialProducts: ListingProduct[] = [
     profit: 420,
     status: "Active",
     description: "100% natural soy wax jar candle with a humorous sarcastic label. Hand-poured with premium scent oils and a clean-burning cotton wick.",
-    tags: ["soy candle", "funny candle", "scented candle", "jar candle", "gift candle"]
+    tags: ["soy candle", "funny candle", "scented candle", "jar candle", "gift candle"],
+    images: [
+      { id: "img-4-1", url: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=400&q=80", active: true },
+      { id: "img-4-2", url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=400&q=80", active: true },
+      { id: "img-4-3", url: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=400&q=80", active: true }
+    ]
   },
   {
     id: "5",
@@ -103,16 +135,12 @@ const initialProducts: ListingProduct[] = [
     profit: 110,
     status: "Inactive",
     description: "15oz accent mug with an elegant vintage art deco geometric pattern. Premium ceramic coating, extra large size perfect for tea and hot cocoa lovers.",
-    tags: ["art deco mug", "vintage mug", "15oz mug", "accent mug", "retro kitchen"]
+    tags: ["art deco mug", "vintage mug", "15oz mug", "accent mug", "retro kitchen"],
+    images: [
+      { id: "img-5-1", url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=400&q=80", active: true },
+      { id: "img-5-2", url: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80", active: true }
+    ]
   }
-];
-
-// Mock gallery presets for easy image swapping
-const presetImages = [
-  { name: "Tote Bag", url: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=150&q=80" },
-  { name: "Mug", url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=150&q=80" },
-  { name: "Tee", url: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=150&q=80" },
-  { name: "Candle", url: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=150&q=80" }
 ];
 
 export default function ProductsPage() {
@@ -127,7 +155,8 @@ export default function ProductsPage() {
   const [editSku, setEditSku] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editTags, setEditTags] = useState("");
-  const [editImage, setEditImage] = useState("");
+  const [editImages, setEditImages] = useState<ProductImage[]>([]);
+  const [largePreviewUrl, setLargePreviewUrl] = useState<string>("");
 
   // Unsaved changes confirmation dialog state
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -159,20 +188,85 @@ export default function ProductsPage() {
     setEditSku(product.sku);
     setEditDescription(product.description || "");
     setEditTags(product.tags ? product.tags.join(", ") : "");
-    setEditImage(product.image);
+    // Copy the images array deeply
+    const copiedImages = product.images ? product.images.map(img => ({ ...img })) : [];
+    setEditImages(copiedImages);
+    
+    // Set default large preview to the active primary image
+    const firstActive = copiedImages.find(i => i.active);
+    setLargePreviewUrl(firstActive ? firstActive.url : product.image);
+
     setOpenDropdownId(null);
     setShowExitConfirm(false);
   };
 
+  // Image actions inside the edit modal
+  const handleImageClick = (url: string) => {
+    setLargePreviewUrl(url);
+  };
+
+  const handleMoveImageLeft = (index: number) => {
+    if (index === 0) return;
+    setEditImages(prev => {
+      const next = [...prev];
+      const temp = next[index];
+      next[index] = next[index - 1];
+      next[index - 1] = temp;
+      return next;
+    });
+  };
+
+  const handleMoveImageRight = (index: number) => {
+    if (index === editImages.length - 1) return;
+    setEditImages(prev => {
+      const next = [...prev];
+      const temp = next[index];
+      next[index] = next[index + 1];
+      next[index + 1] = temp;
+      return next;
+    });
+  };
+
+  const handleMakePrimary = (index: number) => {
+    setEditImages(prev => {
+      const next = [...prev];
+      // Splice selected image out and place at index 0
+      const selected = next.splice(index, 1)[0];
+      selected.active = true; // Ensure it is active
+      next.unshift(selected);
+      // Set preview as large image
+      setLargePreviewUrl(selected.url);
+      return next;
+    });
+  };
+
+  const handleToggleImageActive = (index: number) => {
+    setEditImages(prev => {
+      const next = [...prev];
+      next[index].active = !next[index].active;
+      return next;
+    });
+  };
+
   const checkUnsavedChanges = () => {
     if (!editingProduct) return false;
-    const hasChanges =
+    
+    // Check if titles or metadata are different
+    const metaChanged =
       editTitle !== editingProduct.title ||
       editSku !== editingProduct.sku ||
       editDescription !== (editingProduct.description || "") ||
-      editTags !== (editingProduct.tags ? editingProduct.tags.join(", ") : "") ||
-      editImage !== editingProduct.image;
-    return hasChanges;
+      editTags !== (editingProduct.tags ? editingProduct.tags.join(", ") : "");
+      
+    // Check if images array list matches exactly (length, order, and active state)
+    if (metaChanged) return true;
+    if (!editingProduct.images || editImages.length !== editingProduct.images.length) return true;
+    
+    for (let i = 0; i < editImages.length; i++) {
+      if (editImages[i].url !== editingProduct.images[i].url) return true;
+      if (editImages[i].active !== editingProduct.images[i].active) return true;
+    }
+    return false;
   };
 
   const handleCloseAttempt = () => {
@@ -185,6 +279,11 @@ export default function ProductsPage() {
 
   const saveEdit = () => {
     if (!editTitle.trim()) return;
+
+    // The primary thumbnail is the first active image in the list, or fallback to first image
+    const firstActiveImage = editImages.find(img => img.active);
+    const primaryThumbnail = firstActiveImage ? firstActiveImage.url : (editImages[0]?.url || "");
+
     setProducts(prev =>
       prev.map(p =>
         p.id === editingProduct?.id
@@ -193,7 +292,8 @@ export default function ProductsPage() {
               title: editTitle,
               sku: editSku,
               description: editDescription,
-              image: editImage,
+              image: primaryThumbnail,
+              images: editImages,
               tags: editTags ? editTags.split(",").map(t => t.trim()).filter(t => t !== "") : []
             }
           : p
@@ -440,7 +540,7 @@ export default function ProductsPage() {
       {/* Edit Product Modal Dialog */}
       {editingProduct && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-center justify-center p-4">
-          <div className="bg-[#16161e] border border-white/[0.08] w-full max-w-lg rounded-2xl p-5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] space-y-4 animate-scale-up">
+          <div className="bg-[#16161e] border border-white/[0.08] w-full max-w-xl rounded-2xl p-5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] space-y-4 animate-scale-up max-h-[90vh] overflow-y-auto">
             
             <div className="flex justify-between items-center pb-2 border-b border-white/[0.06]">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -448,6 +548,7 @@ export default function ProductsPage() {
                 <span>Ürünü Düzenle</span>
               </h3>
               <button 
+                type="button"
                 onClick={handleCloseAttempt}
                 className="w-6 h-6 rounded-lg hover:bg-white/5 flex items-center justify-center text-[#a09cb0] hover:text-white cursor-pointer"
               >
@@ -457,41 +558,111 @@ export default function ProductsPage() {
 
             <div className="space-y-4">
               
-              {/* 1. Ürün Görseli Değiştirme */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Ürün Görseli</label>
-                <div className="flex items-center gap-4">
-                  {/* Current image preview */}
-                  <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 bg-neutral-900 shrink-0 flex items-center justify-center">
-                    <img src={editImage} alt="Edit preview" className="w-full h-full object-cover" />
+              {/* 1. Ürün Görseli Değiştirme (Visual Grid Reorder & Toggle) */}
+              <div className="space-y-2.5">
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Ürün Görselleri (Sürükleme ve Düzenleme)</label>
+                
+                {/* Large Preview Panel */}
+                <div className="relative w-full h-44 rounded-xl overflow-hidden border border-white/[0.06] bg-neutral-950 flex items-center justify-center">
+                  <img src={largePreviewUrl} alt="Large preview" className="h-full object-contain" />
+                  <div className="absolute bottom-2 left-2 px-2.5 py-1 bg-black/75 rounded-lg text-[9px] text-white/80 font-medium">
+                    Büyük Önizleme
                   </div>
-                  
-                  {/* Preset quick swapping icons */}
-                  <div className="space-y-1.5 flex-1">
-                    <input
-                      type="text"
-                      placeholder="Görsel URL veya galeri şablonu seçin"
-                      value={editImage}
-                      onChange={(e) => setEditImage(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-white/[0.08] bg-black/20 text-[11px] text-white focus:outline-none focus:border-purple-500/50"
-                    />
-                    <div className="flex gap-2">
-                      {presetImages.map(img => (
+                </div>
+
+                {/* Side-by-side Images Grid */}
+                <div className="grid grid-cols-4 gap-2.5 pt-1">
+                  {editImages.map((img, index) => {
+                    const isPrimary = index === 0;
+                    return (
+                      <div
+                        key={img.id}
+                        className={`relative group rounded-xl overflow-hidden border transition-all aspect-square bg-neutral-900 ${
+                          img.active 
+                            ? isPrimary 
+                              ? "border-purple-500 shadow-[0_0_8px_rgba(139,92,246,0.3)]" 
+                              : "border-white/[0.08]"
+                            : "border-red-500/30 opacity-40 grayscale"
+                        }`}
+                      >
+                        {/* Image element click triggers large preview */}
                         <button
-                          key={img.name}
                           type="button"
-                          onClick={() => setEditImage(img.url)}
-                          className={`px-2 py-0.5 rounded text-[9px] font-bold transition-all border cursor-pointer ${
-                            editImage === img.url
-                              ? "bg-purple-500/20 border-purple-500/40 text-white"
-                              : "bg-white/[0.02] border-white/[0.05] text-[#a09cb0] hover:text-white"
-                          }`}
+                          onClick={() => handleImageClick(img.url)}
+                          className="w-full h-full cursor-pointer flex items-center justify-center"
                         >
-                          {img.name}
+                          <img src={img.url} alt={`Listing thumbnail ${index}`} className="w-full h-full object-cover" />
                         </button>
-                      ))}
-                    </div>
-                  </div>
+
+                        {/* Top Indicator Badges */}
+                        <div className="absolute top-1 left-1.5 flex gap-1 z-10 pointer-events-none">
+                          {isPrimary && img.active && (
+                            <span className="text-[8px] font-bold text-white bg-purple-500 px-1 py-0.5 rounded leading-none">
+                              ANA
+                            </span>
+                          )}
+                          {!img.active && (
+                            <span className="text-[8px] font-bold text-white bg-red-500 px-1 py-0.5 rounded leading-none uppercase">
+                              Pasif
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Interaction Control Overlays */}
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-1 z-10">
+                          {/* Reordering chevrons */}
+                          <div className="flex justify-between items-center w-full">
+                            <button
+                              type="button"
+                              onClick={() => handleMoveImageLeft(index)}
+                              disabled={index === 0}
+                              className="w-5 h-5 bg-black/50 hover:bg-black/80 rounded flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                            >
+                              <ChevronLeft size={12} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveImageRight(index)}
+                              disabled={index === editImages.length - 1}
+                              className="w-5 h-5 bg-black/50 hover:bg-black/80 rounded flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                            >
+                              <ChevronRight size={12} />
+                            </button>
+                          </div>
+
+                          {/* Action Buttons Row */}
+                          <div className="flex justify-around items-center w-full">
+                            {/* Make Primary Star */}
+                            {img.active && (
+                              <button
+                                type="button"
+                                title="Ana Görsel Yap"
+                                onClick={() => handleMakePrimary(index)}
+                                className={`w-5 h-5 rounded flex items-center justify-center cursor-pointer transition-colors ${
+                                  isPrimary ? "bg-purple-500 text-white" : "bg-black/50 hover:bg-purple-500 text-white"
+                                }`}
+                              >
+                                <Star size={11} className={isPrimary ? "fill-white" : ""} />
+                              </button>
+                            )}
+
+                            {/* Active/Inactive Toggle Button */}
+                            <button
+                              type="button"
+                              title={img.active ? "Aktiften Çıkar (Sil)" : "Aktif Et (Geri Al)"}
+                              onClick={() => handleToggleImageActive(index)}
+                              className={`w-5 h-5 rounded flex items-center justify-center cursor-pointer transition-colors ${
+                                img.active ? "bg-black/50 hover:bg-red-500 text-white" : "bg-red-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white"
+                              }`}
+                            >
+                              {img.active ? <Trash2 size={11} /> : <Plus size={11} />}
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -533,7 +704,7 @@ export default function ProductsPage() {
                 <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">Ürün Tagleri (Virgülle Ayırın)</label>
                 <input
                   type="text"
-                  placeholder="örneğin: mug, coffee, ceramic, handmade"
+                  placeholder="örneğin: tote, canvas, wildflowers"
                   value={editTags}
                   onChange={(e) => setEditTags(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50"
