@@ -34,6 +34,7 @@ interface ActiveOrder {
   orderId: string;
   buyerName: string;
   product: string;
+  image: string;
   sku: string;
   orderedTime: string;
   shipBy: string;
@@ -46,6 +47,7 @@ const activeOrders: ActiveOrder[] = [
     orderId: "#ET-14205",
     buyerName: "Olivia Vance",
     product: "Wildflower Garden Custom Canvas Tote Bag",
+    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80",
     sku: "SKU: TOTE-WF-GARDEN",
     orderedTime: "2 hours ago",
     shipBy: "Tomorrow, 2:00 PM",
@@ -56,6 +58,7 @@ const activeOrders: ActiveOrder[] = [
     orderId: "#ET-14204",
     buyerName: "Liam Sterling",
     product: "Golden Meadows Fine Art Accent Mug 11oz",
+    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=100&q=80",
     sku: "SKU: MUG-GM-ACC-11",
     orderedTime: "4 hours ago",
     shipBy: "Tomorrow, 5:00 PM",
@@ -66,6 +69,7 @@ const activeOrders: ActiveOrder[] = [
     orderId: "#ET-14203",
     buyerName: "Sophia Martinez",
     product: "Retro Custom Botanical Unisex Tee",
+    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=100&q=80",
     sku: "SKU: TEE-RET-BOT-M",
     orderedTime: "6 hours ago",
     shipBy: "Jul 21, 12:00 PM",
@@ -76,6 +80,7 @@ const activeOrders: ActiveOrder[] = [
     orderId: "#ET-14202",
     buyerName: "Emma Watson",
     product: "Funny Sarcastic Soy Wax Jar Candle",
+    image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=100&q=80",
     sku: "SKU: CAND-SARC-SOY",
     orderedTime: "12 hours ago",
     shipBy: "Jul 21, 3:00 PM",
@@ -294,9 +299,14 @@ export default function SellerDashboard() {
                   </span>
                 </div>
 
-                <div className="space-y-0.5 min-w-0">
-                  <span className="text-[10px] text-white/95 block font-semibold truncate">{o.product}</span>
-                  <span className="text-[9px] text-[#5e5a72] block font-mono truncate">{o.sku}</span>
+                <div className="flex gap-2.5 items-center min-w-0">
+                  <div className="w-10 h-10 rounded-lg bg-neutral-900 border border-white/10 overflow-hidden shrink-0">
+                    <img src={o.image} alt={o.product} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="min-w-0 space-y-0.5">
+                    <span className="text-[10px] text-white/95 block font-semibold truncate">{o.product}</span>
+                    <span className="text-[9px] text-[#5e5a72] block font-mono truncate">{o.sku}</span>
+                  </div>
                 </div>
 
                 <div className="border-t border-white/[0.04] pt-2 flex flex-col gap-0.5 text-[9px] shrink-0">
@@ -312,8 +322,7 @@ export default function SellerDashboard() {
 
       {/* Timeframe Selector Navigation Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-black/10 p-2.5 rounded-xl border border-white/[0.03]">
-        <span className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider px-2">Store Analytics Overview</span>
-        <div className="flex bg-white/[0.02] p-1 rounded-lg border border-white/[0.05] self-start sm:self-auto">
+        <div className="flex bg-white/[0.02] p-1 rounded-lg border border-white/[0.05] self-start">
           {[
             { id: "daily", label: "Günlük" },
             { id: "weekly", label: "Haftalık" },
@@ -333,6 +342,7 @@ export default function SellerDashboard() {
             </button>
           ))}
         </div>
+        <span className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider px-2 sm:text-right">Store Analytics Overview</span>
       </div>
 
       {/* Core Etsy Shop Metrics Grid */}
