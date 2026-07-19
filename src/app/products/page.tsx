@@ -19,8 +19,7 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
-  Star,
-  Plus
+  Star
 } from "lucide-react";
 
 interface ProductImage {
@@ -582,10 +581,10 @@ export default function ProductsPage() {
                             ? isPrimary 
                               ? "border-purple-500 shadow-[0_0_8px_rgba(139,92,246,0.3)]" 
                               : "border-white/[0.08]"
-                            : "border-red-500/30 opacity-40 grayscale"
+                            : "border-white/[0.04] opacity-35 grayscale"
                         }`}
                       >
-                        {/* Image element click triggers large preview */}
+                        {/* Image element click triggers large preview — works for any image, active or inactive */}
                         <button
                           type="button"
                           onClick={() => handleImageClick(img.url)}
@@ -602,7 +601,7 @@ export default function ProductsPage() {
                             </span>
                           )}
                           {!img.active && (
-                            <span className="text-[8px] font-bold text-white bg-red-500 px-1 py-0.5 rounded leading-none uppercase">
+                            <span className="text-[8px] font-bold text-white/80 bg-black/60 px-1 py-0.5 rounded leading-none uppercase">
                               Pasif
                             </span>
                           )}
@@ -646,16 +645,18 @@ export default function ProductsPage() {
                               </button>
                             )}
 
-                            {/* Active/Inactive Toggle Button */}
+                            {/* Active/Inactive Toggle Button — Eye icon */}
                             <button
                               type="button"
-                              title={img.active ? "Aktiften Çıkar (Sil)" : "Aktif Et (Geri Al)"}
+                              title={img.active ? "Gizle (İnaktif Yap)" : "Göster (Aktif Et)"}
                               onClick={() => handleToggleImageActive(index)}
                               className={`w-5 h-5 rounded flex items-center justify-center cursor-pointer transition-colors ${
-                                img.active ? "bg-black/50 hover:bg-red-500 text-white" : "bg-red-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white"
+                                img.active
+                                  ? "bg-black/50 hover:bg-white/20 text-white"
+                                  : "bg-white/10 hover:bg-emerald-500/60 text-white/60 hover:text-white"
                               }`}
                             >
-                              {img.active ? <Trash2 size={11} /> : <Plus size={11} />}
+                              {img.active ? <Eye size={11} /> : <EyeOff size={11} />}
                             </button>
                           </div>
                         </div>
