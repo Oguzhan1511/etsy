@@ -15,7 +15,8 @@ import {
   ShoppingCart,
   ShoppingBag,
   CheckCircle,
-  X
+  X,
+  AlertCircle
 } from "lucide-react";
 
 interface ListingProduct {
@@ -29,6 +30,8 @@ interface ListingProduct {
   revenue: number;
   profit: number;
   status: "Active" | "Inactive";
+  description: string;
+  tags: string[];
 }
 
 const initialProducts: ListingProduct[] = [
@@ -42,7 +45,9 @@ const initialProducts: ListingProduct[] = [
     favoritesCount: 410,
     revenue: 3550,
     profit: 1980,
-    status: "Active"
+    status: "Active",
+    description: "High quality organic cotton canvas tote bag featuring a beautiful wildflower print. Durable handles and spacious design perfect for daily grocery shopping, beach outings, or travel.",
+    tags: ["tote bag", "canvas tote", "wildflowers", "custom bag", "eco friendly"]
   },
   {
     id: "2",
@@ -54,7 +59,9 @@ const initialProducts: ListingProduct[] = [
     favoritesCount: 196,
     revenue: 1440,
     profit: 820,
-    status: "Active"
+    status: "Active",
+    description: "Beautiful golden wildflower printed mug. 11oz capacity, ceramic construction, microwave and dishwasher safe. A perfect morning coffee companion.",
+    tags: ["wildflower mug", "ceramic mug", "coffee mug", "gift for her", "golden meadows"]
   },
   {
     id: "3",
@@ -66,7 +73,9 @@ const initialProducts: ListingProduct[] = [
     favoritesCount: 284,
     revenue: 2100,
     profit: 1150,
-    status: "Active"
+    status: "Active",
+    description: "Super soft Bella+Canvas 3001 unisex t-shirt featuring a retro botanical print. Available in multiple colors and sizes. Made with premium lightweight ringspun cotton.",
+    tags: ["botanical tee", "unisex shirt", "retro t-shirt", "bella canvas", "floral graphic"]
   },
   {
     id: "4",
@@ -78,7 +87,9 @@ const initialProducts: ListingProduct[] = [
     favoritesCount: 410,
     revenue: 760,
     profit: 420,
-    status: "Active"
+    status: "Active",
+    description: "100% natural soy wax jar candle with a humorous sarcastic label. Hand-poured with premium scent oils and a clean-burning cotton wick.",
+    tags: ["soy candle", "funny candle", "scented candle", "jar candle", "gift candle"]
   },
   {
     id: "5",
@@ -90,8 +101,18 @@ const initialProducts: ListingProduct[] = [
     favoritesCount: 78,
     revenue: 204,
     profit: 110,
-    status: "Inactive"
+    status: "Inactive",
+    description: "15oz accent mug with an elegant vintage art deco geometric pattern. Premium ceramic coating, extra large size perfect for tea and hot cocoa lovers.",
+    tags: ["art deco mug", "vintage mug", "15oz mug", "accent mug", "retro kitchen"]
   }
+];
+
+// Mock gallery presets for easy image swapping
+const presetImages = [
+  { name: "Tote Bag", url: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=150&q=80" },
+  { name: "Mug", url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=150&q=80" },
+  { name: "Tee", url: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=150&q=80" },
+  { name: "Candle", url: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=150&q=80" }
 ];
 
 export default function ProductsPage() {
@@ -104,6 +125,12 @@ export default function ProductsPage() {
   const [editingProduct, setEditingProduct] = useState<ListingProduct | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editSku, setEditSku] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editTags, setEditTags] = useState("");
+  const [editImage, setEditImage] = useState("");
+
+  // Unsaved changes confirmation dialog state
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   const handleDeactivate = (id: string) => {
     setProducts(prev =>
@@ -130,14 +157,46 @@ export default function ProductsPage() {
     setEditingProduct(product);
     setEditTitle(product.title);
     setEditSku(product.sku);
+    setEditDescription(product.description || "");
+    setEditTags(product.tags ? product.tags.join(", ") : "");
+    setEditImage(product.image);
     setOpenDropdownId(null);
+    setShowExitConfirm(false);
+  };
+
+  const checkUnsavedChanges = () => {
+    if (!editingProduct) return false;
+    const hasChanges =
+      editTitle !== editingProduct.title ||
+      editSku !== editingProduct.sku ||
+      editDescription !== (editingProduct.description || "") ||
+      editTags !== (editingProduct.tags ? editingProduct.tags.join(", ") : "") ||
+      editImage !== editingProduct.image;
+    return hasChanges;
+  };
+
+  const handleCloseAttempt = () => {
+    if (checkUnsavedChanges()) {
+      setShowExitConfirm(true);
+    } else {
+      setEditingProduct(null);
+    }
   };
 
   const saveEdit = () => {
     if (!editTitle.trim()) return;
     setProducts(prev =>
       prev.map(p =>
-        p.id === editingProduct?.id ? { ...p, title: editTitle, sku: editSku } : p
+        p.id === editingProduct?.id
+          ? {
+              ...p,
+              title: editTitle,
+              sku: editSku,
+              description: editDescription,
+              image: editImage,
+              tags: editTags ? editTags.split(",").map(t => t.trim()).filter(t => t !== "") : []
+            }
+          : p
       )
     );
     setEditingProduct(null);
@@ -380,8 +439,8 @@ export default function ProductsPage() {
 
       {/* Edit Product Modal Dialog */}
       {editingProduct && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#16161e] border border-white/[0.08] w-full max-w-md rounded-2xl p-5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] space-y-4 animate-scale-up">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+          <div className="bg-[#16161e] border border-white/[0.08] w-full max-w-lg rounded-2xl p-5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] space-y-4 animate-scale-up">
             
             <div className="flex justify-between items-center pb-2 border-b border-white/[0.06]">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -389,14 +448,54 @@ export default function ProductsPage() {
                 <span>Ürünü Düzenle</span>
               </h3>
               <button 
-                onClick={() => setEditingProduct(null)}
+                onClick={handleCloseAttempt}
                 className="w-6 h-6 rounded-lg hover:bg-white/5 flex items-center justify-center text-[#a09cb0] hover:text-white cursor-pointer"
               >
                 <X size={14} />
               </button>
             </div>
 
-            <div className="space-y-3.5">
+            <div className="space-y-4">
+              
+              {/* 1. Ürün Görseli Değiştirme */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Ürün Görseli</label>
+                <div className="flex items-center gap-4">
+                  {/* Current image preview */}
+                  <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 bg-neutral-900 shrink-0 flex items-center justify-center">
+                    <img src={editImage} alt="Edit preview" className="w-full h-full object-cover" />
+                  </div>
+                  
+                  {/* Preset quick swapping icons */}
+                  <div className="space-y-1.5 flex-1">
+                    <input
+                      type="text"
+                      placeholder="Görsel URL veya galeri şablonu seçin"
+                      value={editImage}
+                      onChange={(e) => setEditImage(e.target.value)}
+                      className="w-full px-3 py-1.5 rounded-lg border border-white/[0.08] bg-black/20 text-[11px] text-white focus:outline-none focus:border-purple-500/50"
+                    />
+                    <div className="flex gap-2">
+                      {presetImages.map(img => (
+                        <button
+                          key={img.name}
+                          type="button"
+                          onClick={() => setEditImage(img.url)}
+                          className={`px-2 py-0.5 rounded text-[9px] font-bold transition-all border cursor-pointer ${
+                            editImage === img.url
+                              ? "bg-purple-500/20 border-purple-500/40 text-white"
+                              : "bg-white/[0.02] border-white/[0.05] text-[#a09cb0] hover:text-white"
+                          }`}
+                        >
+                          {img.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Ürün Başlığı Değişme */}
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">Ürün Başlığı</label>
                 <input
@@ -407,6 +506,7 @@ export default function ProductsPage() {
                 />
               </div>
 
+              {/* SKU code input */}
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">SKU Kodu</label>
                 <input
@@ -416,24 +516,86 @@ export default function ProductsPage() {
                   className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50"
                 />
               </div>
+
+              {/* 3. Ürün Açıklaması Değişme */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">Ürün Açıklaması</label>
+                <textarea
+                  rows={3}
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 resize-none leading-relaxed"
+                />
+              </div>
+
+              {/* 4. Ürün Tag Değiştirme */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">Ürün Tagleri (Virgülle Ayırın)</label>
+                <input
+                  type="text"
+                  placeholder="örneğin: mug, coffee, ceramic, handmade"
+                  value={editTags}
+                  onChange={(e) => setEditTags(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50"
+                />
+              </div>
             </div>
 
-            <div className="flex justify-end gap-3.5 pt-2">
+            {/* Bottom Actions */}
+            <div className="flex justify-end gap-3 pt-2 border-t border-white/[0.04]">
               <button
-                onClick={() => setEditingProduct(null)}
+                type="button"
+                onClick={handleCloseAttempt}
                 className="px-4 py-2 border border-white/[0.06] hover:bg-white/5 text-[#a09cb0] hover:text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
               >
-                Vazgeç
+                İptal
               </button>
               <button
+                type="button"
                 onClick={saveEdit}
-                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-white rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-white rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-lg shadow-purple-500/10"
               >
                 <CheckCircle size={12} />
-                <span>Kaydet</span>
+                <span>Onayla</span>
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Unsaved Changes Confirmation Dialog Modal */}
+      {showExitConfirm && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-[#181822] border border-white/[0.08] w-full max-w-sm rounded-xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-4 text-center animate-scale-up">
+            <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 mx-auto">
+              <AlertCircle size={22} className="animate-pulse" />
+            </div>
+            
+            <div className="space-y-1.5">
+              <h4 className="text-sm font-bold text-white">Kaydedilmemiş Değişiklikler Var</h4>
+              <p className="text-xs text-[#a09cb0] leading-relaxed px-2">
+                Düzenlemeden çıkmak istediğinize emin misiniz? Yaptığınız tüm değişiklikler kaybolacaktır.
+              </p>
+            </div>
+
+            <div className="flex justify-center gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setShowExitConfirm(false);
+                  setEditingProduct(null); // Discards edits
+                }}
+                className="px-4 py-2 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 rounded-lg text-xs font-bold transition-all cursor-pointer"
+              >
+                İptal Et (Çık)
+              </button>
+              <button
+                onClick={() => setShowExitConfirm(false)} // Returns to editing
+                className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
+              >
+                Devam Et (Düzenle)
+              </button>
+            </div>
           </div>
         </div>
       )}
