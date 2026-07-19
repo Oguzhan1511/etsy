@@ -229,22 +229,20 @@ export default function ProductsPage() {
   const handleMakePrimary = (index: number) => {
     setEditImages(prev => {
       const next = [...prev];
-      // Splice selected image out and place at index 0
-      const selected = next.splice(index, 1)[0];
-      selected.active = true; // Ensure it is active
-      next.unshift(selected);
-      // Set preview as large image
-      setLargePreviewUrl(selected.url);
+      const [selected] = next.splice(index, 1);
+      const activated = { ...selected, active: true }; // immutable — no mutation
+      next.unshift(activated);
+      setLargePreviewUrl(activated.url);
       return next;
     });
   };
 
   const handleToggleImageActive = (index: number) => {
-    setEditImages(prev => {
-      const next = [...prev];
-      next[index].active = !next[index].active;
-      return next;
-    });
+    setEditImages(prev =>
+      prev.map((img, i) =>
+        i === index ? { ...img, active: !img.active } : img
+      )
+    );
   };
 
   const checkUnsavedChanges = () => {
