@@ -12,8 +12,11 @@ import {
   Star,
   Activity,
   FileText,
-  Percent
+  Percent,
+  Clock,
+  ArrowRight
 } from "lucide-react";
+import Link from "next/link";
 
 /* ─── Types & Interfaces ────────────────────────────────────────── */
 
@@ -25,6 +28,60 @@ interface PerformanceItem {
   secondaryVal: string;
   rate: string;
 }
+
+interface ActiveOrder {
+  id: string;
+  orderId: string;
+  buyerName: string;
+  product: string;
+  sku: string;
+  orderedTime: string;
+  shipBy: string;
+  status: string;
+}
+
+const activeOrders: ActiveOrder[] = [
+  {
+    id: "1",
+    orderId: "#ET-14205",
+    buyerName: "Olivia Vance",
+    product: "Wildflower Garden Custom Canvas Tote Bag",
+    sku: "SKU: TOTE-WF-GARDEN",
+    orderedTime: "2 hours ago",
+    shipBy: "Tomorrow, 2:00 PM",
+    status: "Processing"
+  },
+  {
+    id: "2",
+    orderId: "#ET-14204",
+    buyerName: "Liam Sterling",
+    product: "Golden Meadows Fine Art Accent Mug 11oz",
+    sku: "SKU: MUG-GM-ACC-11",
+    orderedTime: "4 hours ago",
+    shipBy: "Tomorrow, 5:00 PM",
+    status: "Processing"
+  },
+  {
+    id: "3",
+    orderId: "#ET-14203",
+    buyerName: "Sophia Martinez",
+    product: "Retro Custom Botanical Unisex Tee",
+    sku: "SKU: TEE-RET-BOT-M",
+    orderedTime: "6 hours ago",
+    shipBy: "Jul 21, 12:00 PM",
+    status: "Ready to Ship"
+  },
+  {
+    id: "4",
+    orderId: "#ET-14202",
+    buyerName: "Emma Watson",
+    product: "Funny Sarcastic Soy Wax Jar Candle",
+    sku: "SKU: CAND-SARC-SOY",
+    orderedTime: "12 hours ago",
+    shipBy: "Jul 21, 3:00 PM",
+    status: "Ready to Ship"
+  }
+];
 
 // Timeframe mapping datasets
 const statsData = {
@@ -207,6 +264,49 @@ export default function SellerDashboard() {
             <span className="text-[#a09cb0]">Etsy Sync:</span>
             <span className="text-white font-bold">StarSeller_Store_1</span>
           </div>
+        </div>
+      </div>
+
+      {/* Aktif Siparişler (Active Orders Grid) */}
+      <div className="space-y-3">
+        <div className="flex justify-between items-center px-1">
+          <h3 className="text-xs font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1.5">
+            <Clock size={13} className="text-purple-400" />
+            <span>Aktif Siparişler (Son 4 Sipariş)</span>
+          </h3>
+          <Link href="/orders" className="text-[10px] font-bold text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1">
+            <span>Tüm Siparişleri Gör</span>
+            <ArrowRight size={10} />
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {activeOrders.map((o) => (
+            <Link href="/orders" key={o.id} className="group block">
+              <div className="bg-[#16161e] border border-white/[0.05] group-hover:border-purple-500/20 rounded-xl p-3.5 space-y-3 transition-all hover:-translate-y-0.5 relative overflow-hidden flex flex-col justify-between h-36">
+                
+                <div className="flex justify-between items-start gap-2">
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold text-white block group-hover:text-purple-300 transition-colors truncate">{o.buyerName}</span>
+                    <span className="text-[9px] text-[#5e5a72] block mt-0.5 font-mono">{o.orderId}</span>
+                  </div>
+                  <span className="text-[8px] font-bold text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/15 shrink-0 uppercase">
+                    {o.status === "Processing" ? "Hazırlanıyor" : "Kargoya Hazır"}
+                  </span>
+                </div>
+
+                <div className="space-y-0.5 min-w-0">
+                  <span className="text-[10px] text-white/95 block font-semibold truncate">{o.product}</span>
+                  <span className="text-[9px] text-[#5e5a72] block font-mono truncate">{o.sku}</span>
+                </div>
+
+                <div className="border-t border-white/[0.04] pt-2 flex flex-col gap-0.5 text-[9px] shrink-0">
+                  <span className="text-[#a09cb0]">Sipariş: <strong className="text-white font-medium">{o.orderedTime}</strong></span>
+                  <span className="text-[#a09cb0]">Gönderim: <strong className="text-amber-400 font-semibold">{o.shipBy}</strong></span>
+                </div>
+
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
 

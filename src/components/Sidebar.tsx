@@ -11,6 +11,7 @@ import {
   Settings,
   Zap,
   ChevronRight,
+  ShoppingBag,
 } from "lucide-react";
 
 const navItems = [
@@ -18,6 +19,7 @@ const navItems = [
     label: "Core Platform",
     items: [
       { icon: LayoutDashboard, label: "Satıcı Dashboard", href: "/" },
+      { icon: ShoppingBag, label: "Siparişler", href: "/orders" },
       { icon: LayoutDashboard, label: "Üretici Dashboard", href: "/producer-dashboard" },
       { icon: Search, label: "Product Research", href: "/product-research" },
       { icon: Sparkles, label: "AI Design Studio", href: "/ai-design-studio" },
