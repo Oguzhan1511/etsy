@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import {
   LayoutDashboard,
   Search,
@@ -13,7 +14,10 @@ import {
   ChevronRight,
   ShoppingBag,
   Package,
+  LogOut,
+  Loader2,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   {
@@ -39,6 +43,32 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout, isLoading } = useAuth();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoading && !user && pathname !== "/login") {
+      router.replace("/login");
+    }
+  }, [user, isLoading, pathname, router]);
+
+  // Don't render sidebar on login page
+  if (pathname === "/login") return null;
+
+  // Show minimal loading state while checking auth
+  if (isLoading) {
+    return (
+      <aside
+        className="hidden md:flex flex-col w-[220px] shrink-0 border-r items-center justify-center"
+        style={{ background: "var(--bg-surface)", borderColor: "var(--border)" }}
+      >
+        <Loader2 size={18} className="text-purple-500 animate-spin" />
+      </aside>
+    );
+  }
+
+  if (!user) return null;
 
   return (
     <aside
@@ -123,41 +153,63 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* User footer */}
+      {/* User Profile Footer */}
       <div
         className="p-3 border-t"
         style={{ borderColor: "var(--border)" }}
       >
-        <button
-          className="w-full flex items-center gap-2.5 p-2 rounded-lg transition-all duration-150 text-left"
-          style={{ color: "var(--text-secondary)" }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
-            (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.background = "transparent";
-            (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
-          }}
-        >
+        {/* User info row */}
+        <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg mb-1">
+          {/* Avatar */}
           <div
-            className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+            className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
             style={{
               background: "linear-gradient(135deg, #7c6af7 0%, #a855f7 100%)",
               color: "#fff",
             }}
           >
-            BE
+            {user.initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium truncate" style={{ color: "var(--text-primary)" }}>
-              Bot Etsy
+            <p className="text-xs font-semibold truncate" style={{ color: "var(--text-primary)" }}>
+              {user.name}
             </p>
-            <p className="text-[11px] truncate" style={{ color: "var(--text-muted)" }}>
-              Pro Plan
+            <p className="text-[10px] truncate" style={{ color: "var(--text-muted)" }}>
+              {user.email}
             </p>
           </div>
-        </button>
+        </div>
+
+        {/* Plan badge + logout row */}
+        <div className="flex items-center justify-between px-2">
+          <span
+            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+            style={{
+              background: "rgba(124,106,247,0.12)",
+              color: "#9d8df5",
+              border: "1px solid rgba(124,106,247,0.2)",
+            }}
+          >
+            {user.plan}
+          </span>
+          <button
+            onClick={logout}
+            title="Çıkış Yap"
+            className="flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-lg transition-all duration-150 cursor-pointer"
+            style={{ color: "var(--text-muted)" }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.color = "#f87171";
+              (e.currentTarget as HTMLElement).style.background = "rgba(248,113,113,0.08)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
+              (e.currentTarget as HTMLElement).style.background = "transparent";
+            }}
+          >
+            <LogOut size={12} />
+            <span>Çıkış</span>
+          </button>
+        </div>
       </div>
     </aside>
   );

@@ -199,10 +199,7 @@ export default function ProductsPage() {
     setShowExitConfirm(false);
   };
 
-  // Image actions inside the edit modal
-  const handleImageClick = (url: string) => {
-    setLargePreviewUrl(url);
-  };
+
 
   const handleMoveImageLeft = (index: number) => {
     if (index === 0) return;
