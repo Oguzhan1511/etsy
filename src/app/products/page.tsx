@@ -573,28 +573,31 @@ export default function ProductsPage() {
                 <div className="grid grid-cols-4 gap-2.5 pt-1">
                   {editImages.map((img, index) => {
                     const isPrimary = index === 0;
+                    const isSelected = largePreviewUrl === img.url;
                     return (
                       <div
                         key={img.id}
                         className={`relative group rounded-xl overflow-hidden border transition-all aspect-square bg-neutral-900 ${
-                          img.active 
-                            ? isPrimary 
-                              ? "border-purple-500 shadow-[0_0_8px_rgba(139,92,246,0.3)]" 
-                              : "border-white/[0.08]"
-                            : "border-white/[0.04] opacity-35 grayscale"
+                          isSelected
+                            ? "border-purple-400 shadow-[0_0_10px_rgba(139,92,246,0.4)]"
+                            : img.active
+                              ? isPrimary
+                                ? "border-purple-500/50"
+                                : "border-white/[0.08]"
+                              : "border-white/[0.04] opacity-35 grayscale"
                         }`}
                       >
-                        {/* Image element click triggers large preview — works for any image, active or inactive */}
+                        {/* Clickable image — tıklanınca büyük önizlemeyi günceller */}
                         <button
                           type="button"
-                          onClick={() => handleImageClick(img.url)}
-                          className="w-full h-full cursor-pointer flex items-center justify-center"
+                          onClick={() => setLargePreviewUrl(img.url)}
+                          className="absolute inset-0 w-full h-full cursor-pointer z-0"
                         >
                           <img src={img.url} alt={`Listing thumbnail ${index}`} className="w-full h-full object-cover" />
                         </button>
 
-                        {/* Top Indicator Badges */}
-                        <div className="absolute top-1 left-1.5 flex gap-1 z-10 pointer-events-none">
+                        {/* Top badges — pointer-events-none so they don't block click */}
+                        <div className="absolute top-1 left-1.5 flex gap-1 z-20 pointer-events-none">
                           {isPrimary && img.active && (
                             <span className="text-[8px] font-bold text-white bg-purple-500 px-1 py-0.5 rounded leading-none">
                               ANA
@@ -605,54 +608,58 @@ export default function ProductsPage() {
                               Pasif
                             </span>
                           )}
+                          {isSelected && (
+                            <span className="text-[8px] font-bold text-white bg-purple-500/80 px-1 py-0.5 rounded leading-none">
+                              ●
+                            </span>
+                          )}
                         </div>
 
-                        {/* Interaction Control Overlays */}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-1 z-10">
-                          {/* Reordering chevrons */}
-                          <div className="flex justify-between items-center w-full">
+                        {/* Hover control bar — only appears on hover, positioned at top and bottom edges */}
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+                          <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+
+                          {/* Top row: left/right arrows */}
+                          <div className="absolute top-1 right-1 flex gap-1 pointer-events-auto">
                             <button
                               type="button"
-                              onClick={() => handleMoveImageLeft(index)}
+                              onClick={(e) => { e.stopPropagation(); handleMoveImageLeft(index); }}
                               disabled={index === 0}
-                              className="w-5 h-5 bg-black/50 hover:bg-black/80 rounded flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                              className="w-5 h-5 bg-black/60 hover:bg-black/90 rounded flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                             >
                               <ChevronLeft size={12} />
                             </button>
                             <button
                               type="button"
-                              onClick={() => handleMoveImageRight(index)}
+                              onClick={(e) => { e.stopPropagation(); handleMoveImageRight(index); }}
                               disabled={index === editImages.length - 1}
-                              className="w-5 h-5 bg-black/50 hover:bg-black/80 rounded flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                              className="w-5 h-5 bg-black/60 hover:bg-black/90 rounded flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                             >
                               <ChevronRight size={12} />
                             </button>
                           </div>
 
-                          {/* Action Buttons Row */}
-                          <div className="flex justify-around items-center w-full">
-                            {/* Make Primary Star */}
+                          {/* Bottom row: star + eye toggle */}
+                          <div className="absolute bottom-1 right-1 flex gap-1 pointer-events-auto">
                             {img.active && (
                               <button
                                 type="button"
                                 title="Ana Görsel Yap"
-                                onClick={() => handleMakePrimary(index)}
+                                onClick={(e) => { e.stopPropagation(); handleMakePrimary(index); }}
                                 className={`w-5 h-5 rounded flex items-center justify-center cursor-pointer transition-colors ${
-                                  isPrimary ? "bg-purple-500 text-white" : "bg-black/50 hover:bg-purple-500 text-white"
+                                  isPrimary ? "bg-purple-500 text-white" : "bg-black/60 hover:bg-purple-500 text-white"
                                 }`}
                               >
                                 <Star size={11} className={isPrimary ? "fill-white" : ""} />
                               </button>
                             )}
-
-                            {/* Active/Inactive Toggle Button — Eye icon */}
                             <button
                               type="button"
                               title={img.active ? "Gizle (İnaktif Yap)" : "Göster (Aktif Et)"}
-                              onClick={() => handleToggleImageActive(index)}
+                              onClick={(e) => { e.stopPropagation(); handleToggleImageActive(index); }}
                               className={`w-5 h-5 rounded flex items-center justify-center cursor-pointer transition-colors ${
                                 img.active
-                                  ? "bg-black/50 hover:bg-white/20 text-white"
+                                  ? "bg-black/60 hover:bg-white/20 text-white"
                                   : "bg-white/10 hover:bg-emerald-500/60 text-white/60 hover:text-white"
                               }`}
                             >
