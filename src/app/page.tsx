@@ -287,7 +287,7 @@ export default function SellerDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {activeOrders.map((o) => (
             <Link href="/orders" key={o.id} className="group block">
-              <div className="bg-[#16161e] border border-white/[0.05] group-hover:border-purple-500/20 rounded-xl p-3.5 space-y-3 transition-all hover:-translate-y-0.5 relative overflow-hidden flex flex-col justify-between h-36">
+              <div className="bg-[#16161e] border border-white/[0.05] group-hover:border-purple-500/20 rounded-xl p-3.5 space-y-3 transition-all hover:-translate-y-0.5 relative overflow-hidden flex flex-col justify-between min-h-[155px] h-auto">
                 
                 <div className="flex justify-between items-start gap-2">
                   <div className="min-w-0">
@@ -320,116 +320,121 @@ export default function SellerDashboard() {
         </div>
       </div>
 
-      {/* Timeframe Selector Navigation Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-black/10 p-2.5 rounded-xl border border-white/[0.03]">
-        <div className="flex bg-white/[0.02] p-1 rounded-lg border border-white/[0.05] self-start">
-          {[
-            { id: "daily", label: "Günlük" },
-            { id: "weekly", label: "Haftalık" },
-            { id: "monthly", label: "Aylık" },
-            { id: "allTime", label: "Tüm Zamanlar" }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setTimeframe(tab.id as "daily" | "weekly" | "monthly" | "allTime")}
-              className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                timeframe === tab.id
-                  ? "bg-purple-500/20 border border-purple-500/35 text-white shadow-md font-extrabold"
-                  : "text-[#a09cb0] hover:text-white"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <span className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider px-2 sm:text-right">Store Analytics Overview</span>
-      </div>
-
-      {/* Core Etsy Shop Metrics Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+      {/* Unified Analytics Panel */}
+      <div className="bg-[#16161e] border border-white/[0.07] rounded-xl p-5 space-y-5 shadow-[0_4px_24px_rgba(0,0,0,0.15)]">
         
-        {/* Metric 1: Aktif Ürünler */}
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
-          <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
-            <Package size={10} className="text-purple-400" />
-            <span>Aktif Ürünler</span>
-          </span>
-          <div>
-            <div className="text-lg font-bold text-white leading-none">{activeData.activeListings}</div>
-            <span className="text-[9px] text-[#5e5a72] block mt-1">Live Listings</span>
+        {/* Timeframe Selector Navigation Tabs */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.05]">
+          <div className="flex bg-white/[0.02] p-1 rounded-lg border border-white/[0.05] self-start">
+            {[
+              { id: "daily", label: "Günlük" },
+              { id: "weekly", label: "Haftalık" },
+              { id: "monthly", label: "Aylık" },
+              { id: "allTime", label: "Tüm Zamanlar" }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setTimeframe(tab.id as "daily" | "weekly" | "monthly" | "allTime")}
+                className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                  timeframe === tab.id
+                    ? "bg-purple-500/20 border border-purple-500/35 text-white shadow-md font-extrabold"
+                    : "text-[#a09cb0] hover:text-white"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
+          <span className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider px-2 sm:text-right">Store Analytics Overview</span>
         </div>
 
-        {/* Metric 2: Draft Ürünler */}
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
-          <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
-            <FileText size={10} className="text-blue-400" />
-            <span>Draft Ürünler</span>
-          </span>
-          <div>
-            <div className="text-lg font-bold text-white leading-none">{activeData.draftListings}</div>
-            <span className="text-[9px] text-[#5e5a72] block mt-1">Pending Sync</span>
+        {/* Core Etsy Shop Metrics Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+          
+          {/* Metric 1: Aktif Ürünler */}
+          <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
+            <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
+              <Package size={10} className="text-purple-400" />
+              <span>Aktif Ürünler</span>
+            </span>
+            <div>
+              <div className="text-lg font-bold text-white leading-none">{activeData.activeListings}</div>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">Live Listings</span>
+            </div>
           </div>
-        </div>
 
-        {/* Metric 3: Satışlar */}
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
-          <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
-            <ShoppingBag size={10} className="text-purple-400" />
-            <span>Satışlar</span>
-          </span>
-          <div>
-            <div className="text-lg font-bold text-white leading-none">{activeData.orders.split(" ")[0]}</div>
-            <span className="text-[9px] text-[#5e5a72] block mt-1">Total Orders</span>
+          {/* Metric 2: Draft Ürünler */}
+          <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
+            <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
+              <FileText size={10} className="text-blue-400" />
+              <span>Draft Ürünler</span>
+            </span>
+            <div>
+              <div className="text-lg font-bold text-white leading-none">{activeData.draftListings}</div>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">Pending Sync</span>
+            </div>
           </div>
-        </div>
 
-        {/* Metric 4: Görüntülenme */}
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
-          <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
-            <Eye size={10} className="text-blue-400" />
-            <span>Görüntülenme</span>
-          </span>
-          <div>
-            <div className="text-lg font-bold text-white leading-none">{activeData.views.split(" ")[0]}</div>
-            <span className="text-[9px] text-[#5e5a72] block mt-1">Store Visits</span>
+          {/* Metric 3: Satışlar */}
+          <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
+            <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
+              <ShoppingBag size={10} className="text-purple-400" />
+              <span>Satışlar</span>
+            </span>
+            <div>
+              <div className="text-lg font-bold text-white leading-none">{activeData.orders.split(" ")[0]}</div>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">Total Orders</span>
+            </div>
           </div>
-        </div>
 
-        {/* Metric 5: Favoriler */}
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
-          <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
-            <Heart size={10} className="text-pink-400" />
-            <span>Favoriler</span>
-          </span>
-          <div>
-            <div className="text-lg font-bold text-white leading-none">{activeData.favorites.split(" ")[0]}</div>
-            <span className="text-[9px] text-[#5e5a72] block mt-1">Listing Favs</span>
+          {/* Metric 4: Görüntülenme */}
+          <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
+            <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
+              <Eye size={10} className="text-blue-400" />
+              <span>Görüntülenme</span>
+            </span>
+            <div>
+              <div className="text-lg font-bold text-white leading-none">{activeData.views.split(" ")[0]}</div>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">Store Visits</span>
+            </div>
           </div>
-        </div>
 
-        {/* Metric 6: Ciro */}
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
-          <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
-            <DollarSign size={10} className="text-emerald-400" />
-            <span>Ciro</span>
-          </span>
-          <div>
-            <div className="text-lg font-bold text-emerald-400 leading-none">{activeData.revenue}</div>
-            <span className="text-[9px] text-[#5e5a72] block mt-1">Gross Sales</span>
+          {/* Metric 5: Favoriler */}
+          <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
+            <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
+              <Heart size={10} className="text-pink-400" />
+              <span>Favoriler</span>
+            </span>
+            <div>
+              <div className="text-lg font-bold text-white leading-none">{activeData.favorites.split(" ")[0]}</div>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">Listing Favs</span>
+            </div>
           </div>
-        </div>
 
-        {/* Metric 7: Net Kâr */}
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
-          <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
-            <TrendingUp size={10} className="text-amber-400" />
-            <span>Net Kâr</span>
-          </span>
-          <div>
-            <div className="text-lg font-bold text-amber-400 leading-none">{activeData.profit}</div>
-            <span className="text-[9px] text-[#5e5a72] block mt-1">Net Margins</span>
+          {/* Metric 6: Ciro */}
+          <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
+            <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
+              <DollarSign size={10} className="text-emerald-400" />
+              <span>Ciro</span>
+            </span>
+            <div>
+              <div className="text-lg font-bold text-emerald-400 leading-none">{activeData.revenue}</div>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">Gross Sales</span>
+            </div>
           </div>
+
+          {/* Metric 7: Net Kâr */}
+          <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
+            <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
+              <TrendingUp size={10} className="text-amber-400" />
+              <span>Net Kâr</span>
+            </span>
+            <div>
+              <div className="text-lg font-bold text-amber-400 leading-none">{activeData.profit}</div>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">Net Margins</span>
+            </div>
+          </div>
+
         </div>
 
       </div>
