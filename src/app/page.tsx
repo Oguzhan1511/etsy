@@ -17,6 +17,16 @@ import {
   ArrowRight
 } from "lucide-react";
 import Link from "next/link";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LabelList
+} from "recharts";
 
 /* ─── Types & Interfaces ────────────────────────────────────────── */
 
@@ -88,6 +98,14 @@ const activeOrders: ActiveOrder[] = [
   }
 ];
 
+const chartLines = [
+  { key: "Sales", name: "Sales", color: "#8b5cf6" },
+  { key: "Views", name: "Views", color: "#3b82f6" },
+  { key: "Favorites", name: "Favorites", color: "#ec4899" },
+  { key: "Revenue", name: "Revenue", color: "#10b981", isCurrency: true },
+  { key: "NetMargin", name: "Net Margin", color: "#f59e0b", isCurrency: true }
+];
+
 // Timeframe mapping datasets
 const statsData = {
   daily: {
@@ -98,12 +116,14 @@ const statsData = {
     favorites: "42 favs",
     revenue: "$616.00",
     profit: "$345.00",
-    lines: [
-      { name: "Sales", color: "#8b5cf6", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 140 }, { cx: 180, cy: 160 }, { cx: 245, cy: 130 }, { cx: 310, cy: 120 }, { cx: 375, cy: 90 }, { cx: 440, cy: 80 }], weeklyValues: ["2", "3", "1", "4", "4", "7", "7"], gradientId: "purple-fade" },
-      { name: "Views", color: "#3b82f6", points: [{ cx: 50, cy: 130 }, { cx: 115, cy: 120 }, { cx: 180, cy: 140 }, { cx: 245, cy: 110 }, { cx: 310, cy: 95 }, { cx: 375, cy: 70 }, { cx: 440, cy: 60 }], weeklyValues: ["80", "90", "75", "110", "120", "165", "200"], gradientId: "blue-fade" },
-      { name: "Favorites", color: "#ec4899", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 155 }, { cx: 180, cy: 162 }, { cx: 245, cy: 148 }, { cx: 310, cy: 135 }, { cx: 375, cy: 120 }, { cx: 440, cy: 110 }], weeklyValues: ["4", "3", "2", "5", "6", "10", "12"], gradientId: "pink-fade" },
-      { name: "Revenue", color: "#10b981", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 142 }, { cx: 180, cy: 158 }, { cx: 245, cy: 132 }, { cx: 310, cy: 122 }, { cx: 375, cy: 95 }, { cx: 440, cy: 85 }], weeklyValues: ["$44", "$66", "$22", "$88", "$88", "$154", "$154"], gradientId: "green-fade" },
-      { name: "Net Margin", color: "#f59e0b", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 148 }, { cx: 180, cy: 162 }, { cx: 245, cy: 140 }, { cx: 310, cy: 130 }, { cx: 375, cy: 105 }, { cx: 440, cy: 95 }], weeklyValues: ["$25", "$37", "$12", "$50", "$50", "$85", "$86"], gradientId: "amber-fade" }
+    chartData: [
+      { name: "Mon", Sales: 2, Views: 80, Favorites: 4, Revenue: 44, NetMargin: 25 },
+      { name: "Tue", Sales: 3, Views: 90, Favorites: 3, Revenue: 66, NetMargin: 37 },
+      { name: "Wed", Sales: 1, Views: 75, Favorites: 2, Revenue: 22, NetMargin: 12 },
+      { name: "Thu", Sales: 4, Views: 110, Favorites: 5, Revenue: 88, NetMargin: 50 },
+      { name: "Fri", Sales: 4, Views: 120, Favorites: 6, Revenue: 88, NetMargin: 50 },
+      { name: "Sat", Sales: 7, Views: 165, Favorites: 10, Revenue: 154, NetMargin: 85 },
+      { name: "Sun", Sales: 7, Views: 200, Favorites: 12, Revenue: 154, NetMargin: 86 }
     ]
   },
   weekly: {
@@ -114,12 +134,14 @@ const statsData = {
     favorites: "290 favs",
     revenue: "$4,268.00",
     profit: "$2,380.00",
-    lines: [
-      { name: "Sales", color: "#8b5cf6", points: [{ cx: 50, cy: 140 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 80 }, { cx: 310, cy: 60 }, { cx: 375, cy: 45 }, { cx: 440, cy: 30 }], weeklyValues: ["15", "20", "25", "30", "32", "34", "38"], gradientId: "purple-fade" },
-      { name: "Views", color: "#3b82f6", points: [{ cx: 50, cy: 110 }, { cx: 115, cy: 95 }, { cx: 180, cy: 80 }, { cx: 245, cy: 75 }, { cx: 310, cy: 70 }, { cx: 375, cy: 65 }, { cx: 440, cy: 55 }], weeklyValues: ["650", "720", "840", "880", "900", "920", "930"], gradientId: "blue-fade" },
-      { name: "Favorites", color: "#ec4899", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 145 }, { cx: 180, cy: 130 }, { cx: 245, cy: 105 }, { cx: 310, cy: 90 }, { cx: 375, cy: 75 }, { cx: 440, cy: 65 }], weeklyValues: ["30", "34", "38", "42", "45", "49", "52"], gradientId: "pink-fade" },
-      { name: "Revenue", color: "#10b981", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 138 }, { cx: 180, cy: 118 }, { cx: 245, cy: 88 }, { cx: 310, cy: 68 }, { cx: 375, cy: 53 }, { cx: 440, cy: 38 }], weeklyValues: ["$330", "$440", "$550", "$660", "$704", "$748", "$836"], gradientId: "green-fade" },
-      { name: "Net Margin", color: "#f59e0b", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 143 }, { cx: 180, cy: 125 }, { cx: 245, cy: 95 }, { cx: 310, cy: 78 }, { cx: 375, cy: 62 }, { cx: 440, cy: 48 }], weeklyValues: ["$185", "$246", "$308", "$370", "$394", "$418", "$469"], gradientId: "amber-fade" }
+    chartData: [
+      { name: "Mon", Sales: 15, Views: 650, Favorites: 30, Revenue: 330, NetMargin: 185 },
+      { name: "Tue", Sales: 20, Views: 720, Favorites: 34, Revenue: 440, NetMargin: 246 },
+      { name: "Wed", Sales: 25, Views: 840, Favorites: 38, Revenue: 550, NetMargin: 308 },
+      { name: "Thu", Sales: 30, Views: 880, Favorites: 42, Revenue: 660, NetMargin: 370 },
+      { name: "Fri", Sales: 32, Views: 900, Favorites: 45, Revenue: 704, NetMargin: 394 },
+      { name: "Sat", Sales: 34, Views: 920, Favorites: 49, Revenue: 748, NetMargin: 418 },
+      { name: "Sun", Sales: 38, Views: 930, Favorites: 52, Revenue: 836, NetMargin: 469 }
     ]
   },
   monthly: {
@@ -130,12 +152,14 @@ const statsData = {
     favorites: "1,240 favs",
     revenue: "$18,480.00",
     profit: "$10,350.00",
-    lines: [
-      { name: "Sales", color: "#8b5cf6", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 120 }, { cx: 180, cy: 90 }, { cx: 245, cy: 105 }, { cx: 310, cy: 70 }, { cx: 375, cy: 50 }, { cx: 440, cy: 30 }], weeklyValues: ["80", "120", "160", "140", "180", "200", "220"], gradientId: "purple-fade" },
-      { name: "Views", color: "#3b82f6", points: [{ cx: 50, cy: 120 }, { cx: 115, cy: 100 }, { cx: 180, cy: 80 }, { cx: 245, cy: 90 }, { cx: 310, cy: 60 }, { cx: 375, cy: 45 }, { cx: 440, cy: 35 }], weeklyValues: ["2.2k", "3.1k", "4.0k", "3.6k", "4.5k", "5.1k", "5.7k"], gradientId: "blue-fade" },
-      { name: "Favorites", color: "#ec4899", points: [{ cx: 50, cy: 145 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 120 }, { cx: 310, cy: 90 }, { cx: 375, cy: 80 }, { cx: 440, cy: 70 }], weeklyValues: ["120", "150", "180", "160", "200", "210", "220"], gradientId: "pink-fade" },
-      { name: "Revenue", color: "#10b981", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 90 }, { cx: 310, cy: 70 }, { cx: 375, cy: 50 }, { cx: 440, cy: 30 }], weeklyValues: ["$1.7k", "$2.6k", "$3.5k", "$3.0k", "$3.9k", "$4.4k", "$4.8k"], gradientId: "green-fade" },
-      { name: "Net Margin", color: "#f59e0b", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 128 }, { cx: 180, cy: 98 }, { cx: 245, cy: 110 }, { cx: 310, cy: 78 }, { cx: 375, cy: 58 }, { cx: 440, cy: 38 }], weeklyValues: ["$980", "$1.4k", "$1.9k", "$1.6k", "$2.1k", "$2.4k", "$2.6k"], gradientId: "amber-fade" }
+    chartData: [
+      { name: "Week 1", Sales: 80, Views: 2200, Favorites: 120, Revenue: 1700, NetMargin: 980 },
+      { name: "Week 2", Sales: 120, Views: 3100, Favorites: 150, Revenue: 2600, NetMargin: 1400 },
+      { name: "Week 3", Sales: 160, Views: 4000, Favorites: 180, Revenue: 3500, NetMargin: 1900 },
+      { name: "Week 4", Sales: 140, Views: 3600, Favorites: 160, Revenue: 3000, NetMargin: 1600 },
+      { name: "Week 5", Sales: 180, Views: 4500, Favorites: 200, Revenue: 3900, NetMargin: 2100 },
+      { name: "Week 6", Sales: 200, Views: 5100, Favorites: 210, Revenue: 4400, NetMargin: 2400 },
+      { name: "Week 7", Sales: 220, Views: 5700, Favorites: 220, Revenue: 4800, NetMargin: 2600 }
     ]
   },
   allTime: {
@@ -146,12 +170,14 @@ const statsData = {
     favorites: "7,840 favs",
     revenue: "$106,040.00",
     profit: "$59,380.00",
-    lines: [
-      { name: "Sales", color: "#8b5cf6", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 140 }, { cx: 180, cy: 120 }, { cx: 245, cy: 90 }, { cx: 310, cy: 75 }, { cx: 375, cy: 50 }, { cx: 440, cy: 20 }], weeklyValues: ["320", "540", "680", "820", "950", "1.1k", "1.4k"], gradientId: "purple-fade" },
-      { name: "Views", color: "#3b82f6", points: [{ cx: 50, cy: 140 }, { cx: 115, cy: 120 }, { cx: 180, cy: 100 }, { cx: 245, cy: 70 }, { cx: 310, cy: 55 }, { cx: 375, cy: 35 }, { cx: 440, cy: 15 }], weeklyValues: ["10k", "16k", "22k", "28k", "32k", "38k", "46k"], gradientId: "blue-fade" },
-      { name: "Favorites", color: "#ec4899", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 130 }, { cx: 180, cy: 115 }, { cx: 245, cy: 85 }, { cx: 310, cy: 70 }, { cx: 375, cy: 45 }, { cx: 440, cy: 25 }], weeklyValues: ["500", "800", "1.1k", "1.4k", "1.6k", "1.9k", "2.3k"], gradientId: "pink-fade" },
-      { name: "Revenue", color: "#10b981", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 138 }, { cx: 180, cy: 118 }, { cx: 245, cy: 88 }, { cx: 310, cy: 73 }, { cx: 375, cy: 48 }, { cx: 440, cy: 18 }], weeklyValues: ["$7.0k", "$11.8k", "$14.9k", "$18.0k", "$20.9k", "$24.2k", "$30.8k"], gradientId: "green-fade" },
-      { name: "Net Margin", color: "#f59e0b", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 140 }, { cx: 180, cy: 120 }, { cx: 245, cy: 92 }, { cx: 310, cy: 77 }, { cx: 375, cy: 52 }, { cx: 440, cy: 22 }], weeklyValues: ["$3.9k", "$6.6k", "$8.3k", "$10.0k", "$11.7k", "$13.5k", "$17.2k"], gradientId: "amber-fade" }
+    chartData: [
+      { name: "Jan", Sales: 320, Views: 10000, Favorites: 500, Revenue: 7000, NetMargin: 3900 },
+      { name: "Feb", Sales: 540, Views: 16000, Favorites: 800, Revenue: 11800, NetMargin: 6600 },
+      { name: "Mar", Sales: 680, Views: 22000, Favorites: 1100, Revenue: 14900, NetMargin: 8300 },
+      { name: "Apr", Sales: 820, Views: 28000, Favorites: 1400, Revenue: 18000, NetMargin: 10000 },
+      { name: "May", Sales: 950, Views: 32000, Favorites: 1600, Revenue: 20900, NetMargin: 11700 },
+      { name: "Jun", Sales: 1100, Views: 38000, Favorites: 1900, Revenue: 24200, NetMargin: 13500 },
+      { name: "Jul", Sales: 1400, Views: 46000, Favorites: 2300, Revenue: 30800, NetMargin: 17200 }
     ]
   }
 };
@@ -213,10 +239,14 @@ const mostFavoritedList: PerformanceItem[] = [
 export default function SellerDashboard() {
   const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly" | "allTime">("weekly");
   const [selectedMetric, setSelectedMetric] = useState<string>("Sales");
-  const [tooltip, setTooltip] = useState<{ visible: boolean; x: number; y: number; value: string; label: string } | null>(null);
 
   const activeData = statsData[timeframe];
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const activeChartMetric = chartLines.find(l => l.key === selectedMetric) || chartLines[0];
+
+  const formatYAxis = (value: number) => {
+    const formatted = value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value.toString();
+    return activeChartMetric.isCurrency ? `$${formatted}` : formatted;
+  };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16 animate-fade-in">
@@ -454,12 +484,12 @@ export default function SellerDashboard() {
 
           {/* Interactive Metric Selectors (Toggles) */}
           <div className="flex flex-wrap gap-2 text-[9px] text-[#a09cb0]">
-            {activeData.lines.map((l) => {
-              const isSelected = selectedMetric === l.name;
+            {chartLines.map((l) => {
+              const isSelected = selectedMetric === l.key;
               return (
                 <button
-                  key={l.name}
-                  onClick={() => setSelectedMetric(l.name)}
+                  key={l.key}
+                  onClick={() => setSelectedMetric(l.key)}
                   className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
                     isSelected
                       ? "bg-white/10 border-white/20 text-white scale-[1.02] font-bold"
@@ -474,88 +504,70 @@ export default function SellerDashboard() {
           </div>
         </div>
 
-        <div className="w-full h-[220px]">
-          <svg viewBox="0 0 500 200" width="100%" height="100%" className="w-full h-full">
-            <defs>
-              <linearGradient id="purple-fade" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
-              </linearGradient>
-              <linearGradient id="blue-fade" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.22" />
-                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-              </linearGradient>
-              <linearGradient id="pink-fade" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#ec4899" stopOpacity="0.18" />
-                <stop offset="100%" stopColor="#ec4899" stopOpacity="0" />
-              </linearGradient>
-              <linearGradient id="green-fade" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
-              </linearGradient>
-              <linearGradient id="amber-fade" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.18" />
-                <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-
-            {/* Horizontal Grid lines */}
-            <line x1="40" y1="20" x2="470" y2="20" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-            <line x1="40" y1="55" x2="470" y2="55" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-            <line x1="40" y1="90" x2="470" y2="90" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-            <line x1="40" y1="125" x2="470" y2="125" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-            <line x1="40" y1="160" x2="470" y2="160" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-
-            {/* X Axis labels */}
-            <text x="50" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Mon</text>
-            <text x="115" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Tue</text>
-            <text x="180" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Wed</text>
-            <text x="245" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Thu</text>
-            <text x="310" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Fri</text>
-            <text x="375" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Sat</text>
-            <text x="440" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Sun</text>
-
-            {/* Y Axis labels */}
-            <text x="30" y="24" fill="var(--text-muted)" fontSize="7" textAnchor="end" fontWeight="500">Max</text>
-            <text x="30" y="94" fill="var(--text-muted)" fontSize="7" textAnchor="end" fontWeight="500">Mid</text>
-            <text x="30" y="164" fill="var(--text-muted)" fontSize="7" textAnchor="end" fontWeight="500">Min</text>
-
-            {/* Single Selected Metric Line & Vertices Value Labels */}
-            {activeData.lines.map((l) => {
-              const isVisible = selectedMetric === l.name;
-              if (!isVisible) return null;
-              
-              // Standard curve interpolation
-              const curvePath = `M ${l.points[0].cx} ${l.points[0].cy} C ${l.points[1].cx} ${l.points[1].cy}, ${l.points[2].cx} ${l.points[2].cy}, ${l.points[3].cx} ${l.points[3].cy} S ${l.points[5].cx} ${l.points[5].cy}, ${l.points[6].cx} ${l.points[6].cy}`;
-              const fillPath = `${curvePath} L 440 160 L 50 160 Z`;
-
-              return (
-                <g key={l.name} className="transition-all duration-500">
-                  <path d={fillPath} fill={`url(#${l.gradientId})`} />
-                  <path d={curvePath} fill="none" stroke={l.color} strokeWidth="3" strokeLinecap="round" />
-                  {l.points.map((p, i) => (
-                    <g 
-                      key={i} 
-                      className="group/dot cursor-pointer"
-                      onMouseEnter={() => setTooltip({ visible: true, x: p.cx, y: p.cy, value: l.weeklyValues[i], label: days[i] })}
-                      onMouseLeave={() => setTooltip(null)}
-                    >
-                      <circle cx={p.cx} cy={p.cy} r="5" fill={l.color} stroke="#16161e" strokeWidth="2" className="transition-transform group-hover/dot:scale-125" />
-                    </g>
-                  ))}
-                </g>
-              );
-            })}
-
-            {/* SVG Tooltip */}
-            {tooltip?.visible && (
-              <g style={{ pointerEvents: 'none', transition: 'all 0.1s ease-out' }} transform={`translate(${tooltip.x}, ${tooltip.y - 18})`}>
-                <rect x="-35" y="-32" width="70" height="34" rx="6" fill="#16161e" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
-                <text x="0" y="-18" fill="#a09cb0" fontSize="8" fontWeight="bold" textAnchor="middle">{tooltip.label}</text>
-                <text x="0" y="-5" fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">{tooltip.value}</text>
-              </g>
-            )}
-          </svg>
+        {/* Recharts Area Chart */}
+        <div className="w-full h-[300px] mt-4">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={activeData.chartData} margin={{ top: 25, right: 20, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id={`gradient-${activeChartMetric.key}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={activeChartMetric.color} stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor={activeChartMetric.color} stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+              <XAxis 
+                dataKey="name" 
+                stroke="#5e5a72" 
+                fontSize={10} 
+                tickLine={false} 
+                axisLine={false} 
+                dy={10}
+              />
+              <YAxis 
+                stroke="#5e5a72" 
+                fontSize={10} 
+                tickLine={false} 
+                axisLine={false}
+                tickFormatter={formatYAxis}
+                width={50}
+              />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#16161e', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', padding: '10px 14px' }}
+                itemStyle={{ color: activeChartMetric.color, fontWeight: 'bold', fontSize: '13px' }}
+                labelStyle={{ color: '#a09cb0', fontWeight: 'bold', marginBottom: '6px', fontSize: '11px', textTransform: 'uppercase' }}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                formatter={(value: any) => {
+                  if (activeChartMetric.isCurrency) return [`$${Number(value).toLocaleString()}`, activeChartMetric.name];
+                  return [Number(value).toLocaleString(), activeChartMetric.name];
+                }}
+              />
+              <Area 
+                type="monotone" 
+                dataKey={activeChartMetric.key} 
+                stroke={activeChartMetric.color} 
+                strokeWidth={3}
+                fillOpacity={1} 
+                fill={`url(#gradient-${activeChartMetric.key})`}
+                activeDot={{ r: 7, strokeWidth: 2, stroke: '#16161e' }}
+                animationDuration={600}
+              >
+                <LabelList 
+                  dataKey={activeChartMetric.key} 
+                  position="top" 
+                  offset={12}
+                  fill="#ffffff"
+                  fontSize={10}
+                  fontWeight="bold"
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  formatter={(value: any) => {
+                    const numVal = Number(value);
+                    if (activeChartMetric.isCurrency) return `$${numVal >= 1000 ? (numVal/1000).toFixed(1) + 'k' : numVal}`;
+                    return numVal >= 1000 ? (numVal/1000).toFixed(1) + 'k' : numVal;
+                  }}
+                />
+              </Area>
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
