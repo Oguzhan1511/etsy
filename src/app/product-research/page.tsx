@@ -149,11 +149,9 @@ export default function ProductResearchPage() {
     };
   }, []);
 
-  const handleSearchSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchTerm.trim()) return;
+  const performSearch = async (kw: string) => {
+    if (!kw.trim()) return;
 
-    // Clear previous interval if running
     if (pollIntervalRef.current) {
       clearInterval(pollIntervalRef.current);
     }
@@ -164,13 +162,12 @@ export default function ProductResearchPage() {
     setLoadingStatus("Initializing Apify search...");
 
     try {
-      // 1. Trigger the scraper asynchronously via POST
       const response = await fetch("/api/research", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ keyword: searchTerm }),
+        body: JSON.stringify({ keyword: kw }),
       });
 
       if (!response.ok) {
@@ -202,7 +199,7 @@ export default function ProductResearchPage() {
           if (statusData.status === "SUCCEEDED") {
             if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
             setProducts(statusData.products || []);
-            setActiveQuery(searchTerm);
+            setActiveQuery(kw);
             setIsLoading(false);
             setLoadingStatus("");
           } else if (statusData.status === "RUNNING") {
@@ -233,11 +230,42 @@ export default function ProductResearchPage() {
     }
   };
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get("q");
+      if (q) {
+        setTimeout(() => {
+          setSearchTerm(q);
+          performSearch(q);
+        }, 0);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSearchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    performSearch(searchTerm);
+  };
+
+  const saveToHistory = (product: Product) => {
+    if (typeof window === "undefined") return;
+    try {
+      const hist = JSON.parse(localStorage.getItem("researched_products_history") || "[]");
+      const newHist = [product, ...hist.filter((p: Product) => p.id !== product.id)].slice(0, 10);
+      localStorage.setItem("researched_products_history", JSON.stringify(newHist));
+    } catch {
+      // Ignore local storage errors
+    }
+  };
+
   const handleCardClick = (product: Product) => {
     if (selectedProduct?.id === product.id) {
       setSelectedProduct(null);
     } else {
       setSelectedProduct(product);
+      saveToHistory(product);
     }
   };
 

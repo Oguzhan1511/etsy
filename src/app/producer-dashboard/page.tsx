@@ -1,20 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Sparkles,
   Layers,
   Clock,
   ArrowRight,
   Package,
-  CheckCircle,
-  Loader2,
   TrendingUp,
   Search,
   Heart,
   ShoppingBag,
-  Users,
-  Cloud
+  Users
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -514,68 +511,43 @@ export default function ProducerDashboardPage() {
     return 148;
   });
 
-  const [draftCount, setDraftCount] = useState(() => {
+  const [draftCount] = useState(() => {
     if (typeof window !== "undefined" && localStorage.getItem("printify_api_key")) {
       return 47;
     }
     return 36;
   });
 
-  const [publishedCount, setPublishedCount] = useState(() => {
+  const [publishedCount] = useState(() => {
     if (typeof window !== "undefined" && localStorage.getItem("printify_api_key")) {
       return 118;
     }
     return 64;
   });
 
-  // Interactive Draft Queue simulation
-  const [draftsList, setDraftsList] = useState<DraftItem[]>([
-    {
-      id: "1",
-      name: "Bella+Canvas 3001 Unisex Tee - Wildflower Retro",
-      color: "Sport Grey",
-      designName: "Retro Wildflower",
-      image: "https://images.printify.com/api/v1/blueprints/3/images/1.jpg",
-      price: "$24.99",
-      status: "Draft",
-    },
-    {
-      id: "2",
-      name: "Ceramic Mug 11oz - Golden Meadows Fine Art",
-      color: "White",
-      designName: "Golden Meadows",
-      image: "https://images.printify.com/api/v1/blueprints/69/images/1.jpg",
-      price: "$14.99",
-      status: "Draft",
-    },
-    {
-      id: "3",
-      name: "Gildan 18000 Crewneck Sweatshirt - Abstract Lines",
-      color: "Navy",
-      designName: "Abstract Neon Wave",
-      image: "https://images.printify.com/api/v1/blueprints/12/images/1.jpg",
-      price: "$39.99",
-      status: "Draft",
-    },
-  ]);
+  interface ResearchedProduct {
+    id: string;
+    title: string;
+    shopName: string;
+    price: string;
+    opportunityScore: number;
+    url: string;
+    imageUrl: string;
+  }
 
-  // Sync draft item to Etsy directly from dashboard
-  const handlePublishDraft = async (id: string) => {
-    setDraftsList(prev =>
-      prev.map(item => (item.id === id ? { ...item, status: "Syncing" } : item))
-    );
-
-    // Simulate Etsy inventory sync latency
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    setDraftsList(prev =>
-      prev.map(item => (item.id === id ? { ...item, status: "Published" } : item))
-    );
-
-    // Update stats counter dynamically
-    setDraftCount(prev => Math.max(prev - 1, 0));
-    setPublishedCount(prev => prev + 1);
-  };
+  const [researchHistory, setResearchHistory] = useState<ResearchedProduct[]>([]);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const hist = JSON.parse(localStorage.getItem("researched_products_history") || "[]");
+        setTimeout(() => {
+          setResearchHistory(hist);
+        }, 0);
+      } catch {
+        // ignore JSON parse errors
+      }
+    }
+  }, []);
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16 animate-fade-in">
@@ -935,10 +907,10 @@ export default function ProducerDashboardPage() {
 
             {/* Start Designing Action Button */}
             <Link
-              href={`/mockup-publish?blueprintId=${activeCat.recommendedModelId}`}
+              href={`/product-research?q=${encodeURIComponent(activeCat.name)}`}
               className="w-full py-2 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(124,106,247,0.25)] transition-all cursor-pointer animate-pulse"
             >
-              <span>Design {activeCat.recommendedModel}</span>
+              <span>Research {activeCat.name} Products</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -946,7 +918,7 @@ export default function ProducerDashboardPage() {
         </div>
       </div>
 
-      {/* Interactive Draft Publishing Queue (Yayınlanmamış Mockup Listesi) */}
+      {/* Recent Product Analysis History */}
       <div
         className="rounded-xl overflow-hidden border border-white/[0.07]"
         style={{ background: "var(--bg-card)" }}
@@ -958,15 +930,15 @@ export default function ProducerDashboardPage() {
           <div className="flex items-center gap-2">
             <Clock size={15} className="text-purple-400" />
             <span className="text-sm font-bold text-white">
-              Etsy Draft Publishing Queue
+              Recent Product Analysis History
             </span>
           </div>
           
           <Link
-            href="/mockup-publish"
+            href="/product-research"
             className="flex items-center gap-1 text-xs font-bold transition-colors text-purple-400 hover:text-purple-300"
           >
-            <span>Open Mockup Studio</span>
+            <span>Open Product Research</span>
             <ArrowRight size={12} />
           </Link>
         </div>
@@ -975,7 +947,7 @@ export default function ProducerDashboardPage() {
           <table className="w-full text-sm text-left">
             <thead>
               <tr style={{ borderBottom: "1px solid var(--border)", background: "rgba(255, 255, 255, 0.01)" }}>
-                {["Draft Product Model", "Color View", "Design Layer", "Price Option", "Sync Action"].map((h) => (
+                {["Analyzed Product", "Shop Name", "Price", "Opportunity Score", "Action"].map((h) => (
                   <th
                     key={h}
                     className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-[#5e5a72]"
@@ -986,54 +958,47 @@ export default function ProducerDashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.04]">
-              {draftsList.map((p) => (
+              {researchHistory.length > 0 ? researchHistory.map((p) => (
                 <tr
                   key={p.id}
                   className="transition-all hover:bg-white/[0.01]"
                 >
                   <td className="px-5 py-4 font-semibold text-white flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-900 border border-white/10 shrink-0 flex items-center justify-center">
-                      <FallbackImage src={p.image} alt={p.name} />
+                      <FallbackImage src={p.imageUrl} alt={p.title} />
                     </div>
-                    <span className="truncate max-w-[280px]">{p.name}</span>
+                    <span className="truncate max-w-[280px]">{p.title}</span>
                   </td>
                   <td className="px-5 py-4">
                     <span className="px-2.5 py-1 text-xs rounded-lg bg-white/[0.03] border border-white/[0.06] font-semibold text-[#a09cb0]">
-                      {p.color}
+                      {p.shopName}
                     </span>
-                  </td>
-                  <td className="px-5 py-4 font-medium text-purple-300">
-                    {p.designName}
                   </td>
                   <td className="px-5 py-4 font-bold text-white">
                     {p.price}
                   </td>
+                  <td className="px-5 py-4 font-bold text-purple-300">
+                    {p.opportunityScore}/100
+                  </td>
                   <td className="px-5 py-4">
-                    {p.status === "Draft" ? (
-                      <button
-                        onClick={() => handlePublishDraft(p.id)}
-                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500 hover:text-white transition-all cursor-pointer"
-                      >
-                        <Cloud size={14} />
-                        <span>Publish to Etsy</span>
-                      </button>
-                    ) : p.status === "Syncing" ? (
-                      <button
-                        disabled
-                        className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-purple-300 bg-purple-500/5 border border-purple-500/10 flex items-center gap-1.5"
-                      >
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Publishing...</span>
-                      </button>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-bold bg-emerald-500/5 px-2.5 py-1 border border-emerald-500/10 rounded-lg">
-                        <CheckCircle size={13} />
-                        <span>Published</span>
-                      </span>
-                    )}
+                    <a
+                      href={p.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1.5 px-3.5 py-1.5 w-max rounded-lg text-xs font-bold text-white bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500 hover:text-white transition-all cursor-pointer"
+                    >
+                      <ArrowRight size={14} />
+                      <span>View on Etsy</span>
+                    </a>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan={5} className="px-5 py-12 text-center text-[#5e5a72] text-xs">
+                    No recent analysis history. Go to Product Research to analyze listings.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
