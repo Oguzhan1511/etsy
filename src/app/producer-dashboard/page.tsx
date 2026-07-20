@@ -388,10 +388,92 @@ const FallbackImage = ({ src, alt }: { src: string, alt: string }) => {
 };
 
 export default function ProducerDashboardPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("T-Shirts");
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [activeCat, setActiveCat] = useState<CategoryDetail>(categoryDetails["T-Shirts"]);
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["Search Volume"]);
 
-  const activeCat = categoryDetails[selectedCategory];
+  const handleSearch = (kw: string) => {
+    if (!kw.trim()) return;
+    const lowerKw = kw.trim().toLowerCase();
+    
+    // Predefined lookup
+    const existingKey = Object.keys(categoryDetails).find(k => k.toLowerCase() === lowerKw);
+    if (existingKey) {
+       setActiveCat(categoryDetails[existingKey]);
+       return;
+    }
+
+    // Dynamic mock generation based on hash
+    const hash = lowerKw.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const searchVol = 10 + (hash % 150); // 10k to 160k
+    const activeSellers = 1 + (hash % 20); // 1k to 21k
+    const favRate = (3 + (hash % 50) / 10).toFixed(1); // 3.0% to 8.0%
+    const convRate = (1 + (hash % 30) / 10).toFixed(1); // 1.0% to 4.0%
+    
+    const baseWeekly = (base: number, volatility: number) => {
+      return Array.from({length: 7}, (_, i) => {
+        const variation = (Math.sin(hash + i) * volatility);
+        return Math.max(1, base + variation);
+      });
+    };
+
+    const searchVolWeekly = baseWeekly(searchVol, searchVol * 0.2).map(v => Math.round(v) + "k");
+    const activeSellersWeekly = baseWeekly(activeSellers, activeSellers * 0.05).map(v => v.toFixed(1) + "k");
+    const favRateWeekly = baseWeekly(parseFloat(favRate), 0.5).map(v => v.toFixed(1) + "%");
+    const convRateWeekly = baseWeekly(parseFloat(convRate), 0.3).map(v => v.toFixed(1) + "%");
+
+    const newMock: CategoryDetail = {
+      name: kw.trim(),
+      sub: "Custom Merch",
+      color: "#7c6af7",
+      change: "+12.4% Up",
+      trend: "up",
+      monthlySales: "~" + (Math.round((searchVol * parseFloat(convRate)) * 10)).toLocaleString() + " orders",
+      avgPrice: "$15.00 - $35.00",
+      competition: searchVol > 100 ? "High" : (searchVol > 50 ? "Medium" : "Low"),
+      hotStyle: "Trendy, Custom Design",
+      keywords: [lowerKw, lowerKw + " gift", "custom " + lowerKw],
+      recommendedModel: "Premium " + kw.trim(),
+      recommendedModelId: "3",
+      insight: `${kw.trim()} is showing steady activity. Focus on unique designs and high-quality mockups to stand out in this niche.`,
+      lines: [
+        {
+          name: "Search Volume",
+          label: "Search Volume",
+          color: "#7c6af7",
+          path: "", areaPath: "", points: [], gradientId: "purple-fade",
+          value: searchVol + "k queries/mo",
+          weeklyValues: searchVolWeekly,
+        },
+        {
+          name: "Active Sellers",
+          label: "Active Sellers",
+          color: "#3b82f6",
+          path: "", areaPath: "", points: [], gradientId: "blue-fade",
+          value: activeSellers.toFixed(1) + "k shops",
+          weeklyValues: activeSellersWeekly,
+        },
+        {
+          name: "Favorites Rate",
+          label: "Favorites Rate",
+          color: "#f43f5e",
+          path: "", areaPath: "", points: [], gradientId: "red-fade",
+          value: favRate + "% fav rate",
+          weeklyValues: favRateWeekly,
+        },
+        {
+          name: "Conversion Rate",
+          label: "Conversion Rate",
+          color: "#22c55e",
+          path: "", areaPath: "", points: [], gradientId: "green-fade",
+          value: convRate + "% conversion",
+          weeklyValues: convRateWeekly,
+        }
+      ]
+    };
+    
+    setActiveCat(newMock);
+  };
   const activeLines = activeCat.lines.filter(l => selectedMetrics.includes(l.name));
   if (activeLines.length === 0) activeLines.push(activeCat.lines[0]);
   
@@ -629,27 +711,28 @@ export default function ProducerDashboardPage() {
             <p className="text-[11px] text-[#a09cb0] mt-0.5">Select a category tab to isolate its line graph, track margins, and view custom insights.</p>
           </div>
 
-          {/* Interactive Navigation Tabs */}
-          <div className="flex flex-wrap gap-2">
-            {Object.keys(categoryDetails).map((catName) => {
-              const cat = categoryDetails[catName];
-              const isSelected = selectedCategory === catName;
-              return (
-                <button
-                  key={catName}
-                  onClick={() => setSelectedCategory(catName)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
-                    isSelected
-                      ? "bg-purple-500/25 border-purple-500/40 text-white shadow-[0_2px_10px_rgba(124,106,247,0.15)]"
-                      : "border-white/[0.05] bg-white/[0.01] text-[#a09cb0] hover:bg-white/5 hover:text-white"
-                  }`}
-                >
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: cat.color }} />
-                  <span>{cat.name}</span>
-                </button>
-              );
-            })}
-          </div>
+          {/* Keyword Search Input */}
+          <form 
+            onSubmit={(e) => { e.preventDefault(); handleSearch(searchKeyword); }}
+            className="flex items-center gap-2"
+          >
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5e5a72]" />
+              <input 
+                type="text" 
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                placeholder="Search niche, product, keyword..."
+                className="bg-black/20 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:border-purple-500/50 w-64 transition-colors placeholder:text-[#5e5a72]"
+              />
+            </div>
+            <button 
+              type="submit"
+              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors"
+            >
+              Analyze
+            </button>
+          </form>
         </div>
 
         {/* 2-Column Grid: SVG Line Chart (Left) + Niche Insights (Right) */}
@@ -662,7 +745,7 @@ export default function ProducerDashboardPage() {
               
               {/* Interactive metric selectors */}
               <div className="flex flex-wrap gap-2 text-[9px] text-[#a09cb0]">
-                {categoryDetails[selectedCategory].lines.map((l) => {
+                {activeCat.lines.map((l) => {
                   const isHoveredOrClicked = selectedMetrics.includes(l.name);
                   return (
                     <button
@@ -756,10 +839,10 @@ export default function ProducerDashboardPage() {
             <div className="space-y-2">
               <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Market Intelligence</span>
               <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                <span>{categoryDetails[selectedCategory].name} Niche Details</span>
+                <span>{activeCat.name} Niche Details</span>
               </h3>
               <p className="text-xs text-[#a09cb0] leading-relaxed">
-                {categoryDetails[selectedCategory].insight}
+                {activeCat.insight}
               </p>
             </div>
 
@@ -773,7 +856,7 @@ export default function ProducerDashboardPage() {
                   <span>Active Sellers</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Active Sellers")?.value}
+                  {activeCat.lines.find(l => l.name === "Active Sellers")?.value}
                 </div>
               </div>
 
@@ -784,7 +867,7 @@ export default function ProducerDashboardPage() {
                   <span>Search Volume</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Search Volume")?.value}
+                  {activeCat.lines.find(l => l.name === "Search Volume")?.value}
                 </div>
               </div>
 
@@ -795,7 +878,7 @@ export default function ProducerDashboardPage() {
                   <span>Favorites Rate</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Favorites Rate")?.value}
+                  {activeCat.lines.find(l => l.name === "Favorites Rate")?.value}
                 </div>
               </div>
 
@@ -806,7 +889,7 @@ export default function ProducerDashboardPage() {
                   <span>Conversion Rate</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Conversion Rate")?.value}
+                  {activeCat.lines.find(l => l.name === "Conversion Rate")?.value}
                 </div>
               </div>
 
@@ -816,24 +899,24 @@ export default function ProducerDashboardPage() {
             <div className="space-y-1.5 bg-black/10 p-2.5 rounded-lg border border-white/[0.02]">
               <div className="flex justify-between text-[10px]">
                 <span className="text-[#5e5a72]">Monthly Order Vol:</span>
-                <span className="font-semibold text-white">{categoryDetails[selectedCategory].monthlySales}</span>
+                <span className="font-semibold text-white">{activeCat.monthlySales}</span>
               </div>
               <div className="flex justify-between text-[10px]">
                 <span className="text-[#5e5a72]">Avg. Retail Price:</span>
-                <span className="font-semibold text-white">{categoryDetails[selectedCategory].avgPrice}</span>
+                <span className="font-semibold text-white">{activeCat.avgPrice}</span>
               </div>
               <div className="flex justify-between text-[10px]">
                 <span className="text-[#5e5a72]">Etsy Competition:</span>
                 <span className={`font-semibold ${
-                  categoryDetails[selectedCategory].competition === "Low" ? "text-emerald-400" : "text-amber-400"
+                  activeCat.competition === "Low" ? "text-emerald-400" : "text-amber-400"
                 }`}>
-                  {categoryDetails[selectedCategory].competition}
+                  {activeCat.competition}
                 </span>
               </div>
               <div className="flex justify-between text-[10px]">
                 <span className="text-[#5e5a72]">Best-Selling Styles:</span>
-                <span className="font-semibold text-purple-300 truncate max-w-[140px]" title={categoryDetails[selectedCategory].hotStyle}>
-                  {categoryDetails[selectedCategory].hotStyle}
+                <span className="font-semibold text-purple-300 truncate max-w-[140px]" title={activeCat.hotStyle}>
+                  {activeCat.hotStyle}
                 </span>
               </div>
             </div>
@@ -842,7 +925,7 @@ export default function ProducerDashboardPage() {
             <div className="space-y-1.5">
               <span className="text-[9px] font-bold text-[#5e5a72] uppercase tracking-wider">Suggested SEO Keywords</span>
               <div className="flex flex-wrap gap-1.5">
-                {categoryDetails[selectedCategory].keywords.map((kw, i) => (
+                {activeCat.keywords.map((kw, i) => (
                   <span key={i} className="text-[10px] bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] px-2 py-0.5 rounded text-[#a09cb0] transition-colors cursor-default">
                     {kw}
                   </span>
@@ -852,10 +935,10 @@ export default function ProducerDashboardPage() {
 
             {/* Start Designing Action Button */}
             <Link
-              href={`/mockup-publish?blueprintId=${categoryDetails[selectedCategory].recommendedModelId}`}
+              href={`/mockup-publish?blueprintId=${activeCat.recommendedModelId}`}
               className="w-full py-2 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(124,106,247,0.25)] transition-all cursor-pointer animate-pulse"
             >
-              <span>Design {categoryDetails[selectedCategory].recommendedModel}</span>
+              <span>Design {activeCat.recommendedModel}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
