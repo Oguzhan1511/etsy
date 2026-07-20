@@ -574,7 +574,7 @@ export default function MockupPublishPage() {
   // Search and Pagination parameters
   const [catalogSearch, setCatalogSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 20;
 
   // Selected item states
   const [selectedModel, setSelectedModel] = useState<ProductModel | null>(null);
@@ -644,10 +644,7 @@ export default function MockupPublishPage() {
               defaultPrice: 24.99,
               colors: ["Black", "White", "Navy", "Sport Grey"],
               images: {
-                "White": bp.images && bp.images[0] ? bp.images[0] : "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80",
-                "Black": bp.images && bp.images[0] ? bp.images[0] : "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80",
-                "Navy": bp.images && bp.images[0] ? bp.images[0] : "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80",
-                "Sport Grey": bp.images && bp.images[0] ? bp.images[0] : "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80"
+                "default": bp.images && bp.images[0] ? bp.images[0] : "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80",
               },
               description: bp.description || "Official Printify product catalog blueprint.",
               providers: "Multiple Print Providers",
@@ -655,7 +652,7 @@ export default function MockupPublishPage() {
               isBestseller: bp.is_bestseller || Number(bp.id) % 8 === 0,
               brand: brandName,
               sizeGuide: ["S: Standard", "M: Standard", "L: Standard", "XL: Standard"],
-              blueprintImages: bp.images || [],
+              blueprintImages: bp.images && bp.images.length > 0 ? [bp.images[0]] : [],
             };
           });
 
@@ -1271,6 +1268,7 @@ export default function MockupPublishPage() {
                             <img
                               src={defaultImg}
                               alt={model.name}
+                              loading="lazy"
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
                             />
                             {model.isBestseller && (
@@ -1471,6 +1469,7 @@ export default function MockupPublishPage() {
                     onMouseLeave={handleCanvasMouseUp}
                   >
                     <img
+                      key={selectedColor + "_" + activePrintArea}
                       src={getMockupImageForArea(selectedModel, selectedColor)}
                       alt={selectedModel.name}
                       style={getMockupImageStyle(selectedColor)}
@@ -1787,8 +1786,10 @@ export default function MockupPublishPage() {
                         {/* Mockup Preview Container */}
                         <div className="relative aspect-square w-full rounded-md overflow-hidden bg-neutral-950 border border-white/[0.04] flex items-center justify-center">
                           <img 
+                            key={selectedColor + "_" + tmpl.id}
                             src={baseImg} 
                             alt={tmpl.name}
+                            loading="lazy"
                             style={tmpl.viewType !== "lifestyle" ? getMockupImageStyle(selectedColor) : {}}
                             className="w-full h-full object-cover pointer-events-none"
                           />
