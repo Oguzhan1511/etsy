@@ -99,11 +99,11 @@ const statsData = {
     revenue: "$616.00",
     profit: "$345.00",
     lines: [
-      { name: "Satışlar", color: "#8b5cf6", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 140 }, { cx: 180, cy: 160 }, { cx: 245, cy: 130 }, { cx: 310, cy: 120 }, { cx: 375, cy: 90 }, { cx: 440, cy: 80 }], weeklyValues: ["2", "3", "1", "4", "4", "7", "7"], gradientId: "purple-fade" },
-      { name: "Görüntülenme", color: "#3b82f6", points: [{ cx: 50, cy: 130 }, { cx: 115, cy: 120 }, { cx: 180, cy: 140 }, { cx: 245, cy: 110 }, { cx: 310, cy: 95 }, { cx: 375, cy: 70 }, { cx: 440, cy: 60 }], weeklyValues: ["80", "90", "75", "110", "120", "165", "200"], gradientId: "blue-fade" },
-      { name: "Favoriler", color: "#ec4899", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 155 }, { cx: 180, cy: 162 }, { cx: 245, cy: 148 }, { cx: 310, cy: 135 }, { cx: 375, cy: 120 }, { cx: 440, cy: 110 }], weeklyValues: ["4", "3", "2", "5", "6", "10", "12"], gradientId: "pink-fade" },
-      { name: "Ciro", color: "#10b981", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 142 }, { cx: 180, cy: 158 }, { cx: 245, cy: 132 }, { cx: 310, cy: 122 }, { cx: 375, cy: 95 }, { cx: 440, cy: 85 }], weeklyValues: ["$44", "$66", "$22", "$88", "$88", "$154", "$154"], gradientId: "green-fade" },
-      { name: "Net Kâr", color: "#f59e0b", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 148 }, { cx: 180, cy: 162 }, { cx: 245, cy: 140 }, { cx: 310, cy: 130 }, { cx: 375, cy: 105 }, { cx: 440, cy: 95 }], weeklyValues: ["$25", "$37", "$12", "$50", "$50", "$85", "$86"], gradientId: "amber-fade" }
+      { name: "Sales", color: "#8b5cf6", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 140 }, { cx: 180, cy: 160 }, { cx: 245, cy: 130 }, { cx: 310, cy: 120 }, { cx: 375, cy: 90 }, { cx: 440, cy: 80 }], weeklyValues: ["2", "3", "1", "4", "4", "7", "7"], gradientId: "purple-fade" },
+      { name: "Views", color: "#3b82f6", points: [{ cx: 50, cy: 130 }, { cx: 115, cy: 120 }, { cx: 180, cy: 140 }, { cx: 245, cy: 110 }, { cx: 310, cy: 95 }, { cx: 375, cy: 70 }, { cx: 440, cy: 60 }], weeklyValues: ["80", "90", "75", "110", "120", "165", "200"], gradientId: "blue-fade" },
+      { name: "Favorites", color: "#ec4899", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 155 }, { cx: 180, cy: 162 }, { cx: 245, cy: 148 }, { cx: 310, cy: 135 }, { cx: 375, cy: 120 }, { cx: 440, cy: 110 }], weeklyValues: ["4", "3", "2", "5", "6", "10", "12"], gradientId: "pink-fade" },
+      { name: "Revenue", color: "#10b981", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 142 }, { cx: 180, cy: 158 }, { cx: 245, cy: 132 }, { cx: 310, cy: 122 }, { cx: 375, cy: 95 }, { cx: 440, cy: 85 }], weeklyValues: ["$44", "$66", "$22", "$88", "$88", "$154", "$154"], gradientId: "green-fade" },
+      { name: "Net Margin", color: "#f59e0b", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 148 }, { cx: 180, cy: 162 }, { cx: 245, cy: 140 }, { cx: 310, cy: 130 }, { cx: 375, cy: 105 }, { cx: 440, cy: 95 }], weeklyValues: ["$25", "$37", "$12", "$50", "$50", "$85", "$86"], gradientId: "amber-fade" }
     ]
   },
   weekly: {
@@ -115,11 +115,11 @@ const statsData = {
     revenue: "$4,268.00",
     profit: "$2,380.00",
     lines: [
-      { name: "Satışlar", color: "#8b5cf6", points: [{ cx: 50, cy: 140 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 80 }, { cx: 310, cy: 60 }, { cx: 375, cy: 45 }, { cx: 440, cy: 30 }], weeklyValues: ["15", "20", "25", "30", "32", "34", "38"], gradientId: "purple-fade" },
-      { name: "Görüntülenme", color: "#3b82f6", points: [{ cx: 50, cy: 110 }, { cx: 115, cy: 95 }, { cx: 180, cy: 80 }, { cx: 245, cy: 75 }, { cx: 310, cy: 70 }, { cx: 375, cy: 65 }, { cx: 440, cy: 55 }], weeklyValues: ["650", "720", "840", "880", "900", "920", "930"], gradientId: "blue-fade" },
-      { name: "Favoriler", color: "#ec4899", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 145 }, { cx: 180, cy: 130 }, { cx: 245, cy: 105 }, { cx: 310, cy: 90 }, { cx: 375, cy: 75 }, { cx: 440, cy: 65 }], weeklyValues: ["30", "34", "38", "42", "45", "49", "52"], gradientId: "pink-fade" },
-      { name: "Ciro", color: "#10b981", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 138 }, { cx: 180, cy: 118 }, { cx: 245, cy: 88 }, { cx: 310, cy: 68 }, { cx: 375, cy: 53 }, { cx: 440, cy: 38 }], weeklyValues: ["$330", "$440", "$550", "$660", "$704", "$748", "$836"], gradientId: "green-fade" },
-      { name: "Net Kâr", color: "#f59e0b", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 143 }, { cx: 180, cy: 125 }, { cx: 245, cy: 95 }, { cx: 310, cy: 78 }, { cx: 375, cy: 62 }, { cx: 440, cy: 48 }], weeklyValues: ["$185", "$246", "$308", "$370", "$394", "$418", "$469"], gradientId: "amber-fade" }
+      { name: "Sales", color: "#8b5cf6", points: [{ cx: 50, cy: 140 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 80 }, { cx: 310, cy: 60 }, { cx: 375, cy: 45 }, { cx: 440, cy: 30 }], weeklyValues: ["15", "20", "25", "30", "32", "34", "38"], gradientId: "purple-fade" },
+      { name: "Views", color: "#3b82f6", points: [{ cx: 50, cy: 110 }, { cx: 115, cy: 95 }, { cx: 180, cy: 80 }, { cx: 245, cy: 75 }, { cx: 310, cy: 70 }, { cx: 375, cy: 65 }, { cx: 440, cy: 55 }], weeklyValues: ["650", "720", "840", "880", "900", "920", "930"], gradientId: "blue-fade" },
+      { name: "Favorites", color: "#ec4899", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 145 }, { cx: 180, cy: 130 }, { cx: 245, cy: 105 }, { cx: 310, cy: 90 }, { cx: 375, cy: 75 }, { cx: 440, cy: 65 }], weeklyValues: ["30", "34", "38", "42", "45", "49", "52"], gradientId: "pink-fade" },
+      { name: "Revenue", color: "#10b981", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 138 }, { cx: 180, cy: 118 }, { cx: 245, cy: 88 }, { cx: 310, cy: 68 }, { cx: 375, cy: 53 }, { cx: 440, cy: 38 }], weeklyValues: ["$330", "$440", "$550", "$660", "$704", "$748", "$836"], gradientId: "green-fade" },
+      { name: "Net Margin", color: "#f59e0b", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 143 }, { cx: 180, cy: 125 }, { cx: 245, cy: 95 }, { cx: 310, cy: 78 }, { cx: 375, cy: 62 }, { cx: 440, cy: 48 }], weeklyValues: ["$185", "$246", "$308", "$370", "$394", "$418", "$469"], gradientId: "amber-fade" }
     ]
   },
   monthly: {
@@ -131,11 +131,11 @@ const statsData = {
     revenue: "$18,480.00",
     profit: "$10,350.00",
     lines: [
-      { name: "Satışlar", color: "#8b5cf6", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 120 }, { cx: 180, cy: 90 }, { cx: 245, cy: 105 }, { cx: 310, cy: 70 }, { cx: 375, cy: 50 }, { cx: 440, cy: 30 }], weeklyValues: ["80", "120", "160", "140", "180", "200", "220"], gradientId: "purple-fade" },
-      { name: "Görüntülenme", color: "#3b82f6", points: [{ cx: 50, cy: 120 }, { cx: 115, cy: 100 }, { cx: 180, cy: 80 }, { cx: 245, cy: 90 }, { cx: 310, cy: 60 }, { cx: 375, cy: 45 }, { cx: 440, cy: 35 }], weeklyValues: ["2.2k", "3.1k", "4.0k", "3.6k", "4.5k", "5.1k", "5.7k"], gradientId: "blue-fade" },
-      { name: "Favoriler", color: "#ec4899", points: [{ cx: 50, cy: 145 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 120 }, { cx: 310, cy: 90 }, { cx: 375, cy: 80 }, { cx: 440, cy: 70 }], weeklyValues: ["120", "150", "180", "160", "200", "210", "220"], gradientId: "pink-fade" },
-      { name: "Ciro", color: "#10b981", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 90 }, { cx: 310, cy: 70 }, { cx: 375, cy: 50 }, { cx: 440, cy: 30 }], weeklyValues: ["$1.7k", "$2.6k", "$3.5k", "$3.0k", "$3.9k", "$4.4k", "$4.8k"], gradientId: "green-fade" },
-      { name: "Net Kâr", color: "#f59e0b", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 128 }, { cx: 180, cy: 98 }, { cx: 245, cy: 110 }, { cx: 310, cy: 78 }, { cx: 375, cy: 58 }, { cx: 440, cy: 38 }], weeklyValues: ["$980", "$1.4k", "$1.9k", "$1.6k", "$2.1k", "$2.4k", "$2.6k"], gradientId: "amber-fade" }
+      { name: "Sales", color: "#8b5cf6", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 120 }, { cx: 180, cy: 90 }, { cx: 245, cy: 105 }, { cx: 310, cy: 70 }, { cx: 375, cy: 50 }, { cx: 440, cy: 30 }], weeklyValues: ["80", "120", "160", "140", "180", "200", "220"], gradientId: "purple-fade" },
+      { name: "Views", color: "#3b82f6", points: [{ cx: 50, cy: 120 }, { cx: 115, cy: 100 }, { cx: 180, cy: 80 }, { cx: 245, cy: 90 }, { cx: 310, cy: 60 }, { cx: 375, cy: 45 }, { cx: 440, cy: 35 }], weeklyValues: ["2.2k", "3.1k", "4.0k", "3.6k", "4.5k", "5.1k", "5.7k"], gradientId: "blue-fade" },
+      { name: "Favorites", color: "#ec4899", points: [{ cx: 50, cy: 145 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 120 }, { cx: 310, cy: 90 }, { cx: 375, cy: 80 }, { cx: 440, cy: 70 }], weeklyValues: ["120", "150", "180", "160", "200", "210", "220"], gradientId: "pink-fade" },
+      { name: "Revenue", color: "#10b981", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 90 }, { cx: 310, cy: 70 }, { cx: 375, cy: 50 }, { cx: 440, cy: 30 }], weeklyValues: ["$1.7k", "$2.6k", "$3.5k", "$3.0k", "$3.9k", "$4.4k", "$4.8k"], gradientId: "green-fade" },
+      { name: "Net Margin", color: "#f59e0b", points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 128 }, { cx: 180, cy: 98 }, { cx: 245, cy: 110 }, { cx: 310, cy: 78 }, { cx: 375, cy: 58 }, { cx: 440, cy: 38 }], weeklyValues: ["$980", "$1.4k", "$1.9k", "$1.6k", "$2.1k", "$2.4k", "$2.6k"], gradientId: "amber-fade" }
     ]
   },
   allTime: {
@@ -147,11 +147,11 @@ const statsData = {
     revenue: "$106,040.00",
     profit: "$59,380.00",
     lines: [
-      { name: "Satışlar", color: "#8b5cf6", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 140 }, { cx: 180, cy: 120 }, { cx: 245, cy: 90 }, { cx: 310, cy: 75 }, { cx: 375, cy: 50 }, { cx: 440, cy: 20 }], weeklyValues: ["320", "540", "680", "820", "950", "1.1k", "1.4k"], gradientId: "purple-fade" },
-      { name: "Görüntülenme", color: "#3b82f6", points: [{ cx: 50, cy: 140 }, { cx: 115, cy: 120 }, { cx: 180, cy: 100 }, { cx: 245, cy: 70 }, { cx: 310, cy: 55 }, { cx: 375, cy: 35 }, { cx: 440, cy: 15 }], weeklyValues: ["10k", "16k", "22k", "28k", "32k", "38k", "46k"], gradientId: "blue-fade" },
-      { name: "Favoriler", color: "#ec4899", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 130 }, { cx: 180, cy: 115 }, { cx: 245, cy: 85 }, { cx: 310, cy: 70 }, { cx: 375, cy: 45 }, { cx: 440, cy: 25 }], weeklyValues: ["500", "800", "1.1k", "1.4k", "1.6k", "1.9k", "2.3k"], gradientId: "pink-fade" },
-      { name: "Ciro", color: "#10b981", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 138 }, { cx: 180, cy: 118 }, { cx: 245, cy: 88 }, { cx: 310, cy: 73 }, { cx: 375, cy: 48 }, { cx: 440, cy: 18 }], weeklyValues: ["$7.0k", "$11.8k", "$14.9k", "$18.0k", "$20.9k", "$24.2k", "$30.8k"], gradientId: "green-fade" },
-      { name: "Net Kâr", color: "#f59e0b", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 140 }, { cx: 180, cy: 120 }, { cx: 245, cy: 92 }, { cx: 310, cy: 77 }, { cx: 375, cy: 52 }, { cx: 440, cy: 22 }], weeklyValues: ["$3.9k", "$6.6k", "$8.3k", "$10.0k", "$11.7k", "$13.5k", "$17.2k"], gradientId: "amber-fade" }
+      { name: "Sales", color: "#8b5cf6", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 140 }, { cx: 180, cy: 120 }, { cx: 245, cy: 90 }, { cx: 310, cy: 75 }, { cx: 375, cy: 50 }, { cx: 440, cy: 20 }], weeklyValues: ["320", "540", "680", "820", "950", "1.1k", "1.4k"], gradientId: "purple-fade" },
+      { name: "Views", color: "#3b82f6", points: [{ cx: 50, cy: 140 }, { cx: 115, cy: 120 }, { cx: 180, cy: 100 }, { cx: 245, cy: 70 }, { cx: 310, cy: 55 }, { cx: 375, cy: 35 }, { cx: 440, cy: 15 }], weeklyValues: ["10k", "16k", "22k", "28k", "32k", "38k", "46k"], gradientId: "blue-fade" },
+      { name: "Favorites", color: "#ec4899", points: [{ cx: 50, cy: 150 }, { cx: 115, cy: 130 }, { cx: 180, cy: 115 }, { cx: 245, cy: 85 }, { cx: 310, cy: 70 }, { cx: 375, cy: 45 }, { cx: 440, cy: 25 }], weeklyValues: ["500", "800", "1.1k", "1.4k", "1.6k", "1.9k", "2.3k"], gradientId: "pink-fade" },
+      { name: "Revenue", color: "#10b981", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 138 }, { cx: 180, cy: 118 }, { cx: 245, cy: 88 }, { cx: 310, cy: 73 }, { cx: 375, cy: 48 }, { cx: 440, cy: 18 }], weeklyValues: ["$7.0k", "$11.8k", "$14.9k", "$18.0k", "$20.9k", "$24.2k", "$30.8k"], gradientId: "green-fade" },
+      { name: "Net Margin", color: "#f59e0b", points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 140 }, { cx: 180, cy: 120 }, { cx: 245, cy: 92 }, { cx: 310, cy: 77 }, { cx: 375, cy: 52 }, { cx: 440, cy: 22 }], weeklyValues: ["$3.9k", "$6.6k", "$8.3k", "$10.0k", "$11.7k", "$13.5k", "$17.2k"], gradientId: "amber-fade" }
     ]
   }
 };
@@ -212,9 +212,11 @@ const mostFavoritedList: PerformanceItem[] = [
 
 export default function SellerDashboard() {
   const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly" | "allTime">("weekly");
-  const [selectedMetric, setSelectedMetric] = useState<string>("Satışlar");
+  const [selectedMetric, setSelectedMetric] = useState<string>("Sales");
+  const [tooltip, setTooltip] = useState<{ visible: boolean; x: number; y: number; value: string; label: string } | null>(null);
 
   const activeData = statsData[timeframe];
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16 animate-fade-in">
@@ -223,7 +225,7 @@ export default function SellerDashboard() {
       <div className="relative rounded-2xl overflow-hidden border border-white/[0.08] bg-[#16161e] shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
         {/* Banner Image */}
         <div 
-          className="h-36 w-full bg-cover bg-center relative"
+          className="h-24 w-full bg-cover bg-center relative"
           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80')" }}
         >
           {/* Tint Overlay */}
@@ -237,7 +239,7 @@ export default function SellerDashboard() {
         </div>
 
         {/* Shop Avatar & Name Block */}
-        <div className="px-6 pb-6 -mt-10 relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div className="px-6 pb-6 -mt-8 relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
             {/* Avatar image */}
             <div className="w-20 h-20 rounded-full border-4 border-[#16161e] overflow-hidden bg-neutral-900 shadow-xl shrink-0">
@@ -277,17 +279,17 @@ export default function SellerDashboard() {
         <div className="flex justify-between items-center px-1">
           <h3 className="text-xs font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1.5">
             <Clock size={13} className="text-purple-400" />
-            <span>Aktif Siparişler (Son 4 Sipariş)</span>
+            <span>Active Orders (Last 4)</span>
           </h3>
           <Link href="/orders" className="text-[10px] font-bold text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1">
-            <span>Tüm Siparişleri Gör</span>
+            <span>View All Orders</span>
             <ArrowRight size={10} />
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {activeOrders.map((o) => (
             <Link href="/orders" key={o.id} className="group block">
-              <div className="bg-[#16161e] border border-white/[0.05] group-hover:border-purple-500/20 rounded-xl p-3.5 space-y-3 transition-all hover:-translate-y-0.5 relative overflow-hidden flex flex-col justify-between min-h-[155px] h-auto">
+              <div className="bg-[#16161e] border border-white/[0.05] group-hover:border-purple-500/20 rounded-xl p-5 space-y-3 transition-all hover:-translate-y-0.5 relative overflow-hidden flex flex-col justify-between min-h-[155px] h-auto">
                 
                 <div className="flex justify-between items-start gap-2">
                   <div className="min-w-0">
@@ -295,7 +297,7 @@ export default function SellerDashboard() {
                     <span className="text-[9px] text-[#5e5a72] block mt-0.5 font-mono">{o.orderId}</span>
                   </div>
                   <span className="text-[8px] font-bold text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/15 shrink-0 uppercase">
-                    {o.status === "Processing" ? "Hazırlanıyor" : "Kargoya Hazır"}
+                    {o.status === "Processing" ? "Processing" : "Ready to Ship"}
                   </span>
                 </div>
 
@@ -310,8 +312,8 @@ export default function SellerDashboard() {
                 </div>
 
                 <div className="border-t border-white/[0.04] pt-2 flex flex-col gap-0.5 text-[9px] shrink-0">
-                  <span className="text-[#a09cb0]">Sipariş: <strong className="text-white font-medium">{o.orderedTime}</strong></span>
-                  <span className="text-[#a09cb0]">Gönderim: <strong className="text-amber-400 font-semibold">{o.shipBy}</strong></span>
+                  <span className="text-[#a09cb0]">Ordered: <strong className="text-white font-medium">{o.orderedTime}</strong></span>
+                  <span className="text-[#a09cb0]">Ship by: <strong className="text-amber-400 font-semibold">{o.shipBy}</strong></span>
                 </div>
 
               </div>
@@ -327,10 +329,10 @@ export default function SellerDashboard() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.05]">
           <div className="flex bg-white/[0.02] p-1 rounded-lg border border-white/[0.05] self-start">
             {[
-              { id: "daily", label: "Günlük" },
-              { id: "weekly", label: "Haftalık" },
-              { id: "monthly", label: "Aylık" },
-              { id: "allTime", label: "Tüm Zamanlar" }
+              { id: "daily", label: "Daily" },
+              { id: "weekly", label: "Weekly" },
+              { id: "monthly", label: "Monthly" },
+              { id: "allTime", label: "All Time" }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -355,10 +357,10 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <Package size={10} className="text-purple-400" />
-              <span>Aktif Ürünler</span>
+              <span>Active Listings</span>
             </span>
             <div>
-              <div className="text-lg font-bold text-white leading-none">{activeData.activeListings}</div>
+              <div className="text-2xl font-extrabold text-white leading-none">{activeData.activeListings}</div>
               <span className="text-[9px] text-[#5e5a72] block mt-1">Live Listings</span>
             </div>
           </div>
@@ -367,10 +369,10 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <FileText size={10} className="text-blue-400" />
-              <span>Draft Ürünler</span>
+              <span>Draft Listings</span>
             </span>
             <div>
-              <div className="text-lg font-bold text-white leading-none">{activeData.draftListings}</div>
+              <div className="text-2xl font-extrabold text-white leading-none">{activeData.draftListings}</div>
               <span className="text-[9px] text-[#5e5a72] block mt-1">Pending Sync</span>
             </div>
           </div>
@@ -379,10 +381,10 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <ShoppingBag size={10} className="text-purple-400" />
-              <span>Satışlar</span>
+              <span>Sales</span>
             </span>
             <div>
-              <div className="text-lg font-bold text-white leading-none">{activeData.orders.split(" ")[0]}</div>
+              <div className="text-2xl font-extrabold text-white leading-none">{activeData.orders.split(" ")[0]}</div>
               <span className="text-[9px] text-[#5e5a72] block mt-1">Total Orders</span>
             </div>
           </div>
@@ -391,10 +393,10 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <Eye size={10} className="text-blue-400" />
-              <span>Görüntülenme</span>
+              <span>Views</span>
             </span>
             <div>
-              <div className="text-lg font-bold text-white leading-none">{activeData.views.split(" ")[0]}</div>
+              <div className="text-2xl font-extrabold text-white leading-none">{activeData.views.split(" ")[0]}</div>
               <span className="text-[9px] text-[#5e5a72] block mt-1">Store Visits</span>
             </div>
           </div>
@@ -403,10 +405,10 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <Heart size={10} className="text-pink-400" />
-              <span>Favoriler</span>
+              <span>Favorites</span>
             </span>
             <div>
-              <div className="text-lg font-bold text-white leading-none">{activeData.favorites.split(" ")[0]}</div>
+              <div className="text-2xl font-extrabold text-white leading-none">{activeData.favorites.split(" ")[0]}</div>
               <span className="text-[9px] text-[#5e5a72] block mt-1">Listing Favs</span>
             </div>
           </div>
@@ -415,10 +417,10 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <DollarSign size={10} className="text-emerald-400" />
-              <span>Ciro</span>
+              <span>Revenue</span>
             </span>
             <div>
-              <div className="text-lg font-bold text-emerald-400 leading-none">{activeData.revenue}</div>
+              <div className="text-2xl font-extrabold text-emerald-400 leading-none">{activeData.revenue}</div>
               <span className="text-[9px] text-[#5e5a72] block mt-1">Gross Sales</span>
             </div>
           </div>
@@ -427,10 +429,10 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <TrendingUp size={10} className="text-amber-400" />
-              <span>Net Kâr</span>
+              <span>Net Margin</span>
             </span>
             <div>
-              <div className="text-lg font-bold text-amber-400 leading-none">{activeData.profit}</div>
+              <div className="text-2xl font-extrabold text-amber-400 leading-none">{activeData.profit}</div>
               <span className="text-[9px] text-[#5e5a72] block mt-1">Net Margins</span>
             </div>
           </div>
@@ -440,12 +442,12 @@ export default function SellerDashboard() {
       </div>
 
       {/* Interactive Shop Metrics Projection Line Chart */}
-      <div className="rounded-xl border border-white/[0.07] bg-[#16161e] p-5 space-y-4">
+      <div className="rounded-xl border border-white/[0.07] bg-[#16161e] p-5 space-y-4 relative">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-white/[0.06]">
           <div className="space-y-0.5">
             <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
               <Activity className="w-4 h-4 text-purple-400" />
-              <span>Mağaza Performans Grafiği</span>
+              <span>Store Performance</span>
             </h3>
             <p className="text-[11px] text-[#a09cb0]">Select a sub-metric to plot its weekly trajectory with localized value vertices.</p>
           </div>
@@ -532,25 +534,27 @@ export default function SellerDashboard() {
                   <path d={fillPath} fill={`url(#${l.gradientId})`} />
                   <path d={curvePath} fill="none" stroke={l.color} strokeWidth="3" strokeLinecap="round" />
                   {l.points.map((p, i) => (
-                    <g key={i} className="group/dot">
-                      <circle cx={p.cx} cy={p.cy} r="4.5" fill={l.color} stroke="#16161e" strokeWidth="1.5" className="transition-transform group-hover/dot:scale-125" />
-                      <text
-                        x={p.cx}
-                        y={p.cy - 10}
-                        fill="#ffffff"
-                        fontSize="8"
-                        fontWeight="bold"
-                        textAnchor="middle"
-                        className="pointer-events-none"
-                        style={{ filter: "drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.95))" }}
-                      >
-                        {l.weeklyValues[i]}
-                      </text>
+                    <g 
+                      key={i} 
+                      className="group/dot cursor-pointer"
+                      onMouseEnter={() => setTooltip({ visible: true, x: p.cx, y: p.cy, value: l.weeklyValues[i], label: days[i] })}
+                      onMouseLeave={() => setTooltip(null)}
+                    >
+                      <circle cx={p.cx} cy={p.cy} r="5" fill={l.color} stroke="#16161e" strokeWidth="2" className="transition-transform group-hover/dot:scale-125" />
                     </g>
                   ))}
                 </g>
               );
             })}
+
+            {/* SVG Tooltip */}
+            {tooltip?.visible && (
+              <g style={{ pointerEvents: 'none', transition: 'all 0.1s ease-out' }} transform={`translate(${tooltip.x}, ${tooltip.y - 18})`}>
+                <rect x="-35" y="-32" width="70" height="34" rx="6" fill="#16161e" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                <text x="0" y="-18" fill="#a09cb0" fontSize="8" fontWeight="bold" textAnchor="middle">{tooltip.label}</text>
+                <text x="0" y="-5" fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">{tooltip.value}</text>
+              </g>
+            )}
           </svg>
         </div>
       </div>
@@ -558,19 +562,21 @@ export default function SellerDashboard() {
       {/* 2-Column Section Grid (En Çok Satan Ürünler + En Çok Favorilenenler) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Left Column: En Çok Satan Ürünler */}
+        {/* Left Column: Top Selling Products */}
         <div className="rounded-xl border border-white/[0.07] bg-[#16161e] overflow-hidden flex flex-col justify-between">
           <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-purple-400" />
-              <span>En Çok Satan Mağaza Ürünleri</span>
+              <span>Top Selling Products</span>
             </h3>
-            <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/15 font-semibold">Orders Leaderboard</span>
+            <button className="text-[10px] font-bold text-purple-300 bg-purple-500/20 px-3 py-1.5 rounded-md border border-purple-500/30 shadow-lg hover:bg-purple-500/30 transition-colors cursor-pointer">
+              Orders Leaderboard
+            </button>
           </div>
 
-          <div className="p-4 space-y-4">
+          <div className="px-3 py-1 space-y-0 divide-y divide-white/[0.04]">
             {bestSellersList.map((item) => (
-              <div key={item.id} className="flex items-center justify-between gap-4 p-2.5 rounded-lg border border-white/[0.03] bg-black/10 hover:bg-white/[0.01] transition-colors">
+              <div key={item.id} className="flex items-center justify-between gap-4 py-3 px-2 hover:bg-white/[0.02] transition-colors rounded-md">
                 <div className="flex items-center gap-3">
                   {/* Item Image */}
                   <div className="w-11 h-11 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-neutral-900 flex items-center justify-center">
@@ -592,19 +598,21 @@ export default function SellerDashboard() {
           </div>
         </div>
 
-        {/* Right Column: En Çok Favori Alanlar */}
+        {/* Right Column: Most Favorited */}
         <div className="rounded-xl border border-white/[0.07] bg-[#16161e] overflow-hidden flex flex-col justify-between">
           <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <Heart className="w-4 h-4 text-pink-400" />
-              <span>En Çok Favori Alan Ürünler</span>
+              <span>Most Favorited</span>
             </h3>
-            <span className="text-[10px] text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/15 font-semibold">Engagement Status</span>
+            <button className="text-[10px] font-bold text-pink-300 bg-pink-500/20 px-3 py-1.5 rounded-md border border-pink-500/30 shadow-lg hover:bg-pink-500/30 transition-colors cursor-pointer">
+              Engagement Status
+            </button>
           </div>
 
-          <div className="p-4 space-y-4">
+          <div className="px-3 py-1 space-y-0 divide-y divide-white/[0.04]">
             {mostFavoritedList.map((item) => (
-              <div key={item.id} className="flex items-center justify-between gap-4 p-2.5 rounded-lg border border-white/[0.03] bg-black/10 hover:bg-white/[0.01] transition-colors">
+              <div key={item.id} className="flex items-center justify-between gap-4 py-3 px-2 hover:bg-white/[0.02] transition-colors rounded-md">
                 <div className="flex items-center gap-3">
                   {/* Item Image */}
                   <div className="w-11 h-11 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-neutral-900 flex items-center justify-center">
@@ -637,7 +645,7 @@ export default function SellerDashboard() {
             <Percent size={18} />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-white">Etsy SEO & Mağaza Sağlığı Skoru</h4>
+            <h4 className="text-xs font-bold text-white">Etsy SEO & Store Health Score</h4>
             <p className="text-[11px] text-[#a09cb0] mt-0.5">
               100% of listings contain tags and image alt-texts. Shipping dispatch latency is optimized at 1-2 days.
             </p>
