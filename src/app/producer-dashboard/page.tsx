@@ -16,6 +16,16 @@ import {
   Users
 } from "lucide-react";
 import Link from "next/link";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LabelList
+} from "recharts";
 
 /* ─── Types & Interfaces ────────────────────────────────────────── */
 interface DraftItem {
@@ -369,6 +379,20 @@ export default function ProducerDashboardPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("T-Shirts");
   const [selectedMetric, setSelectedMetric] = useState<string>("Aratma Oranı");
 
+  const activeCat = categoryDetails[selectedCategory];
+  const activeLine = activeCat.lines.find(l => l.name === selectedMetric) || activeCat.lines[0];
+  
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const chartData = days.map((day, i) => {
+    const rawValue = activeLine.weeklyValues[i];
+    const numVal = parseFloat(rawValue.replace(/[^0-9.]/g, ''));
+    return {
+      name: day,
+      [activeLine.name]: numVal,
+      originalString: rawValue
+    };
+  });
+
   const [apiKey] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("printify_api_key") || "";
@@ -643,82 +667,65 @@ export default function ProducerDashboardPage() {
             </div>
 
             <div className="w-full h-[220px]">
-              <svg viewBox="0 0 500 200" width="100%" height="100%" className="w-full h-full">
-                <defs>
-                  <linearGradient id="purple-fade" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#7c6af7" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#7c6af7" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="blue-fade" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.22" />
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="green-fade" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#22c55e" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="pink-fade" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#a855f7" stopOpacity="0.18" />
-                    <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="red-fade" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ef4444" stopOpacity="0.18" />
-                    <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                
-                {/* Horizontal Grid lines */}
-                <line x1="40" y1="20" x2="470" y2="20" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-                <line x1="40" y1="55" x2="470" y2="55" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-                <line x1="40" y1="90" x2="470" y2="90" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-                <line x1="40" y1="125" x2="470" y2="125" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-                <line x1="40" y1="160" x2="470" y2="160" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-                
-                {/* X Axis labels */}
-                <text x="50" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Mon</text>
-                <text x="115" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Tue</text>
-                <text x="180" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Wed</text>
-                <text x="245" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Thu</text>
-                <text x="310" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Fri</text>
-                <text x="375" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Sat</text>
-                <text x="440" y="180" fill="var(--text-muted)" fontSize="8" textAnchor="middle" fontWeight="500">Sun</text>
-
-                {/* Y Axis labels */}
-                <text x="30" y="24" fill="var(--text-muted)" fontSize="7" textAnchor="end" fontWeight="500">5k</text>
-                <text x="30" y="59" fill="var(--text-muted)" fontSize="7" textAnchor="end" fontWeight="500">4k</text>
-                <text x="30" y="94" fill="var(--text-muted)" fontSize="7" textAnchor="end" fontWeight="500">3k</text>
-                <text x="30" y="129" fill="var(--text-muted)" fontSize="7" textAnchor="end" fontWeight="500">2k</text>
-                <text x="30" y="164" fill="var(--text-muted)" fontSize="7" textAnchor="end" fontWeight="500">1k</text>
-                
-                {/* Single Selected Metric Line & Vertices Value Labels */}
-                {categoryDetails[selectedCategory].lines.map((l) => {
-                  const isVisible = selectedMetric === l.name;
-                  if (!isVisible) return null;
-                  return (
-                    <g key={l.name} className="transition-all duration-500">
-                      <path d={l.areaPath} fill={`url(#${l.gradientId})`} />
-                      <path d={l.path} fill="none" stroke={l.color} strokeWidth="3" strokeLinecap="round" />
-                      {l.points.map((p, i) => (
-                        <g key={i} className="group/dot">
-                          <circle cx={p.cx} cy={p.cy} r="4" fill={l.color} stroke="#16161e" strokeWidth="1.5" className="transition-transform group-hover/dot:scale-125" />
-                          <text
-                            x={p.cx}
-                            y={p.cy - 10}
-                            fill="#ffffff"
-                            fontSize="8"
-                            fontWeight="bold"
-                            textAnchor="middle"
-                            className="pointer-events-none"
-                            style={{ filter: "drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.95))" }}
-                          >
-                            {l.weeklyValues[i]}
-                          </text>
-                        </g>
-                      ))}
-                    </g>
-                  );
-                })}
-              </svg>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 25, right: 20, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id={`grad-${activeLine.name}`} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={activeLine.color} stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor={activeLine.color} stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#5e5a72" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    stroke="#5e5a72" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    width={40}
+                    tickFormatter={(value) => {
+                      if (activeLine.value.includes('%')) return `${value}%`;
+                      if (activeLine.value.includes('k')) return `${value}k`;
+                      return value.toString();
+                    }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#16161e', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', padding: '10px 14px' }}
+                    itemStyle={{ color: activeLine.color, fontWeight: 'bold', fontSize: '13px' }}
+                    labelStyle={{ color: '#a09cb0', fontWeight: 'bold', marginBottom: '6px', fontSize: '11px', textTransform: 'uppercase' }}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    formatter={(value: any, name: any, props: any) => {
+                      return [props.payload.originalString, name];
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey={activeLine.name} 
+                    stroke={activeLine.color} 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill={`url(#grad-${activeLine.name})`}
+                    activeDot={{ r: 7, strokeWidth: 2, stroke: '#16161e' }}
+                    animationDuration={600}
+                  >
+                    <LabelList 
+                      dataKey="originalString" 
+                      position="top" 
+                      offset={12}
+                      fill="#ffffff"
+                      fontSize={10}
+                      fontWeight="bold"
+                    />
+                  </Area>
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
