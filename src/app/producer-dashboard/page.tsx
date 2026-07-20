@@ -13,7 +13,8 @@ import {
   Search,
   Heart,
   ShoppingBag,
-  Users
+  Users,
+  Cloud
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -23,8 +24,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  LabelList
+  ResponsiveContainer
 } from "recharts";
 
 /* ─── Types & Interfaces ────────────────────────────────────────── */
@@ -84,7 +84,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
     insight: "T-Shirts are experiencing extreme summer demand. Direct-to-garment (DTG) prints with retro typography and botanical elements are currently converting highest on Etsy.",
     lines: [
       {
-        name: "Aratma Oranı",
+        name: "Search Volume",
         label: "Search Volume",
         color: "#7c6af7",
         path: "M 50 140 C 115 125, 180 115, 245 80 S 375 45, 440 30",
@@ -95,7 +95,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["140k", "130k", "110k", "80k", "60k", "45k", "30k"],
       },
       {
-        name: "Satıcı Oranı",
+        name: "Active Sellers",
         label: "Active Sellers",
         color: "#3b82f6",
         path: "M 50 80 C 115 82, 180 78, 245 83 S 375 80, 440 75",
@@ -106,7 +106,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["14.2k", "14.2k", "14.1k", "14.3k", "14.2k", "14.2k", "14.3k"],
       },
       {
-        name: "Beğeni Oranı",
+        name: "Favorites Rate",
         label: "Favorites Rate",
         color: "#f43f5e",
         path: "M 50 155 C 115 145, 180 135, 245 105 S 375 80, 440 65",
@@ -117,7 +117,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["6.1%", "6.2%", "6.3%", "6.4%", "6.4%", "6.5%", "6.4%"],
       },
       {
-        name: "Satın Alma",
+        name: "Conversion Rate",
         label: "Conversion Rate",
         color: "#22c55e",
         path: "M 50 170 C 115 160, 180 150, 245 130 S 375 110, 440 95",
@@ -145,7 +145,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
     insight: "Sweatshirts are seeing steady early autumn stock build-up. Custom sleeve printing (like Roman numerals or initials) is a high-margin opportunity.",
     lines: [
       {
-        name: "Aratma Oranı",
+        name: "Search Volume",
         label: "Search Volume",
         color: "#7c6af7",
         path: "M 50 160 C 115 152, 180 140, 245 118 S 375 80, 440 70",
@@ -156,7 +156,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["90k", "91k", "91k", "92k", "92k", "93k", "92k"],
       },
       {
-        name: "Satıcı Oranı",
+        name: "Active Sellers",
         label: "Active Sellers",
         color: "#3b82f6",
         path: "M 50 110 C 115 112, 180 108, 245 113 S 375 110, 440 105",
@@ -167,7 +167,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["8.8k", "8.8k", "8.7k", "8.9k", "8.8k", "8.8k", "8.9k"],
       },
       {
-        name: "Beğeni Oranı",
+        name: "Favorites Rate",
         label: "Favorites Rate",
         color: "#f43f5e",
         path: "M 50 175 C 115 165, 180 155, 245 135 S 375 115, 440 100",
@@ -178,7 +178,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["5.5%", "5.6%", "5.7%", "5.8%", "5.8%", "5.9%", "5.8%"],
       },
       {
-        name: "Satın Alma",
+        name: "Conversion Rate",
         label: "Conversion Rate",
         color: "#22c55e",
         path: "M 50 185 C 115 178, 180 170, 245 155 S 375 140, 440 125",
@@ -206,7 +206,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
     insight: "Soy candles carry low catalog competition with high profit margins. Personalized gift items for birthdays and corporate coworker farewells have excellent traction.",
     lines: [
       {
-        name: "Aratma Oranı",
+        name: "Search Volume",
         label: "Search Volume",
         color: "#7c6af7",
         path: "M 50 185 C 115 170, 180 152, 245 120 S 375 75, 440 50",
@@ -217,7 +217,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["45k", "48k", "52k", "55k", "56k", "57k", "58k"],
       },
       {
-        name: "Satıcı Oranı",
+        name: "Active Sellers",
         label: "Active Sellers",
         color: "#3b82f6",
         path: "M 50 160 C 115 155, 180 150, 245 145 S 375 140, 440 135",
@@ -228,7 +228,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["2.0k", "2.1k", "2.1k", "2.1k", "2.1k", "2.1k", "2.1k"],
       },
       {
-        name: "Beğeni Oranı",
+        name: "Favorites Rate",
         label: "Favorites Rate",
         color: "#f43f5e",
         path: "M 50 145 C 115 130, 180 110, 245 80 S 375 55, 440 40",
@@ -239,7 +239,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["7.9%", "8.0%", "8.1%", "8.2%", "8.2%", "8.3%", "8.2%"],
       },
       {
-        name: "Satın Alma",
+        name: "Conversion Rate",
         label: "Conversion Rate",
         color: "#22c55e",
         path: "M 50 170 C 115 155, 180 135, 245 105 S 375 80, 440 65",
@@ -267,7 +267,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
     insight: "Mugs are a stable year-round staple. Focus on birth flower illustrations or high-contrast office humor text designs to stand out in high-competition listings.",
     lines: [
       {
-        name: "Aratma Oranı",
+        name: "Search Volume",
         label: "Search Volume",
         color: "#7c6af7",
         path: "M 50 120 C 115 122, 180 118, 245 123 S 375 120, 440 115",
@@ -278,7 +278,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["72k", "73k", "73k", "74k", "74k", "75k", "74k"],
       },
       {
-        name: "Satıcı Oranı",
+        name: "Active Sellers",
         label: "Active Sellers",
         color: "#3b82f6",
         path: "M 50 90 C 115 92, 180 88, 245 93 S 375 90, 440 85",
@@ -289,7 +289,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["11.4k", "11.5k", "11.5k", "11.5k", "11.5k", "11.6k", "11.5k"],
       },
       {
-        name: "Beğeni Oranı",
+        name: "Favorites Rate",
         label: "Favorites Rate",
         color: "#f43f5e",
         path: "M 50 140 C 115 138, 180 135, 245 142 S 375 135, 440 130",
@@ -300,7 +300,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["4.0%", "4.1%", "4.1%", "4.2%", "4.2%", "4.3%", "4.2%"],
       },
       {
-        name: "Satın Alma",
+        name: "Conversion Rate",
         label: "Conversion Rate",
         color: "#22c55e",
         path: "M 50 160 C 115 158, 180 155, 245 162 S 375 155, 440 150",
@@ -328,7 +328,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
     insight: "Phone case demand is currently consolidating. Aesthetic retro designs or high-protection dual-layer cases are preferred over generic patterns.",
     lines: [
       {
-        name: "Aratma Oranı",
+        name: "Search Volume",
         label: "Search Volume",
         color: "#7c6af7",
         path: "M 50 70 C 115 85, 180 102, 245 122 S 375 138, 440 155",
@@ -339,7 +339,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["65k", "60k", "55k", "50k", "45k", "42k", "41k"],
       },
       {
-        name: "Satıcı Oranı",
+        name: "Active Sellers",
         label: "Active Sellers",
         color: "#3b82f6",
         path: "M 50 100 C 115 102, 180 98, 245 103 S 375 100, 440 95",
@@ -350,7 +350,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["9.4k", "9.4k", "9.3k", "9.5k", "9.4k", "9.4k", "9.5k"],
       },
       {
-        name: "Beğeni Oranı",
+        name: "Favorites Rate",
         label: "Favorites Rate",
         color: "#f43f5e",
         path: "M 50 90 C 115 105, 180 122, 245 142 S 375 158, 440 175",
@@ -361,7 +361,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
         weeklyValues: ["4.2%", "4.1%", "4.0%", "3.9%", "3.9%", "3.8%", "3.9%"],
       },
       {
-        name: "Satın Alma",
+        name: "Conversion Rate",
         label: "Conversion Rate",
         color: "#22c55e",
         path: "M 50 110 C 115 125, 180 142, 245 162 S 375 178, 440 190",
@@ -375,22 +375,40 @@ const categoryDetails: Record<string, CategoryDetail> = {
   },
 };
 
+
+const FallbackImage = ({ src, alt }: { src: string, alt: string }) => {
+  const [error, setError] = React.useState(false);
+  return error ? (
+    <div className="w-full h-full flex flex-col items-center justify-center bg-white/5 text-[#5e5a72]">
+      <Package size={16} className="mb-0.5 opacity-50"/>
+    </div>
+  ) : (
+    <img src={src} alt={alt} className="w-full h-full object-cover" onError={() => setError(true)} />
+  );
+};
+
 export default function ProducerDashboardPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("T-Shirts");
-  const [selectedMetric, setSelectedMetric] = useState<string>("Aratma Oranı");
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["Search Volume"]);
 
   const activeCat = categoryDetails[selectedCategory];
-  const activeLine = activeCat.lines.find(l => l.name === selectedMetric) || activeCat.lines[0];
+  const activeLines = activeCat.lines.filter(l => selectedMetrics.includes(l.name));
+  if (activeLines.length === 0) activeLines.push(activeCat.lines[0]);
   
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const chartData = days.map((day, i) => {
-    const rawValue = activeLine.weeklyValues[i];
-    const numVal = parseFloat(rawValue.replace(/[^0-9.]/g, ''));
-    return {
-      name: day,
-      [activeLine.name]: numVal,
-      originalString: rawValue
-    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dataObj: any = { name: day };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const originalString: any = {};
+    activeLines.forEach(line => {
+       const rawValue = line.weeklyValues[i];
+       const numVal = parseFloat(rawValue.replace(/[^0-9.]/g, ''));
+       dataObj[line.name] = numVal;
+       originalString[line.name] = rawValue;
+    });
+    dataObj.originalString = originalString;
+    return dataObj;
   });
 
   const [apiKey] = useState(() => {
@@ -484,7 +502,7 @@ export default function ProducerDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
-            Üretici Kontrol Paneli
+            Creator Dashboard
           </h1>
           <p className="text-sm mt-0.5 text-[#a09cb0]">
             Printify and Etsy integration metrics, mockup pipelines, and inventory sync queues.
@@ -503,11 +521,11 @@ export default function ProducerDashboardPage() {
       {/* Üretici İstatistikleri Panel (Stats Grid) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        {/* Card 1: Bulunan Ürünler */}
+        {/* Card 1: Discovered Blueprints */}
         <div className="group rounded-xl p-5 border border-white/[0.07] bg-[#16161e] hover:border-white/[0.14] transition-all hover:-translate-y-0.5 cursor-default">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-[#a09cb0]">
-              Bulunan Ürünler
+              Discovered Blueprints
             </span>
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-purple-500/10 text-purple-400 group-hover:scale-105 transition-transform">
               <Package size={16} />
@@ -515,22 +533,22 @@ export default function ProducerDashboardPage() {
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-2xl font-bold tracking-tight text-white">
+              <span className="text-3xl font-extrabold tracking-tight text-white">
                 {totalBlueprints}
               </span>
               <span className="text-[10px] text-[#5e5a72] block mt-0.5">Catalog Blueprints</span>
             </div>
-            <div className="text-[10px] font-semibold text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/15">
+            <div className="text-[10px] font-semibold text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full border border-purple-500/30 text-xs">
               Sync Active
             </div>
           </div>
         </div>
 
-        {/* Card 2: Üretilen Ürünler */}
+        {/* Card 2: Rendered Mockups */}
         <div className="group rounded-xl p-5 border border-white/[0.07] bg-[#16161e] hover:border-white/[0.14] transition-all hover:-translate-y-0.5 cursor-default">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-[#a09cb0]">
-              Üretilen Ürünler
+              Rendered Mockups
             </span>
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-500/10 text-blue-400 group-hover:scale-105 transition-transform">
               <Sparkles size={16} />
@@ -538,22 +556,22 @@ export default function ProducerDashboardPage() {
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-2xl font-bold tracking-tight text-white">
+              <span className="text-3xl font-extrabold tracking-tight text-white">
                 {designedCount}
               </span>
               <span className="text-[10px] text-[#5e5a72] block mt-0.5">Mockup Render Files</span>
             </div>
-            <div className="text-[10px] font-semibold text-blue-300 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/15">
+            <div className="text-[10px] font-semibold text-blue-300 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30 text-xs">
               +14% Weekly
             </div>
           </div>
         </div>
 
-        {/* Card 3: Draft Ürünler */}
+        {/* Card 3: Draft Blueprints */}
         <div className="group rounded-xl p-5 border border-white/[0.07] bg-[#16161e] hover:border-white/[0.14] transition-all hover:-translate-y-0.5 cursor-default">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-[#a09cb0]">
-              Draft Ürünler
+              Draft Blueprints
             </span>
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500/10 text-amber-400 group-hover:scale-105 transition-transform">
               <Clock size={16} />
@@ -561,22 +579,22 @@ export default function ProducerDashboardPage() {
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-2xl font-bold tracking-tight text-white">
+              <span className="text-3xl font-extrabold tracking-tight text-white">
                 {draftCount}
               </span>
               <span className="text-[10px] text-[#5e5a72] block mt-0.5">Not Sync to Etsy</span>
             </div>
-            <div className="text-[10px] font-semibold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/15">
+            <div className="text-[10px] font-semibold text-amber-300 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/30 text-xs">
               Pending Sync
             </div>
           </div>
         </div>
 
-        {/* Card 4: Yayınlanmış Ürünler */}
+        {/* Card 4: Active Listings */}
         <div className="group rounded-xl p-5 border border-white/[0.07] bg-[#16161e] hover:border-white/[0.14] transition-all hover:-translate-y-0.5 cursor-default">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-[#a09cb0]">
-              Yayınlanmış Ürünler
+              Active Listings
             </span>
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-500/10 text-emerald-400 group-hover:scale-105 transition-transform">
               <Layers size={16} />
@@ -584,12 +602,12 @@ export default function ProducerDashboardPage() {
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-2xl font-bold tracking-tight text-white">
+              <span className="text-3xl font-extrabold tracking-tight text-white">
                 {publishedCount}
               </span>
               <span className="text-[10px] text-[#5e5a72] block mt-0.5">Active Etsy Listings</span>
             </div>
-            <div className="text-[10px] font-semibold text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/15">
+            <div className="text-[10px] font-semibold text-emerald-300 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30 text-xs">
               Live Stores
             </div>
           </div>
@@ -645,12 +663,20 @@ export default function ProducerDashboardPage() {
               {/* Interactive metric selectors */}
               <div className="flex flex-wrap gap-2 text-[9px] text-[#a09cb0]">
                 {categoryDetails[selectedCategory].lines.map((l) => {
-                  const isHoveredOrClicked = selectedMetric === l.name;
+                  const isHoveredOrClicked = selectedMetrics.includes(l.name);
                   return (
                     <button
                       key={l.name}
-                      onMouseEnter={() => setSelectedMetric(l.name)}
-                      onClick={() => setSelectedMetric(l.name)}
+                      
+                      onClick={() => {
+                          if (selectedMetrics.includes(l.name)) {
+                            if (selectedMetrics.length > 1) {
+                              setSelectedMetrics(selectedMetrics.filter(m => m !== l.name));
+                            }
+                          } else {
+                            setSelectedMetrics([...selectedMetrics, l.name]);
+                          }
+                        }}
                       className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
                         isHoveredOrClicked
                           ? "bg-white/10 border-white/20 text-white scale-[1.02] shadow-[0_2px_8px_rgba(255,255,255,0.05)] font-bold"
@@ -670,10 +696,12 @@ export default function ProducerDashboardPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 25, right: 20, left: 0, bottom: 0 }}>
                   <defs>
-                    <linearGradient id={`grad-${activeLine.name}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={activeLine.color} stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor={activeLine.color} stopOpacity={0}/>
-                    </linearGradient>
+                    {activeLines.map(line => (
+                      <linearGradient key={line.name} id={`grad-${line.name.replace(/\s+/g, '-')}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={line.color} stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor={line.color} stopOpacity={0}/>
+                      </linearGradient>
+                    ))}
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                   <XAxis 
@@ -691,39 +719,33 @@ export default function ProducerDashboardPage() {
                     axisLine={false}
                     width={40}
                     tickFormatter={(value) => {
-                      if (activeLine.value.includes('%')) return `${value}%`;
-                      if (activeLine.value.includes('k')) return `${value}k`;
+                      if (activeLines[0].value.includes('%')) return `${value}%`;
+                      if (activeLines[0].value.includes('k')) return `${value}k`;
                       return value.toString();
                     }}
                   />
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#16161e', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', padding: '10px 14px' }}
-                    itemStyle={{ color: activeLine.color, fontWeight: 'bold', fontSize: '13px' }}
+                    itemStyle={{ fontWeight: 'bold', fontSize: '13px' }}
                     labelStyle={{ color: '#a09cb0', fontWeight: 'bold', marginBottom: '6px', fontSize: '11px', textTransform: 'uppercase' }}
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     formatter={(value: any, name: any, props: any) => {
-                      return [props.payload.originalString, name];
+                      return [props.payload.originalString[name], name];
                     }}
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey={activeLine.name} 
-                    stroke={activeLine.color} 
-                    strokeWidth={3}
-                    fillOpacity={1} 
-                    fill={`url(#grad-${activeLine.name})`}
-                    activeDot={{ r: 7, strokeWidth: 2, stroke: '#16161e' }}
-                    animationDuration={600}
-                  >
-                    <LabelList 
-                      dataKey="originalString" 
-                      position="top" 
-                      offset={12}
-                      fill="#ffffff"
-                      fontSize={10}
-                      fontWeight="bold"
+                  {activeLines.map(line => (
+                    <Area 
+                      key={line.name}
+                      type="monotone" 
+                      dataKey={line.name} 
+                      stroke={line.color} 
+                      strokeWidth={3}
+                      fillOpacity={1} 
+                      fill={`url(#grad-${line.name.replace(/\s+/g, '-')})`}
+                      activeDot={{ r: 7, strokeWidth: 2, stroke: '#16161e' }}
+                      animationDuration={600}
                     />
-                  </Area>
+                  ))}
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -741,17 +763,17 @@ export default function ProducerDashboardPage() {
               </p>
             </div>
 
-            {/* Market Statistics Grid (Satıcı Sayısı, Aratma Oranı, Beğeni & Satın Alma) */}
+            {/* Market Statistics Grid (Satıcı Sayısı, Search Volume, Beğeni & Conversion Rate) */}
             <div className="grid grid-cols-2 gap-2.5">
               
               {/* Active Sellers Ratio */}
               <div className="bg-black/25 p-2.5 rounded-lg border border-white/[0.03] space-y-1">
                 <div className="flex items-center gap-1 text-[9px] text-[#5e5a72] font-semibold uppercase">
                   <Users className="w-3 h-3 text-purple-400" />
-                  <span>Satıcı Oranı</span>
+                  <span>Active Sellers</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Satıcı Oranı")?.value}
+                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Active Sellers")?.value}
                 </div>
               </div>
 
@@ -759,10 +781,10 @@ export default function ProducerDashboardPage() {
               <div className="bg-black/25 p-2.5 rounded-lg border border-white/[0.03] space-y-1">
                 <div className="flex items-center gap-1 text-[9px] text-[#5e5a72] font-semibold uppercase">
                   <Search className="w-3 h-3 text-blue-400" />
-                  <span>Aratma Oranı</span>
+                  <span>Search Volume</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Aratma Oranı")?.value}
+                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Search Volume")?.value}
                 </div>
               </div>
 
@@ -770,10 +792,10 @@ export default function ProducerDashboardPage() {
               <div className="bg-black/25 p-2.5 rounded-lg border border-white/[0.03] space-y-1">
                 <div className="flex items-center gap-1 text-[9px] text-[#5e5a72] font-semibold uppercase">
                   <Heart className="w-3 h-3 text-pink-400" />
-                  <span>Beğeni Oranı</span>
+                  <span>Favorites Rate</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Beğeni Oranı")?.value}
+                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Favorites Rate")?.value}
                 </div>
               </div>
 
@@ -781,10 +803,10 @@ export default function ProducerDashboardPage() {
               <div className="bg-black/25 p-2.5 rounded-lg border border-white/[0.03] space-y-1">
                 <div className="flex items-center gap-1 text-[9px] text-[#5e5a72] font-semibold uppercase">
                   <ShoppingBag className="w-3 h-3 text-emerald-400" />
-                  <span>Satın Alma</span>
+                  <span>Conversion Rate</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Satın Alma")?.value}
+                  {categoryDetails[selectedCategory].lines.find(l => l.name === "Conversion Rate")?.value}
                 </div>
               </div>
 
@@ -833,7 +855,7 @@ export default function ProducerDashboardPage() {
               href={`/mockup-publish?blueprintId=${categoryDetails[selectedCategory].recommendedModelId}`}
               className="w-full py-2 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(124,106,247,0.25)] transition-all cursor-pointer animate-pulse"
             >
-              <span>{categoryDetails[selectedCategory].recommendedModel} Tasarla</span>
+              <span>Design {categoryDetails[selectedCategory].recommendedModel}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -853,7 +875,7 @@ export default function ProducerDashboardPage() {
           <div className="flex items-center gap-2">
             <Clock size={15} className="text-purple-400" />
             <span className="text-sm font-bold text-white">
-              Etsy Draft Publishing Queue (Yayınlanmamış Ürünler)
+              Etsy Draft Publishing Queue
             </span>
           </div>
           
@@ -888,7 +910,7 @@ export default function ProducerDashboardPage() {
                 >
                   <td className="px-5 py-4 font-semibold text-white flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-900 border border-white/10 shrink-0 flex items-center justify-center">
-                      <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                      <FallbackImage src={p.image} alt={p.name} />
                     </div>
                     <span className="truncate max-w-[280px]">{p.name}</span>
                   </td>
@@ -907,9 +929,10 @@ export default function ProducerDashboardPage() {
                     {p.status === "Draft" ? (
                       <button
                         onClick={() => handlePublishDraft(p.id)}
-                        className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500 hover:text-white transition-all cursor-pointer"
+                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500 hover:text-white transition-all cursor-pointer"
                       >
-                        Publish to Etsy
+                        <Cloud size={14} />
+                        <span>Publish to Etsy</span>
                       </button>
                     ) : p.status === "Syncing" ? (
                       <button
@@ -917,7 +940,7 @@ export default function ProducerDashboardPage() {
                         className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-purple-300 bg-purple-500/5 border border-purple-500/10 flex items-center gap-1.5"
                       >
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Syncing...</span>
+                        <span>Publishing...</span>
                       </button>
                     ) : (
                       <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-bold bg-emerald-500/5 px-2.5 py-1 border border-emerald-500/10 rounded-lg">
