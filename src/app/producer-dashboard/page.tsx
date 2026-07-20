@@ -624,7 +624,7 @@ export default function ProducerDashboardPage() {
           <div>
             <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
               <TrendingUp className="w-4 h-4 text-purple-400" />
-              <span>Etsy Kategori Satış Analizi & Trendleri</span>
+              <span>Etsy Category Sales Analysis & Trends</span>
             </h2>
             <p className="text-[11px] text-[#a09cb0] mt-0.5">Select a category tab to isolate its line graph, track margins, and view custom insights.</p>
           </div>
