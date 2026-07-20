@@ -31,6 +31,12 @@ export default function SettingsPage() {
   const [bio, setBio] = useState("Etsy satıcısı ve girişimci.");
   const [saved, setSaved] = useState(false);
 
+  // Password state
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordSaved, setPasswordSaved] = useState(false);
+
   // Settings toggles
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
@@ -40,6 +46,21 @@ export default function SettingsPage() {
   const handleSaveProfile = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleSavePassword = () => {
+    if (!oldPassword || !newPassword || !confirmPassword) return;
+    if (newPassword !== confirmPassword) {
+      alert("Yeni şifreler eşleşmiyor!");
+      return;
+    }
+    setPasswordSaved(true);
+    setTimeout(() => {
+      setPasswordSaved(false);
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    }, 2000);
   };
 
   const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
@@ -157,6 +178,62 @@ export default function SettingsPage() {
               >
                 {saved ? <Check size={12} /> : <Save size={12} />}
                 {saved ? "Kaydedildi!" : "Kaydet"}
+              </button>
+            </div>
+          </div>
+
+          {/* Password Change */}
+          <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-4">
+            <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
+              <Lock size={12} /> Şifre Değiştir
+            </h3>
+            
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Mevcut Şifre</label>
+                <input
+                  type="password"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  placeholder="Eski şifrenizi girin"
+                  className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Yeni Şifre</label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Yeni şifrenizi girin"
+                    className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Yeni Şifre (Tekrar)</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Yeni şifrenizi tekrar girin"
+                    className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <button
+                onClick={handleSavePassword}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  passwordSaved
+                    ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-400"
+                    : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+                }`}
+              >
+                {passwordSaved ? <Check size={12} /> : <Save size={12} />}
+                {passwordSaved ? "Şifre Güncellendi!" : "Şifreyi Güncelle"}
               </button>
             </div>
           </div>
