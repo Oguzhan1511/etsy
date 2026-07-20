@@ -9,7 +9,6 @@ import {
   Sparkles,
   Library,
   Layers,
-  Settings,
   Zap,
   ChevronRight,
   ShoppingBag,
@@ -31,12 +30,6 @@ const navItems = [
       { icon: Sparkles, label: "AI Design Studio", href: "/ai-design-studio" },
       { icon: Library, label: "Design Library", href: "/design-library" },
       { icon: Layers, label: "Mockup & Publish", href: "/mockup-publish" },
-    ],
-  },
-  {
-    label: "System",
-    items: [
-      { icon: Settings, label: "Settings", href: "/settings" },
     ],
   },
 ];
@@ -155,11 +148,25 @@ export default function Sidebar() {
         className="p-3 border-t"
         style={{ borderColor: "var(--border)" }}
       >
-        {/* User info row */}
-        <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg mb-1">
+        {/* Clickable profile row → /settings */}
+        <Link
+          href="/settings"
+          className="flex items-center gap-2.5 px-2 py-2 rounded-lg mb-1 transition-all duration-150 group"
+          style={{
+            background: pathname === "/settings" ? "var(--bg-elevated)" : "transparent",
+          }}
+          onMouseEnter={(e) => {
+            if (pathname !== "/settings")
+              (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+          }}
+          onMouseLeave={(e) => {
+            if (pathname !== "/settings")
+              (e.currentTarget as HTMLElement).style.background = "transparent";
+          }}
+        >
           {/* Avatar */}
           <div
-            className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
+            className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 ring-2 ring-offset-1 ring-offset-[#16161e] transition-all ${pathname === "/settings" ? "ring-[#7c6af7]" : "ring-transparent"}`}
             style={{
               background: "linear-gradient(135deg, #7c6af7 0%, #a855f7 100%)",
               color: "#fff",
@@ -175,7 +182,8 @@ export default function Sidebar() {
               {user.email}
             </p>
           </div>
-        </div>
+          <ChevronRight size={12} className="opacity-30 group-hover:opacity-60 transition-opacity" style={{ color: "var(--text-muted)" }} />
+        </Link>
 
         {/* Plan badge + logout row */}
         <div className="flex items-center justify-between px-2">
