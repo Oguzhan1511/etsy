@@ -20,6 +20,16 @@ export default function AIDesignStudioPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const imgUrl = params.get("image");
+      const initPrompt = params.get("prompt");
+      if (imgUrl) setReferenceImage(imgUrl);
+      if (initPrompt) setPrompt(initPrompt);
+    }
+  }, []);
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {

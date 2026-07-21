@@ -13,6 +13,7 @@ import {
   HelpCircle,
   ExternalLink,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -142,6 +143,8 @@ export default function ProductResearchPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [analyzedProduct, setAnalyzedProduct] = useState<Product | null>(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
+  
+  const router = useRouter();
 
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -722,10 +725,14 @@ export default function ProductResearchPage() {
                 )}
                 
                 <button
-                  onClick={() => setAnalyzedProduct(null)}
+                  onClick={() => {
+                    const encodedUrl = encodeURIComponent(analyzedProduct.imageUrl);
+                    const encodedPrompt = encodeURIComponent(analyzedProduct.title);
+                    router.push(`/ai-design-studio?image=${encodedUrl}&prompt=${encodedPrompt}`);
+                  }}
                   className="flex-1 py-2.5 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 transition-all font-bold text-xs text-white rounded-xl flex items-center justify-center gap-1.5 shadow-[0_4px_15px_rgba(124,106,247,0.3)]"
                 >
-                  <span>{t("research.generateDesigns")}</span>
+                  <span>{t("research.generateDesigns") || "Tasarımlar Oluştur"}</span>
                   <Sparkles className="w-3.5 h-3.5" />
                 </button>
               </div>
