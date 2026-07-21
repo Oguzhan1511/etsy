@@ -13,6 +13,7 @@ import {
   HelpCircle,
   ExternalLink,
 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Product {
   id: string;
@@ -128,6 +129,7 @@ const mockProducts: Product[] = [
 ];
 
 export default function ProductResearchPage() {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
   const [products, setProducts] = useState<Product[]>(mockProducts);
@@ -304,10 +306,10 @@ export default function ProductResearchPage() {
             <span className="text-xs text-[#a09cb0]">Premium Suite</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
-            Product Research
+            {t("research.title")}
           </h1>
           <p className="text-sm mt-1 text-[#a09cb0]">
-            Discover winning products, analyze opportunity scores, and design top-selling Etsy items using artificial intelligence.
+            {t("research.subtitle")}
           </p>
         </div>
         
@@ -315,7 +317,7 @@ export default function ProductResearchPage() {
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.08] backdrop-blur-md bg-white/[0.02]"
         >
           <div className="w-2 h-2 rounded-full bg-[#7c6af7] shadow-[0_0_8px_#7c6af7]" />
-          <span className="text-xs font-semibold text-[#f1f0ff]">AI Core v1.4</span>
+          <span className="text-xs font-semibold text-[#f1f0ff]">{t("research.premiumSuite")}</span>
         </div>
       </div>
 
@@ -337,7 +339,7 @@ export default function ProductResearchPage() {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search a product keyword (e.g., t-shirt)..."
+                placeholder={t("research.searchPlaceholder")}
                 className="w-full h-12 pl-11 pr-4 bg-black/30 border border-white/[0.08] focus:border-purple-500/80 rounded-xl text-sm text-[#f1f0ff] placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition-all backdrop-blur-sm"
               />
             </div>
@@ -362,12 +364,12 @@ export default function ProductResearchPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Analyzing...</span>
+                  <span>{t("research.analyzing")}</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  <span>Analyze Keyword</span>
+                  <span>{t("research.analyzeKeyword")}</span>
                 </>
               )}
             </button>
@@ -375,21 +377,21 @@ export default function ProductResearchPage() {
 
           {/* Badges Container */}
           <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
-            <span className="text-[#5e5a72] font-medium mr-1">Active Criteria:</span>
+            <span className="text-[#5e5a72] font-medium mr-1">{t("research.activeCriteria")}</span>
             
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] text-[#a09cb0]">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-semibold text-white/90">Etsy Only</span>
+              <span className="font-semibold text-white/90">{t("research.etsyOnly")}</span>
             </div>
 
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] text-[#a09cb0]">
               <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
-              <span>Period: <span className="font-semibold text-white/90">Last 24 Hours</span></span>
+              <span>{t("research.period")} <span className="font-semibold text-white/90">{t("research.last24h")}</span></span>
             </div>
 
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] text-[#a09cb0]">
-              <span className="text-[10px] uppercase font-bold text-purple-400 px-1 bg-purple-500/10 rounded">Limit</span>
-              <span>8 Premium Products</span>
+              <span className="text-[10px] uppercase font-bold text-purple-400 px-1 bg-purple-500/10 rounded">{t("research.limit")}</span>
+              <span>{t("research.premiumProducts")}</span>
             </div>
             
             {activeQuery && (
@@ -399,7 +401,7 @@ export default function ProductResearchPage() {
                 className="flex items-center gap-1 px-2.5 py-1.5 rounded-full border border-red-500/20 bg-red-500/5 text-red-400 hover:bg-red-500/10 transition-colors ml-auto cursor-pointer"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>Reset (Active filter: &quot;{activeQuery}&quot;)</span>
+                <span>{t("research.resetFilter")} &quot;{activeQuery}&quot;)</span>
               </button>
             )}
           </div>
@@ -427,16 +429,16 @@ export default function ProductResearchPage() {
       <div>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-            <span>Premium Keyword Results</span>
+            <span>{t("research.premiumKeywordResults")}</span>
             {!isLoading && (
               <span className="text-xs font-normal text-[#a09cb0] bg-white/[0.04] border border-white/[0.06] px-2 py-0.5 rounded-full">
-                {products.length} items
+                {products.length} {t("research.items")}
               </span>
             )}
           </h2>
           <div className="text-xs text-[#5e5a72] flex items-center gap-1">
             <HelpCircle className="w-3 h-3" />
-            <span>Click cards to select for AI Next Steps</span>
+            <span>{t("research.clickCards")}</span>
           </div>
         </div>
 
@@ -471,16 +473,16 @@ export default function ProductResearchPage() {
             <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center mx-auto mb-4 text-purple-400 border border-purple-500/20">
               <Search className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-semibold text-white">No products found</h3>
+            <h3 className="text-lg font-semibold text-white">{t("research.noProducts")}</h3>
             <p className="text-sm mt-1 max-w-sm mx-auto text-[#a09cb0]">
-              No matches found for &quot;{activeQuery}&quot;. Try typing categories like &quot;t-shirt&quot;, &quot;sweat&quot;, &quot;mug&quot;, &quot;bag&quot;, or &quot;jewelry&quot;.
+              {t("research.noMatches")} &quot;{activeQuery}&quot;. {t("research.tryTyping")}
             </p>
             <button
               onClick={handleResetSearch}
               className="mt-4 px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 hover:border-purple-500/40 text-purple-300 font-semibold text-sm rounded-lg transition-all cursor-pointer inline-flex items-center gap-1.5"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Clear Filter</span>
+              <span>{t("research.clearFilter")}</span>
             </button>
           </div>
         ) : (
@@ -517,7 +519,7 @@ export default function ProductResearchPage() {
 
                       {/* Opportunity Score Badge */}
                       <div className="absolute top-2 right-2 z-10 bg-black/60 backdrop-blur-md border border-white/10 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-md">
-                        Opportunity: <span className="text-purple-400 font-bold">{product.opportunityScore}/100</span>
+                        {t("research.opportunity")} <span className="text-purple-400 font-bold">{product.opportunityScore}/100</span>
                       </div>
                     </div>
 
@@ -568,13 +570,13 @@ export default function ProductResearchPage() {
                       <div className="flex items-center gap-1">
                         <span aria-hidden="true">🔥</span>
                         <span className="truncate">
-                          24h Views: <span className="font-semibold text-white">{product.views}</span>
+                          {t("research.views24h")} <span className="font-semibold text-white">{product.views}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-1 border-l border-white/[0.06] pl-2">
                         <span aria-hidden="true">💖</span>
                         <span className="truncate">
-                          24h Favs: <span className="font-semibold text-white">{product.favs}</span>
+                          {t("research.favs24h")} <span className="font-semibold text-white">{product.favs}</span>
                         </span>
                       </div>
                     </div>
@@ -595,7 +597,7 @@ export default function ProductResearchPage() {
                       }}
                     >
                       <Zap className="w-3.5 h-3.5" />
-                      <span>AI Analyze & Design</span>
+                      <span>{t("research.aiAnalyzeDesign")}</span>
                     </button>
                   </div>
                 </div>
@@ -624,7 +626,7 @@ export default function ProductResearchPage() {
               </div>
               <div className="min-w-0">
                 <div className="text-[10px] text-purple-400 font-semibold uppercase tracking-wider">
-                  Selected Item
+                  {t("research.selectedItem")}
                 </div>
                 <div className="text-xs md:text-sm font-semibold text-white truncate max-w-[180px] sm:max-w-[280px] md:max-w-[340px]">
                   {selectedProduct.title}
@@ -646,7 +648,7 @@ export default function ProductResearchPage() {
                   </>
                 ) : (
                   <>
-                    <span>Next Step (AI Analyze)</span>
+                    <span>{t("research.nextStepAi")}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </>
                 )}
@@ -698,17 +700,17 @@ export default function ProductResearchPage() {
 
             <div className="space-y-4">
               <h4 className="text-xs uppercase font-bold text-[#a09cb0] tracking-wider border-b border-white/[0.06] pb-1.5">
-                AI Analytics & Recommendations
+                {t("research.aiAnalyticsRecommendations")}
               </h4>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="bg-white/[0.02] p-2.5 rounded-lg border border-white/[0.04]">
-                  <p className="text-[#a09cb0] mb-0.5">Opportunity Index</p>
+                  <p className="text-[#a09cb0] mb-0.5">{t("research.opportunityIndex")}</p>
                   <p className="text-lg font-bold text-emerald-400">{analyzedProduct.opportunityScore}/100</p>
                 </div>
                 <div className="bg-white/[0.02] p-2.5 rounded-lg border border-white/[0.04]">
-                  <p className="text-[#a09cb0] mb-0.5">Demand Rating</p>
-                  <p className="text-lg font-bold text-purple-400">Extremely High</p>
+                  <p className="text-[#a09cb0] mb-0.5">{t("research.demandRating")}</p>
+                  <p className="text-lg font-bold text-purple-400">{t("research.extremelyHigh")}</p>
                 </div>
               </div>
 
@@ -716,19 +718,19 @@ export default function ProductResearchPage() {
                 <div className="flex items-start gap-2">
                   <span className="text-emerald-400">✓</span>
                   <p>
-                    <strong className="text-white">Trend:</strong> High conversion rate with positive trajectory in the {analyzedProduct.category || "niche"} sector.
+                    <strong className="text-white">{t("research.trend")}</strong> {t("research.highConv")} {analyzedProduct.category || "niche"} {t("research.sector")}
                   </p>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-emerald-400">✓</span>
                   <p>
-                    <strong className="text-white">Design Tip:</strong> Expand this product category using pastel accents and floral details for Q3/Q4.
+                    <strong className="text-white">{t("research.designTip")}</strong> {t("research.expandCategory")}
                   </p>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-purple-400">✦</span>
                   <p>
-                    <strong className="text-white">SEO Keywords:</strong> Use high-volume keywords like &quot;personalized gift&quot;, &quot;handmade custom {analyzedProduct.category || "item"}&quot; to increase organic traffic.
+                    <strong className="text-white">{t("research.seoKeywords")}</strong> {t("research.useHighVol")} {analyzedProduct.category || "item"}&quot; {t("research.increaseTraffic")}
                   </p>
                 </div>
               </div>
@@ -741,7 +743,7 @@ export default function ProductResearchPage() {
                     rel="noopener noreferrer"
                     className="flex-1 py-2.5 border border-white/10 hover:bg-white/5 transition-all text-xs font-semibold text-center rounded-xl flex items-center justify-center gap-1.5 text-white"
                   >
-                    <span>View Listing on Etsy</span>
+                    <span>{t("research.viewListing")}</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 )}
@@ -750,7 +752,7 @@ export default function ProductResearchPage() {
                   onClick={() => setAnalyzedProduct(null)}
                   className="flex-1 py-2.5 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 transition-all font-bold text-xs text-white rounded-xl flex items-center justify-center gap-1.5 shadow-[0_4px_15px_rgba(124,106,247,0.3)]"
                 >
-                  <span>Generate Designs</span>
+                  <span>{t("research.generateDesigns")}</span>
                   <Sparkles className="w-3.5 h-3.5" />
                 </button>
               </div>

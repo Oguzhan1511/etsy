@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   Package,
   CheckCircle,
@@ -237,6 +238,7 @@ const mostFavoritedList: PerformanceItem[] = [
 ];
 
 export default function SellerDashboard() {
+  const { t } = useLanguage();
   const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly" | "allTime">("weekly");
   const [selectedMetric, setSelectedMetric] = useState<string>("Sales");
 
@@ -298,7 +300,7 @@ export default function SellerDashboard() {
           {/* Sync Connection state */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[#a09cb0]">Etsy Sync:</span>
+            <span className="text-[#a09cb0]">{t("sellerDashboard.etsySync")}</span>
             <span className="text-white font-bold">StarSeller_Store_1</span>
           </div>
         </div>
@@ -309,10 +311,10 @@ export default function SellerDashboard() {
         <div className="flex justify-between items-center px-1">
           <h3 className="text-xs font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1.5">
             <Clock size={13} className="text-purple-400" />
-            <span>Active Orders (Last 4)</span>
+            <span>{t("sellerDashboard.activeOrders")}</span>
           </h3>
           <Link href="/orders" className="text-[10px] font-bold text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1">
-            <span>View All Orders</span>
+            <span>{t("sellerDashboard.viewAllOrders")}</span>
             <ArrowRight size={10} />
           </Link>
         </div>
@@ -327,7 +329,7 @@ export default function SellerDashboard() {
                     <span className="text-[9px] text-[#5e5a72] block mt-0.5 font-mono">{o.orderId}</span>
                   </div>
                   <span className="text-[8px] font-bold text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/15 shrink-0 uppercase">
-                    {o.status === "Processing" ? "Processing" : "Ready to Ship"}
+                    {o.status === "Processing" ? t("sellerDashboard.processing") : t("sellerDashboard.readyToShip")}
                   </span>
                 </div>
 
@@ -342,8 +344,8 @@ export default function SellerDashboard() {
                 </div>
 
                 <div className="border-t border-white/[0.04] pt-2 flex flex-col gap-0.5 text-[9px] shrink-0">
-                  <span className="text-[#a09cb0]">Ordered: <strong className="text-white font-medium">{o.orderedTime}</strong></span>
-                  <span className="text-[#a09cb0]">Ship by: <strong className="text-amber-400 font-semibold">{o.shipBy}</strong></span>
+                  <span className="text-[#a09cb0]">{t("sellerDashboard.ordered")} <strong className="text-white font-medium">{o.orderedTime}</strong></span>
+                  <span className="text-[#a09cb0]">{t("sellerDashboard.shipBy")} <strong className="text-amber-400 font-semibold">{o.shipBy}</strong></span>
                 </div>
 
               </div>
@@ -359,10 +361,10 @@ export default function SellerDashboard() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.05]">
           <div className="flex bg-white/[0.02] p-1 rounded-lg border border-white/[0.05] self-start">
             {[
-              { id: "daily", label: "Daily" },
-              { id: "weekly", label: "Weekly" },
-              { id: "monthly", label: "Monthly" },
-              { id: "allTime", label: "All Time" }
+              { id: "daily", label: t("sellerDashboard.daily") },
+              { id: "weekly", label: t("sellerDashboard.weekly") },
+              { id: "monthly", label: t("sellerDashboard.monthly") },
+              { id: "allTime", label: t("sellerDashboard.allTime") }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -377,7 +379,7 @@ export default function SellerDashboard() {
               </button>
             ))}
           </div>
-          <span className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider px-2 sm:text-right">Store Analytics Overview</span>
+          <span className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider px-2 sm:text-right">{t("sellerDashboard.storeAnalytics")}</span>
         </div>
 
         {/* Core Etsy Shop Metrics Grid */}
@@ -387,11 +389,11 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <Package size={10} className="text-purple-400" />
-              <span>Active Listings</span>
+              <span>{t("sellerDashboard.activeListings").replace(":", "")}</span>
             </span>
             <div>
               <div className="text-2xl font-extrabold text-white leading-none">{activeData.activeListings}</div>
-              <span className="text-[9px] text-[#5e5a72] block mt-1">Live Listings</span>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">{t("sellerDashboard.liveListings")}</span>
             </div>
           </div>
 
@@ -399,11 +401,11 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <FileText size={10} className="text-blue-400" />
-              <span>Draft Listings</span>
+              <span>{t("sellerDashboard.draftListings")}</span>
             </span>
             <div>
               <div className="text-2xl font-extrabold text-white leading-none">{activeData.draftListings}</div>
-              <span className="text-[9px] text-[#5e5a72] block mt-1">Pending Sync</span>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">{t("sellerDashboard.pendingSync")}</span>
             </div>
           </div>
 
@@ -411,11 +413,11 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <ShoppingBag size={10} className="text-purple-400" />
-              <span>Sales</span>
+              <span>{t("sellerDashboard.sales")}</span>
             </span>
             <div>
               <div className="text-2xl font-extrabold text-white leading-none">{activeData.orders.split(" ")[0]}</div>
-              <span className="text-[9px] text-[#5e5a72] block mt-1">Total Orders</span>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">{t("sellerDashboard.totalOrders")}</span>
             </div>
           </div>
 
@@ -423,11 +425,11 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <Eye size={10} className="text-blue-400" />
-              <span>Views</span>
+              <span>{t("sellerDashboard.views")}</span>
             </span>
             <div>
               <div className="text-2xl font-extrabold text-white leading-none">{activeData.views.split(" ")[0]}</div>
-              <span className="text-[9px] text-[#5e5a72] block mt-1">Store Visits</span>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">{t("sellerDashboard.storeVisits")}</span>
             </div>
           </div>
 
@@ -435,11 +437,11 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <Heart size={10} className="text-pink-400" />
-              <span>Favorites</span>
+              <span>{t("sellerDashboard.favorites")}</span>
             </span>
             <div>
               <div className="text-2xl font-extrabold text-white leading-none">{activeData.favorites.split(" ")[0]}</div>
-              <span className="text-[9px] text-[#5e5a72] block mt-1">Listing Favs</span>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">{t("sellerDashboard.listingFavs")}</span>
             </div>
           </div>
 
@@ -447,11 +449,11 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <DollarSign size={10} className="text-emerald-400" />
-              <span>Revenue</span>
+              <span>{t("sellerDashboard.revenue")}</span>
             </span>
             <div>
               <div className="text-2xl font-extrabold text-emerald-400 leading-none">{activeData.revenue}</div>
-              <span className="text-[9px] text-[#5e5a72] block mt-1">Gross Sales</span>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">{t("sellerDashboard.grossSales")}</span>
             </div>
           </div>
 
@@ -459,11 +461,11 @@ export default function SellerDashboard() {
           <div className="bg-black/20 border border-white/[0.04] rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-white/10 transition-colors">
             <span className="text-[9px] font-bold text-[#a09cb0] uppercase tracking-wider flex items-center gap-1">
               <TrendingUp size={10} className="text-amber-400" />
-              <span>Net Margin</span>
+              <span>{t("sellerDashboard.netMargin")}</span>
             </span>
             <div>
               <div className="text-2xl font-extrabold text-amber-400 leading-none">{activeData.profit}</div>
-              <span className="text-[9px] text-[#5e5a72] block mt-1">Net Margins</span>
+              <span className="text-[9px] text-[#5e5a72] block mt-1">{t("sellerDashboard.netMargins")}</span>
             </div>
           </div>
 
@@ -477,9 +479,9 @@ export default function SellerDashboard() {
           <div className="space-y-0.5">
             <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
               <Activity className="w-4 h-4 text-purple-400" />
-              <span>Store Performance</span>
+              <span>{t("sellerDashboard.storePerformance")}</span>
             </h3>
-            <p className="text-[11px] text-[#a09cb0]">Select a sub-metric to plot its weekly trajectory with localized value vertices.</p>
+            <p className="text-[11px] text-[#a09cb0]">{t("sellerDashboard.metricDesc")}</p>
           </div>
 
           {/* Interactive Metric Selectors (Toggles) */}
@@ -579,10 +581,10 @@ export default function SellerDashboard() {
           <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-purple-400" />
-              <span>Top Selling Products</span>
+              <span>{t("sellerDashboard.topSelling")}</span>
             </h3>
             <button className="text-[10px] font-bold text-purple-300 bg-purple-500/20 px-3 py-1.5 rounded-md border border-purple-500/30 shadow-lg hover:bg-purple-500/30 transition-colors cursor-pointer">
-              Orders Leaderboard
+              {t("sellerDashboard.ordersLeaderboard")}
             </button>
           </div>
 
@@ -615,10 +617,10 @@ export default function SellerDashboard() {
           <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <Heart className="w-4 h-4 text-pink-400" />
-              <span>Most Favorited</span>
+              <span>{t("sellerDashboard.mostFavorited")}</span>
             </h3>
             <button className="text-[10px] font-bold text-pink-300 bg-pink-500/20 px-3 py-1.5 rounded-md border border-pink-500/30 shadow-lg hover:bg-pink-500/30 transition-colors cursor-pointer">
-              Engagement Status
+              {t("sellerDashboard.engagementStatus")}
             </button>
           </div>
 
@@ -657,16 +659,16 @@ export default function SellerDashboard() {
             <Percent size={18} />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-white">Etsy SEO & Store Health Score</h4>
+            <h4 className="text-xs font-bold text-white">{t("sellerDashboard.seoHealth")}</h4>
             <p className="text-[11px] text-[#a09cb0] mt-0.5">
-              100% of listings contain tags and image alt-texts. Shipping dispatch latency is optimized at 1-2 days.
+              {t("sellerDashboard.seoDesc")}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3 self-end sm:self-auto text-right">
           <div>
             <span className="text-lg font-extrabold text-white block leading-none">96%</span>
-            <span className="text-[9px] text-[#5e5a72] block mt-0.5">Excellent Health</span>
+            <span className="text-[9px] text-[#5e5a72] block mt-0.5">{t("sellerDashboard.excellentHealth")}</span>
           </div>
           <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
             <CheckCircle size={16} />

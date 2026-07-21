@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Sparkles, Wand2, Loader2, Download, Library, CheckCircle2, Image as ImageIcon, UploadCloud, X } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface DesignItem {
   id: string;
@@ -12,6 +13,7 @@ interface DesignItem {
 }
 
 export default function AIDesignStudioPage() {
+  const { t } = useLanguage();
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -47,7 +49,7 @@ export default function AIDesignStudioPage() {
       const data = await res.json();
       
       if (!res.ok) {
-        throw new Error(data.error || 'Yapay zeka sunucusundan hata döndü');
+        throw new Error(data.error || t("aiDesign.serverError"));
       }
 
       if (data.url) {
@@ -63,12 +65,12 @@ export default function AIDesignStudioPage() {
           setIsGenerating(false);
         };
       } else {
-        throw new Error("Görsel URL'si alınamadı");
+        throw new Error(t("aiDesign.urlError"));
       }
     } catch (err: unknown) {
       console.error(err);
-      const errorMessage = err instanceof Error ? err.message : 'Bilinmeyen bir hata oluştu';
-      alert("Bir hata oluştu: " + errorMessage);
+      const errorMessage = err instanceof Error ? err.message : t("aiDesign.unknownError");
+      alert(t("aiDesign.errorPrefix") + errorMessage);
       setIsGenerating(false);
     }
   };
@@ -93,7 +95,7 @@ export default function AIDesignStudioPage() {
       setTimeout(() => setIsSaved(false), 3000);
     } catch (e) {
       console.error("Failed to save design:", e);
-      alert("Tasarım kaydedilemedi.");
+      alert(t("aiDesign.saveError"));
     }
   };
 
@@ -114,7 +116,7 @@ export default function AIDesignStudioPage() {
             AI Design Studio
           </h1>
           <p className="text-sm mt-1 text-[#a09cb0] max-w-xl">
-            Sadece ne istediğinizi yazın, yapay zeka saniyeler içinde sizin için yüksek çözünürlüklü ve Etsy&apos;de satmaya hazır özgün tasarımlar üretsin.
+            {t("aiDesign.desc")}
           </p>
         </div>
         <Link 
@@ -122,7 +124,7 @@ export default function AIDesignStudioPage() {
           className="flex items-center gap-2 px-4 py-2 bg-[#16161f] border border-white/[0.08] hover:border-purple-500/50 rounded-lg text-sm text-white transition-all group"
         >
           <Library className="w-4 h-4 text-[#a09cb0] group-hover:text-purple-400 transition-colors" />
-          Kütüphaneye Git
+          {t("aiDesign.goToLibrary")}
         </Link>
       </div>
 
@@ -137,7 +139,7 @@ export default function AIDesignStudioPage() {
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-white flex items-center gap-2">
                   <UploadCloud className="w-4 h-4 text-purple-400" />
-                  Referans Görsel Yükle (Görselden Görsele)
+                  {t("aiDesign.uploadRef")}
                 </label>
                 {referenceImage ? (
                   <div className="relative w-full h-64 bg-black/40 rounded-xl overflow-hidden border border-white/[0.08] group">
@@ -157,8 +159,8 @@ export default function AIDesignStudioPage() {
                     <div className="w-10 h-10 rounded-full bg-white/[0.05] flex items-center justify-center mb-3 group-hover:bg-purple-500/20 group-hover:text-purple-400 transition-colors">
                       <UploadCloud className="w-5 h-5 text-[#a09cb0] group-hover:text-purple-400" />
                     </div>
-                    <span className="text-sm text-white font-medium">Görsel yüklemek için tıklayın</span>
-                    <span className="text-[10px] text-[#5e5a72] mt-1">Sürükle bırak veya bilgisayardan seç</span>
+                    <span className="text-sm text-white font-medium">{t("aiDesign.clickToUpload")}</span>
+                    <span className="text-[10px] text-[#5e5a72] mt-1">{t("aiDesign.dragDrop")}</span>
                     <input 
                       type="file" 
                       accept="image/*" 
@@ -173,12 +175,12 @@ export default function AIDesignStudioPage() {
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-white flex items-center gap-2">
                   <Wand2 className="w-4 h-4 text-purple-400" />
-                  Görselde ne değiştirmek istiyorsunuz?
+                  {t("aiDesign.promptLabel")}
                 </label>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Örn: Kahve içen şirin bir kedi illüstrasyonu yap, arka plana neon ışıklar ekle..."
+                  placeholder={t("aiDesign.promptPlaceholder")}
                   className="w-full h-24 bg-black/40 border border-white/[0.08] text-sm text-white rounded-xl p-4 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all resize-none placeholder:text-[#5e5a72]"
                   required
                 />
@@ -197,12 +199,12 @@ export default function AIDesignStudioPage() {
                 {isGenerating ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Yapay Zeka Çiziyor...</span>
+                    <span>{t("aiDesign.generating")}</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    <span>Tasarım Oluştur</span>
+                    <span>{t("aiDesign.generateBtn")}</span>
                   </>
                 )}
                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
@@ -218,7 +220,7 @@ export default function AIDesignStudioPage() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold text-white flex items-center gap-2">
                 <ImageIcon className="w-5 h-5 text-purple-400" />
-                Önizleme
+                {t("aiDesign.preview")}
               </h2>
               {generatedImage && (
                 <div className="flex gap-2">
@@ -232,7 +234,7 @@ export default function AIDesignStudioPage() {
                     }`}
                   >
                     {isSaved ? <CheckCircle2 className="w-4 h-4" /> : <Library className="w-4 h-4" />}
-                    {isSaved ? 'Kütüphaneye Kaydedildi!' : 'Kütüphaneye Kaydet'}
+                    {isSaved ? t("aiDesign.savedToLibrary") : t("aiDesign.saveToLibrary")}
                   </button>
                   <a 
                     href={generatedImage}
@@ -241,7 +243,7 @@ export default function AIDesignStudioPage() {
                     className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/30 text-purple-300 rounded-lg text-sm font-semibold transition-all"
                   >
                     <Download className="w-4 h-4" />
-                    İndir
+                    {t("aiDesign.download")}
                   </a>
                 </div>
               )}
@@ -254,7 +256,7 @@ export default function AIDesignStudioPage() {
                     <div className="w-16 h-16 border-4 border-purple-500/20 rounded-full animate-spin border-t-purple-500" />
                     <Sparkles className="w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
                   </div>
-                  <p className="text-sm font-medium animate-pulse">Pikseller dokunuyor...</p>
+                  <p className="text-sm font-medium animate-pulse">{t("aiDesign.weaving")}</p>
                 </div>
               ) : generatedImage ? (
                 <img 
@@ -267,7 +269,7 @@ export default function AIDesignStudioPage() {
                   <div className="w-16 h-16 rounded-2xl bg-white/[0.02] flex items-center justify-center border border-white/[0.05]">
                     <ImageIcon className="w-8 h-8 opacity-50" />
                   </div>
-                  <p className="text-sm">Oluşturulan tasarım burada görünecektir.</p>
+                  <p className="text-sm">{t("aiDesign.emptyState")}</p>
                 </div>
               )}
             </div>

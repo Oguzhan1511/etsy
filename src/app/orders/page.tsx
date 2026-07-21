@@ -9,6 +9,7 @@ import {
   AlertCircle,
   Search
 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Order {
   id: string;
@@ -93,6 +94,7 @@ const ordersData: Order[] = [
 ];
 
 export default function OrdersPage() {
+  const { t } = useLanguage();
   const [filter, setFilter] = useState<string>("All");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [orders, setOrders] = useState<Order[]>(ordersData);
@@ -119,10 +121,10 @@ export default function OrdersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
-            Etsy Sipariş Yönetimi
+            {t("orders.title")}
           </h1>
           <p className="text-sm mt-0.5 text-[#a09cb0]">
-            Track customer orders, generate shipping labels, and manage listing dispatch status.
+            {t("orders.subtitle")}
           </p>
         </div>
       </div>
@@ -131,7 +133,7 @@ export default function OrdersPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">Aktif Siparişler</span>
+            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("orders.activeOrders")}</span>
             <span className="text-2xl font-bold text-white mt-1 block">
               {orders.filter(o => o.status !== "Shipped" && o.status !== "Cancelled").length}
             </span>
@@ -143,7 +145,7 @@ export default function OrdersPage() {
 
         <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">Kargoya Hazır</span>
+            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("orders.readyToShip")}</span>
             <span className="text-2xl font-bold text-white mt-1 block">
               {orders.filter(o => o.status === "Ready to Ship").length}
             </span>
@@ -155,7 +157,7 @@ export default function OrdersPage() {
 
         <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">Kargolananlar</span>
+            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("orders.shipped")}</span>
             <span className="text-2xl font-bold text-white mt-1 block">
               {orders.filter(o => o.status === "Shipped").length}
             </span>
@@ -167,8 +169,8 @@ export default function OrdersPage() {
 
         <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">Ortalama Gönderim Süresi</span>
-            <span className="text-2xl font-bold text-white mt-1 block">1.2 Gün</span>
+            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("orders.avgShippingTime")}</span>
+            <span className="text-2xl font-bold text-white mt-1 block">{t("orders.avgDays")}</span>
           </div>
           <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400">
             <Clock size={18} />
@@ -189,7 +191,7 @@ export default function OrdersPage() {
                   : "text-[#a09cb0] hover:text-white"
               }`}
             >
-              {status === "All" ? "Hepsi" : status === "Processing" ? "Hazırlanıyor" : status === "Ready to Ship" ? "Kargoya Hazır" : "Gönderildi"}
+              {status === "All" ? t("orders.all") : status === "Processing" ? t("orders.processing") : status === "Ready to Ship" ? t("orders.readyToShip") : t("orders.shipped")}
             </button>
           ))}
         </div>
@@ -199,7 +201,7 @@ export default function OrdersPage() {
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5e5a72]" />
           <input
             type="text"
-            placeholder="Sipariş, isim veya model ara..."
+            placeholder={t("orders.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-4 py-1.5 rounded-lg border border-white/[0.08] bg-[#16161e] text-xs text-white placeholder-[#5e5a72] focus:outline-none focus:border-purple-500/50"
@@ -212,7 +214,7 @@ export default function OrdersPage() {
         {filteredOrders.length === 0 ? (
           <div className="p-12 text-center border border-white/[0.05] bg-black/5 rounded-xl space-y-2">
             <AlertCircle className="w-8 h-8 text-[#5e5a72] mx-auto" />
-            <p className="text-xs text-[#a09cb0]">Herhangi bir aktif sipariş bulunamadı.</p>
+            <p className="text-xs text-[#a09cb0]">{t("orders.noOrders")}</p>
           </div>
         ) : (
           filteredOrders.map(o => (
@@ -242,7 +244,7 @@ export default function OrdersPage() {
                       ? "text-blue-400 bg-blue-500/5 border-blue-500/10"
                       : "text-purple-400 bg-purple-500/5 border-purple-500/10"
                   }`}>
-                    {o.status === "Processing" ? "Hazırlanıyor" : o.status === "Ready to Ship" ? "Kargoya Hazır" : "Gönderildi"}
+                    {o.status === "Processing" ? t("orders.processing") : o.status === "Ready to Ship" ? t("orders.readyToShip") : t("orders.shipped")}
                   </span>
                   
                   {o.status === "Ready to Ship" && (
@@ -251,7 +253,7 @@ export default function OrdersPage() {
                       className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-white rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
                     >
                       <Truck size={12} />
-                      <span>Kargola</span>
+                      <span>{t("orders.shipBtn")}</span>
                     </button>
                   )}
                 </div>
@@ -268,15 +270,15 @@ export default function OrdersPage() {
                       {o.product}
                     </h4>
                     <div className="flex items-center gap-3 text-[10px] text-[#5e5a72] mt-1 font-mono">
-                      <span>Price: <strong className="text-white">{o.price}</strong></span>
+                      <span>{t("orders.price")} <strong className="text-white">{o.price}</strong></span>
                       <span>•</span>
-                      <span>Ship By: <strong className={o.shipBy === "Completed" ? "text-emerald-400 font-bold" : "text-amber-400 font-bold"}>{o.shipBy}</strong></span>
+                      <span>{t("orders.shipBy")} <strong className={o.shipBy === "Completed" ? "text-emerald-400 font-bold" : "text-amber-400 font-bold"}>{o.shipBy}</strong></span>
                     </div>
                   </div>
                 </div>
 
                 <div className="text-left md:text-right border-l md:border-l-0 md:border-r border-white/[0.04] pl-3 md:pl-0 md:pr-4 py-0.5 space-y-1">
-                  <span className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Fatura Adresi</span>
+                  <span className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("orders.billingAddress")}</span>
                   <p className="text-xs text-[#a09cb0] max-w-[240px] leading-relaxed truncate md:whitespace-normal" title={o.shippingAddress}>
                     {o.shippingAddress}
                   </p>

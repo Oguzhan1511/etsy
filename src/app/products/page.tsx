@@ -19,8 +19,8 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
-  Star
 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ProductImage {
   id: string;
@@ -143,6 +143,7 @@ const initialProducts: ListingProduct[] = [
 ];
 
 export default function ProductsPage() {
+  const { t } = useLanguage();
   const [products, setProducts] = useState<ListingProduct[]>(initialProducts);
   const [filterTab, setFilterTab] = useState<"Active" | "Inactive">("Active");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -175,7 +176,7 @@ export default function ProductsPage() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Bu ürünü silmek istediğinize emin misiniz?")) {
+    if (confirm(t("products.deleteConfirm"))) {
       setProducts(prev => prev.filter(p => p.id !== id));
       setOpenDropdownId(null);
     }
@@ -311,10 +312,10 @@ export default function ProductsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
-            Etsy Listings Envanteri
+            {t("products.title")}
           </h1>
           <p className="text-sm mt-0.5 text-[#a09cb0]">
-            Etsy mağazanızdaki aktif ve inaktif ürünleri listeleyin, istatistikleri takip edin ve listelemelerinizi yönetin.
+            {t("products.subtitle")}
           </p>
         </div>
       </div>
@@ -323,7 +324,7 @@ export default function ProductsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">Aktif Ürünler</span>
+            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("products.activeProducts")}</span>
             <span className="text-2xl font-bold text-white mt-1 block">
               {products.filter(p => p.status === "Active").length}
             </span>
@@ -335,7 +336,7 @@ export default function ProductsPage() {
 
         <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">İnaktif Ürünler</span>
+            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("products.inactiveProducts")}</span>
             <span className="text-2xl font-bold text-white mt-1 block">
               {products.filter(p => p.status === "Inactive").length}
             </span>
@@ -347,7 +348,7 @@ export default function ProductsPage() {
 
         <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">Toplam Envanter Cirosu</span>
+            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("products.totalInventoryRevenue")}</span>
             <span className="text-2xl font-bold text-emerald-400 mt-1 block">
               ${products.reduce((acc, curr) => acc + curr.revenue, 0).toLocaleString()}
             </span>
@@ -359,7 +360,7 @@ export default function ProductsPage() {
 
         <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">Net Envanter Kârı</span>
+            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("products.netInventoryProfit")}</span>
             <span className="text-2xl font-bold text-amber-400 mt-1 block">
               ${products.reduce((acc, curr) => acc + curr.profit, 0).toLocaleString()}
             </span>
@@ -374,8 +375,8 @@ export default function ProductsPage() {
       <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between bg-black/10 p-3 rounded-xl border border-white/[0.03]">
         <div className="flex bg-white/[0.02] p-1 rounded-lg border border-white/[0.05] self-start">
           {[
-            { id: "Active", label: "Aktif Ürünler" },
-            { id: "Inactive", label: "İnaktif Ürünler" }
+            { id: "Active", label: t("products.activeProducts") },
+            { id: "Inactive", label: t("products.inactiveProducts") }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -396,7 +397,7 @@ export default function ProductsPage() {
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5e5a72]" />
           <input
             type="text"
-            placeholder="Başlık veya SKU ara..."
+            placeholder={t("products.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-4 py-1.5 rounded-lg border border-white/[0.08] bg-[#16161e] text-xs text-white placeholder-[#5e5a72] focus:outline-none focus:border-purple-500/50"
@@ -409,7 +410,7 @@ export default function ProductsPage() {
         {filteredProducts.length === 0 ? (
           <div className="p-12 text-center border border-white/[0.05] bg-black/5 rounded-xl space-y-2">
             <EyeOff className="w-8 h-8 text-[#5e5a72] mx-auto" />
-            <p className="text-xs text-[#a09cb0]">Seçilen kategoride listelenecek ürün bulunamadı.</p>
+            <p className="text-xs text-[#a09cb0]">{t("products.noProductsFound")}</p>
           </div>
         ) : (
           filteredProducts.map(p => (
@@ -435,7 +436,7 @@ export default function ProductsPage() {
                 
                 {/* Sales */}
                 <div className="space-y-0.5">
-                  <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">Satış</span>
+                  <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">{t("products.sales")}</span>
                   <span className="text-xs font-bold text-white flex items-center gap-1 justify-center md:justify-start">
                     <ShoppingBag size={11} className="text-purple-400" />
                     <span>{p.salesCount}</span>
@@ -444,7 +445,7 @@ export default function ProductsPage() {
 
                 {/* In Carts */}
                 <div className="space-y-0.5">
-                  <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">Sepet</span>
+                  <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">{t("products.cart")}</span>
                   <span className="text-xs font-bold text-white flex items-center gap-1 justify-center md:justify-start">
                     <ShoppingCart size={11} className="text-blue-400" />
                     <span>{p.cartCount}</span>
@@ -453,7 +454,7 @@ export default function ProductsPage() {
 
                 {/* Favorites */}
                 <div className="space-y-0.5">
-                  <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">Favori</span>
+                  <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">{t("products.favorite")}</span>
                   <span className="text-xs font-bold text-white flex items-center gap-1 justify-center md:justify-start">
                     <Heart size={11} className="text-pink-400" />
                     <span>{p.favoritesCount}</span>
@@ -462,7 +463,7 @@ export default function ProductsPage() {
 
                 {/* Revenue */}
                 <div className="space-y-0.5">
-                  <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">Ciro</span>
+                  <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">{t("products.revenue")}</span>
                   <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5 justify-center md:justify-start">
                     <span>${p.revenue.toLocaleString()}</span>
                   </span>
@@ -470,7 +471,7 @@ export default function ProductsPage() {
 
                 {/* Profit */}
                 <div className="space-y-0.5">
-                  <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">Kâr</span>
+                  <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">{t("products.profit")}</span>
                   <span className="text-xs font-bold text-amber-400 flex items-center gap-0.5 justify-center md:justify-start">
                     <span>${p.profit.toLocaleString()}</span>
                   </span>
@@ -494,7 +495,7 @@ export default function ProductsPage() {
                       className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/5 text-[11px] text-white font-semibold cursor-pointer text-left"
                     >
                       <Edit2 size={12} className="text-[#a09cb0]" />
-                      <span>Düzenle</span>
+                      <span>{t("products.edit")}</span>
                     </button>
 
                     {p.status === "Active" ? (
@@ -503,7 +504,7 @@ export default function ProductsPage() {
                         className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-amber-500/10 hover:text-amber-400 text-[11px] text-white font-semibold cursor-pointer text-left"
                       >
                         <EyeOff size={12} className="text-amber-400" />
-                        <span>İnaktif Yap</span>
+                        <span>{t("products.makeInactive")}</span>
                       </button>
                     ) : (
                       <button
@@ -511,7 +512,7 @@ export default function ProductsPage() {
                         className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-emerald-500/10 hover:text-emerald-400 text-[11px] text-white font-semibold cursor-pointer text-left"
                       >
                         <Eye size={12} className="text-emerald-400" />
-                        <span>Aktif Et</span>
+                        <span>{t("products.makeActive")}</span>
                       </button>
                     )}
 
@@ -520,7 +521,7 @@ export default function ProductsPage() {
                       className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-red-500/10 hover:text-red-400 text-[11px] text-white font-semibold cursor-pointer text-left"
                     >
                       <Trash2 size={12} className="text-red-400" />
-                      <span>Sil</span>
+                      <span>{t("products.delete")}</span>
                     </button>
                   </div>
                 )}
@@ -539,7 +540,7 @@ export default function ProductsPage() {
             <div className="flex justify-between items-center pb-2 border-b border-white/[0.06]">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <Edit2 size={14} className="text-purple-400" />
-                <span>Ürünü Düzenle</span>
+                <span>{t("products.editProduct")}</span>
               </h3>
               <button 
                 type="button"
@@ -554,13 +555,13 @@ export default function ProductsPage() {
               
               {/* 1. Ürün Görseli Değiştirme (Visual Grid Reorder & Toggle) */}
               <div className="space-y-2.5">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Ürün Görselleri (Sürükleme ve Düzenleme)</label>
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("products.productImagesDrag")}</label>
                 
                 {/* Large Preview Panel */}
                 <div className="relative w-full h-44 rounded-xl overflow-hidden border border-white/[0.06] bg-neutral-950 flex items-center justify-center">
                   <img src={largePreviewUrl} alt="Large preview" className="h-full object-contain" />
                   <div className="absolute bottom-2 left-2 px-2.5 py-1 bg-black/75 rounded-lg text-[9px] text-white/80 font-medium">
-                    Büyük Önizleme
+                    {t("products.largePreview")}
                   </div>
                 </div>
 
@@ -601,12 +602,12 @@ export default function ProductsPage() {
                         <div className="absolute top-1 left-1.5 flex gap-1 z-20 pointer-events-none">
                           {isPrimary && img.active && (
                             <span className="text-[8px] font-bold text-white bg-purple-500 px-1 py-0.5 rounded leading-none">
-                              ANA
+                              {t("products.primary")}
                             </span>
                           )}
                           {!img.active && (
                             <span className="text-[8px] font-bold text-white/80 bg-black/60 px-1 py-0.5 rounded leading-none uppercase">
-                              Pasif
+                              {t("products.passive")}
                             </span>
                           )}
                           {isSelected && (
@@ -677,7 +678,7 @@ export default function ProductsPage() {
 
               {/* 2. Ürün Başlığı Değişme */}
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">Ürün Başlığı</label>
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.productTitle")}</label>
                 <input
                   type="text"
                   value={editTitle}
@@ -688,7 +689,7 @@ export default function ProductsPage() {
 
               {/* SKU code input */}
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">SKU Kodu</label>
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.skuCode")}</label>
                 <input
                   type="text"
                   value={editSku}
@@ -699,7 +700,7 @@ export default function ProductsPage() {
 
               {/* 3. Ürün Açıklaması Değişme */}
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">Ürün Açıklaması</label>
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.productDesc")}</label>
                 <textarea
                   rows={3}
                   value={editDescription}
@@ -710,10 +711,10 @@ export default function ProductsPage() {
 
               {/* 4. Ürün Tag Değiştirme */}
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">Ürün Tagleri (Virgülle Ayırın)</label>
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.productTags")}</label>
                 <input
                   type="text"
-                  placeholder="örneğin: tote, canvas, wildflowers"
+                  placeholder={t("products.tagsPlaceholder")}
                   value={editTags}
                   onChange={(e) => setEditTags(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50"
@@ -728,7 +729,7 @@ export default function ProductsPage() {
                 onClick={handleCloseAttempt}
                 className="px-4 py-2 border border-white/[0.06] hover:bg-white/5 text-[#a09cb0] hover:text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
               >
-                İptal
+                {t("products.cancel")}
               </button>
               <button
                 type="button"
@@ -736,7 +737,7 @@ export default function ProductsPage() {
                 className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-white rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-lg shadow-purple-500/10"
               >
                 <CheckCircle size={12} />
-                <span>Onayla</span>
+                <span>{t("products.confirm")}</span>
               </button>
             </div>
 
@@ -753,9 +754,9 @@ export default function ProductsPage() {
             </div>
             
             <div className="space-y-1.5">
-              <h4 className="text-sm font-bold text-white">Kaydedilmemiş Değişiklikler Var</h4>
+              <h4 className="text-sm font-bold text-white">{t("products.unsavedChanges")}</h4>
               <p className="text-xs text-[#a09cb0] leading-relaxed px-2">
-                Düzenlemeden çıkmak istediğinize emin misiniz? Yaptığınız tüm değişiklikler kaybolacaktır.
+                {t("products.unsavedChangesDesc")}
               </p>
             </div>
 
@@ -767,13 +768,13 @@ export default function ProductsPage() {
                 }}
                 className="px-4 py-2 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 rounded-lg text-xs font-bold transition-all cursor-pointer"
               >
-                İptal Et (Çık)
+                {t("products.cancelExit")}
               </button>
               <button
                 onClick={() => setShowExitConfirm(false)} // Returns to editing
                 className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
               >
-                Devam Et (Düzenle)
+                {t("products.continueEdit")}
               </button>
             </div>
           </div>
