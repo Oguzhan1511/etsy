@@ -61,8 +61,10 @@ export default function SettingsPage() {
     if (typeof window !== "undefined") {
       const savedToken = localStorage.getItem("printify_api_token");
       if (savedToken) {
-        setPrintifyApiKey(savedToken);
-        setPrintifyConnected(true);
+        setTimeout(() => {
+          setPrintifyApiKey(savedToken);
+          setPrintifyConnected(true);
+        }, 0);
       }
     }
   }, []);
