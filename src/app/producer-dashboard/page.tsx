@@ -511,12 +511,34 @@ export default function ProducerDashboardPage() {
     return 36;
   });
 
-  const [publishedCount] = useState(() => {
+  const [publishedCount, setPublishedCount] = useState(() => {
     if (typeof window !== "undefined" && localStorage.getItem("printify_api_key")) {
       return 118;
     }
     return 64;
   });
+
+  interface ShopData {
+    shop_name: string;
+    review_average: number | string;
+    review_count: number;
+    listing_active_count: number;
+    transaction_sold_count: number;
+  }
+
+  const [shopData, setShopData] = useState<ShopData | null>(null);
+
+  useEffect(() => {
+    fetch('/api/etsy/shop')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          setShopData(data);
+          setPublishedCount(data.listing_active_count || 0);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   interface ResearchedProduct {
     id: string;
@@ -558,9 +580,9 @@ export default function ProducerDashboardPage() {
         <div
           className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl border border-white/[0.08] backdrop-blur-md bg-white/[0.02]"
         >
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
+          <div className={`w-1.5 h-1.5 rounded-full ${shopData ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-red-500'} `} />
           <span className="text-[#a09cb0]">
-            {t("dashboard.connection")} <span className="text-white font-semibold">{apiKey ? t("dashboard.liveApi") : t("dashboard.sandbox")}</span>
+            {t("dashboard.connection")} <span className="text-white font-semibold">{shopData ? t("dashboard.liveApi") : t("dashboard.sandbox")}</span>
           </span>
         </div>
       </div>

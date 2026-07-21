@@ -46,6 +46,19 @@ export default function SettingsPage() {
   const [twoFactor, setTwoFactor] = useState(false);
   const [etsyConnected, setEtsyConnected] = useState(false);
   const [printifyConnected, setPrintifyConnected] = useState(false);
+  const [printifyApiKey, setPrintifyApiKey] = useState("");
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedToken = localStorage.getItem("printify_api_token");
+      if (savedToken) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setPrintifyApiKey(savedToken);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setPrintifyConnected(true);
+      }
+    }
+  }, []);
 
   const handleSaveProfile = () => {
     setSaved(true);
@@ -351,29 +364,53 @@ export default function SettingsPage() {
               </div>
 
               {/* Printify Integration */}
-              <div className="flex items-center justify-between p-3 bg-black/20 rounded-xl border border-white/[0.05]">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#39b75d] flex items-center justify-center font-sans font-bold text-white text-xl">
-                    P
+              <div className="flex flex-col gap-3 p-3 bg-black/20 rounded-xl border border-white/[0.05]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-[#39b75d] flex items-center justify-center font-sans font-bold text-white text-xl">
+                      P
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Printify</h4>
+                      <p className="text-[10px] text-[#a09cb0]">Printify API Anahtarınızı girin</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-white">Printify</h4>
-                    <p className="text-[10px] text-[#a09cb0]">{t("settings.printifyDesc")}</p>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        if (printifyConnected) {
+                          localStorage.removeItem("printify_api_token");
+                          setPrintifyApiKey("");
+                          setPrintifyConnected(false);
+                        } else if (printifyApiKey.trim()) {
+                          localStorage.setItem("printify_api_token", printifyApiKey.trim());
+                          setPrintifyConnected(true);
+                        }
+                      }}
+                      className={`px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                        printifyConnected 
+                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30" 
+                          : "bg-purple-500/10 text-purple-400 border border-purple-500/30 hover:bg-purple-500/20"
+                      }`}
+                    >
+                      {printifyConnected ? t("settings.disconnect") : t("settings.connect")}
+                    </button>
+                    <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_10px] ${printifyConnected ? 'bg-emerald-400 shadow-emerald-400/80' : 'bg-red-500 shadow-red-500/80'}`} />
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setPrintifyConnected(!printifyConnected)}
-                    className={`px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                      printifyConnected 
-                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30" 
-                        : "bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20"
-                    }`}
-                  >
-                    {printifyConnected ? t("settings.disconnect") : t("settings.connect")}
-                  </button>
-                  <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_10px] ${printifyConnected ? 'bg-emerald-400 shadow-emerald-400/80' : 'bg-red-500 shadow-red-500/80'}`} />
-                </div>
+                {!printifyConnected && (
+                  <div className="pt-2 border-t border-white/[0.05] space-y-1.5">
+                    <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Kişisel Erişim Anahtarı (Token)</label>
+                    <input
+                      type="password"
+                      placeholder="eyJ..."
+                      value={printifyApiKey}
+                      onChange={(e) => setPrintifyApiKey(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white placeholder-white/20 focus:outline-none focus:border-purple-500/50 transition-colors"
+                    />
+                    <p className="text-[9px] text-[#5e5a72]">Bu anahtar tarayıcınızda güvenle saklanır ve Printify verilerinizi çekmek için kullanılır.</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

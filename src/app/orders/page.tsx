@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ShoppingBag,
   Clock,
@@ -25,79 +25,44 @@ interface Order {
   shippingAddress: string;
 }
 
-const ordersData: Order[] = [
-  {
-    id: "1",
-    orderId: "#ET-14205",
-    buyerName: "Olivia Vance",
-    email: "olivia.v@gmail.com",
-    product: "Wildflower Garden Custom Canvas Tote Bag",
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80",
-    price: "$24.99",
-    orderedTime: "2 hours ago",
-    shipBy: "Tomorrow, 2:00 PM",
-    status: "Processing",
-    shippingAddress: "742 Evergreen Terrace, Springfield, IL, 62704"
-  },
-  {
-    id: "2",
-    orderId: "#ET-14204",
-    buyerName: "Liam Sterling",
-    email: "lster@yahoo.com",
-    product: "Golden Meadows Fine Art Accent Mug 11oz",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=100&q=80",
-    price: "$14.99",
-    orderedTime: "4 hours ago",
-    shipBy: "Tomorrow, 5:00 PM",
-    status: "Processing",
-    shippingAddress: "120 Baker Street, Los Angeles, CA, 90012"
-  },
-  {
-    id: "3",
-    orderId: "#ET-14203",
-    buyerName: "Sophia Martinez",
-    email: "sophia.m@outlook.com",
-    product: "Retro Custom Botanical Unisex Tee",
-    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=100&q=80",
-    price: "$28.00",
-    orderedTime: "6 hours ago",
-    shipBy: "Jul 21, 12:00 PM",
-    status: "Ready to Ship",
-    shippingAddress: "58 Pine Road, Portland, OR, 97201"
-  },
-  {
-    id: "4",
-    orderId: "#ET-14202",
-    buyerName: "Emma Watson",
-    email: "emma@granger.io",
-    product: "Funny Sarcastic Soy Wax Jar Candle",
-    image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=100&q=80",
-    price: "$19.99",
-    orderedTime: "12 hours ago",
-    shipBy: "Jul 21, 3:00 PM",
-    status: "Ready to Ship",
-    shippingAddress: "4 Privet Drive, Little Whinging, Surrey, UK"
-  },
-  {
-    id: "5",
-    orderId: "#ET-14199",
-    buyerName: "Alexander Wright",
-    email: "alex.wright@icloud.com",
-    product: "Vintage Art Deco Accent Mug 15oz",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=100&q=80",
-    price: "$16.99",
-    orderedTime: "1 day ago",
-    shipBy: "Completed",
-    status: "Shipped",
-    shippingAddress: "89 Broadway St, New York, NY, 10006"
-  }
-];
-
 export default function OrdersPage() {
   const { t } = useLanguage();
   const [filter, setFilter] = useState<string>("All");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [orders, setOrders] = useState<Order[]>(ordersData);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/etsy/orders')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error && Array.isArray(data)) {
+          const formatted = data.map((item: Record<string, unknown>) => {
+            const txs = item.transactions as Array<Record<string, unknown>>;
+            const transaction = txs && txs[0] ? txs[0] : null;
+            const status = item.is_shipped ? "Shipped" : "Processing";
+            const orderedTime = new Date(item.created_timestamp * 1000).toLocaleString();
+            
+            return {
+              id: item.receipt_id.toString(),
+              orderId: `#ET-${item.receipt_id}`,
+              buyerName: item.name,
+              email: item.buyer_email || "N/A",
+              product: transaction ? transaction.title : "Unknown Product",
+              image: "", // Orders endpoint does not easily include images without a lot of extra calls, leaving blank or placeholder for now
+              price: `$${(Number((item.grandtotal as Record<string, number>).amount) / Number((item.grandtotal as Record<string, number>).divisor)).toFixed(2)}`,
+              orderedTime,
+              shipBy: "Pending",
+              status: status as Order["status"],
+              shippingAddress: String(item.formatted_address),
+            };
+          });
+          setOrders(formatted);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleShipOrder = (id: string) => {
     setOrders(prev =>

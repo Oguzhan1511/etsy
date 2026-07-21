@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Package,
   Search,
@@ -44,107 +44,46 @@ interface ListingProduct {
   images: ProductImage[];
 }
 
-const initialProducts: ListingProduct[] = [
-  {
-    id: "1",
-    title: "Wildflower Garden Custom Canvas Tote Bag",
-    sku: "SKU: TOTE-WF-GARDEN",
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=150&q=80",
-    salesCount: 142,
-    cartCount: 14,
-    favoritesCount: 410,
-    revenue: 3550,
-    profit: 1980,
-    status: "Active",
-    description: "High quality organic cotton canvas tote bag featuring a beautiful wildflower print. Durable handles and spacious design perfect for daily grocery shopping, beach outings, or travel.",
-    tags: ["tote bag", "canvas tote", "wildflowers", "custom bag", "eco friendly"],
-    images: [
-      { id: "img-1-1", url: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=400&q=80", active: true },
-      { id: "img-1-2", url: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=400&q=80", active: true },
-      { id: "img-1-3", url: "https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&w=400&q=80", active: true },
-      { id: "img-1-4", url: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80", active: true }
-    ]
-  },
-  {
-    id: "2",
-    title: "Golden Meadows Fine Art Accent Mug 11oz",
-    sku: "SKU: MUG-GM-ACC-11",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=150&q=80",
-    salesCount: 96,
-    cartCount: 8,
-    favoritesCount: 196,
-    revenue: 1440,
-    profit: 820,
-    status: "Active",
-    description: "Beautiful golden wildflower printed mug. 11oz capacity, ceramic construction, microwave and dishwasher safe. A perfect morning coffee companion.",
-    tags: ["wildflower mug", "ceramic mug", "coffee mug", "gift for her", "golden meadows"],
-    images: [
-      { id: "img-2-1", url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=400&q=80", active: true },
-      { id: "img-2-2", url: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80", active: true },
-      { id: "img-2-3", url: "https://images.unsplash.com/photo-1517256064527-09c53b2d0bc6?auto=format&fit=crop&w=400&q=80", active: true }
-    ]
-  },
-  {
-    id: "3",
-    title: "Retro Custom Botanical Unisex Tee",
-    sku: "SKU: TEE-RET-BOT-M",
-    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=150&q=80",
-    salesCount: 84,
-    cartCount: 12,
-    favoritesCount: 284,
-    revenue: 2100,
-    profit: 1150,
-    status: "Active",
-    description: "Super soft Bella+Canvas 3001 unisex t-shirt featuring a retro botanical print. Available in multiple colors and sizes. Made with premium lightweight ringspun cotton.",
-    tags: ["botanical tee", "unisex shirt", "retro t-shirt", "bella canvas", "floral graphic"],
-    images: [
-      { id: "img-3-1", url: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=80", active: true },
-      { id: "img-3-2", url: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80", active: true },
-      { id: "img-3-3", url: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=400&q=80", active: true }
-    ]
-  },
-  {
-    id: "4",
-    title: "Funny Sarcastic Soy Wax Jar Candle - Golden Meadows",
-    sku: "SKU: CAND-SARC-SOY",
-    image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=150&q=80",
-    salesCount: 38,
-    cartCount: 6,
-    favoritesCount: 410,
-    revenue: 760,
-    profit: 420,
-    status: "Active",
-    description: "100% natural soy wax jar candle with a humorous sarcastic label. Hand-poured with premium scent oils and a clean-burning cotton wick.",
-    tags: ["soy candle", "funny candle", "scented candle", "jar candle", "gift candle"],
-    images: [
-      { id: "img-4-1", url: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=400&q=80", active: true },
-      { id: "img-4-2", url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=400&q=80", active: true },
-      { id: "img-4-3", url: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=400&q=80", active: true }
-    ]
-  },
-  {
-    id: "5",
-    title: "Vintage Art Deco Accent Mug 15oz",
-    sku: "SKU: MUG-VINT-DECO-15",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=150&q=80",
-    salesCount: 12,
-    cartCount: 3,
-    favoritesCount: 78,
-    revenue: 204,
-    profit: 110,
-    status: "Inactive",
-    description: "15oz accent mug with an elegant vintage art deco geometric pattern. Premium ceramic coating, extra large size perfect for tea and hot cocoa lovers.",
-    tags: ["art deco mug", "vintage mug", "15oz mug", "accent mug", "retro kitchen"],
-    images: [
-      { id: "img-5-1", url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=400&q=80", active: true },
-      { id: "img-5-2", url: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80", active: true }
-    ]
-  }
-];
-
 export default function ProductsPage() {
   const { t } = useLanguage();
-  const [products, setProducts] = useState<ListingProduct[]>(initialProducts);
+  const [products, setProducts] = useState<ListingProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/etsy/listings')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error && Array.isArray(data)) {
+          const formatted = data.map((item: Record<string, unknown>) => {
+             const imgs = item.images as Array<Record<string, unknown>>;
+             const images = imgs ? imgs.map((img: Record<string, unknown>, idx: number) => ({
+                id: img.listing_image_id.toString(),
+                url: img.url_570xN,
+                active: idx === 0
+             })) : [];
+
+             return {
+                id: String(item.listing_id),
+                title: String(item.title),
+                sku: "",
+                image: images.length > 0 ? String(images[0].url) : "",
+                salesCount: 0,
+                cartCount: 0,
+                favoritesCount: Number(item.num_favorers) || 0,
+                revenue: 0,
+                profit: 0,
+                status: item.state === 'active' ? 'Active' : 'Inactive',
+                description: String(item.description || ""),
+                tags: (item.tags as string[]) || [],
+                images
+             };
+          });
+          setProducts(formatted);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
   const [filterTab, setFilterTab] = useState<"Active" | "Inactive">("Active");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
