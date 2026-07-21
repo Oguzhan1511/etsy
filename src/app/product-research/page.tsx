@@ -142,9 +142,10 @@ export default function ProductResearchPage() {
 
   // Clear polling interval on component unmount
   useEffect(() => {
+    const currentPollRef = pollIntervalRef.current;
     return () => {
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
+      if (currentPollRef) {
+        clearInterval(currentPollRef);
       }
     };
   }, []);
@@ -159,10 +160,10 @@ export default function ProductResearchPage() {
     setIsLoading(true);
     setError(null);
     setSelectedProduct(null);
-    setLoadingStatus("Initializing Apify search...");
+    setLoadingStatus("Fetching live data from Etsy servers...");
 
     try {
-      const response = await fetch("/api/research", {
+      const response = await fetch("/api/research/etsy-native", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -171,60 +172,22 @@ export default function ProductResearchPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to connect to research crawler");
+        throw new Error("Failed to connect to Etsy Research API");
       }
 
-      const initData = await response.json();
-      if (initData.error) {
-        throw new Error(initData.error);
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
       }
 
-      const { runId, datasetId } = initData;
-      setLoadingStatus("Starting live Etsy crawler (Apify container starting)...");
-
-      // 2. Poll the status API route until completed
-      pollIntervalRef.current = setInterval(async () => {
-        try {
-          const statusRes = await fetch(`/api/research?runId=${runId}&datasetId=${datasetId}`);
-          
-          if (!statusRes.ok) {
-            throw new Error("Failed to retrieve crawler status");
-          }
-
-          const statusData = await statusRes.json();
-          if (statusData.error) {
-            throw new Error(statusData.error);
-          }
-
-          if (statusData.status === "SUCCEEDED") {
-            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-            setProducts(statusData.products || []);
-            setActiveQuery(kw);
-            setIsLoading(false);
-            setLoadingStatus("");
-          } else if (statusData.status === "RUNNING") {
-            setLoadingStatus("Scraping live Etsy listings & filtering personalized items...");
-          } else if (
-            statusData.status === "FAILED" ||
-            statusData.status === "ABORTED" ||
-            statusData.status === "TIMED-OUT"
-          ) {
-            throw new Error(`Apify crawler run finished with status: ${statusData.status}`);
-          }
-        } catch (pollErr: unknown) {
-          if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-          console.error("Polling error:", pollErr);
-          const msg = pollErr instanceof Error ? pollErr.message : "Temporary connection issue, please try again";
-          setError(msg.includes("Failed") || msg.includes("crawler") ? "Temporary connection issue, please try again" : msg);
-          setIsLoading(false);
-          setLoadingStatus("");
-        }
-      }, 3000);
-
+      setProducts(data.products || []);
+      setActiveQuery(kw);
+      setIsLoading(false);
+      setLoadingStatus("");
     } catch (err: unknown) {
       console.error("Search error:", err);
       const msg = err instanceof Error ? err.message : "Temporary connection issue, please try again";
-      setError(msg.includes("Failed") || msg.includes("crawler") ? "Temporary connection issue, please try again" : msg);
+      setError(msg.includes("Failed") || msg.includes("Etsy Research") ? "Temporary connection issue, please try again" : msg);
       setIsLoading(false);
       setLoadingStatus("");
     }
@@ -241,7 +204,6 @@ export default function ProductResearchPage() {
         }, 0);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearchSubmit = async (e: React.FormEvent) => {

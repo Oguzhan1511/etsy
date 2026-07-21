@@ -35,20 +35,22 @@ export default function OrdersPage() {
       .then(res => res.json())
       .then(data => {
         if (!data.error && Array.isArray(data)) {
-          const formatted = data.map((item: Record<string, unknown>) => {
+          const formatted = data.map((rawItem: unknown) => {
+            const item = rawItem as Record<string, unknown>;
             const txs = item.transactions as Array<Record<string, unknown>>;
             const transaction = txs && txs[0] ? txs[0] : null;
             const status = item.is_shipped ? "Shipped" : "Processing";
-            const orderedTime = new Date(item.created_timestamp * 1000).toLocaleString();
+            const createdTimestamp = item.created_timestamp as number;
+            const orderedTime = new Date(createdTimestamp * 1000).toLocaleString();
             
             return {
-              id: item.receipt_id.toString(),
+              id: String(item.receipt_id),
               orderId: `#ET-${item.receipt_id}`,
-              buyerName: item.name,
-              email: item.buyer_email || "N/A",
-              product: transaction ? transaction.title : "Unknown Product",
+              buyerName: String(item.name || "Unknown"),
+              email: item.buyer_email ? String(item.buyer_email) : "N/A",
+              product: transaction ? String(transaction.title) : "Unknown Product",
               image: "", // Orders endpoint does not easily include images without a lot of extra calls, leaving blank or placeholder for now
-              price: `$${(Number((item.grandtotal as Record<string, number>).amount) / Number((item.grandtotal as Record<string, number>).divisor)).toFixed(2)}`,
+              price: `$${(Number((item.grandtotal as Record<string, number>)?.amount) / Number((item.grandtotal as Record<string, number>)?.divisor)).toFixed(2)}`,
               orderedTime,
               shipBy: "Pending",
               status: status as Order["status"],

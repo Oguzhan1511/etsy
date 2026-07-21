@@ -242,6 +242,7 @@ interface ShopData {
   review_count: number;
   listing_active_count: number;
   transaction_sold_count: number;
+  icon_url_fullxfull?: string;
 }
 
 export default function SellerDashboard() {

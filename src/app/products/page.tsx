@@ -55,15 +55,19 @@ export default function ProductsPage() {
         if (!data.error && Array.isArray(data)) {
           const formatted = data.map((item: Record<string, unknown>) => {
              const imgs = item.images as Array<Record<string, unknown>>;
-             const images = imgs ? imgs.map((img: Record<string, unknown>, idx: number) => ({
-                id: img.listing_image_id.toString(),
-                url: img.url_570xN,
-                active: idx === 0
-             })) : [];
+             const images = imgs ? imgs.map((rawImg: unknown, idx: number) => {
+               const img = rawImg as Record<string, unknown>;
+               return {
+                 id: String(img.listing_image_id),
+                 url: String(img.url_570xN || ""),
+                 active: idx === 0
+               };
+             }) : [];
 
              return {
                 id: String(item.listing_id),
                 title: String(item.title),
+                status: (String(item.state) === "active" ? "Active" : "Inactive") as "Active" | "Inactive",
                 sku: "",
                 image: images.length > 0 ? String(images[0].url) : "",
                 salesCount: 0,
@@ -71,7 +75,6 @@ export default function ProductsPage() {
                 favoritesCount: Number(item.num_favorers) || 0,
                 revenue: 0,
                 profit: 0,
-                status: item.state === 'active' ? 'Active' : 'Inactive',
                 description: String(item.description || ""),
                 tags: (item.tags as string[]) || [],
                 images

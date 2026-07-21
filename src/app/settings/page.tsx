@@ -52,7 +52,6 @@ export default function SettingsPage() {
       if (savedToken) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setPrintifyApiKey(savedToken);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPrintifyConnected(true);
       }
     }

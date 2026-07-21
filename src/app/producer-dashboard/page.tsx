@@ -524,6 +524,7 @@ export default function ProducerDashboardPage() {
     review_count: number;
     listing_active_count: number;
     transaction_sold_count: number;
+    icon_url_fullxfull?: string;
   }
 
   const [shopData, setShopData] = useState<ShopData | null>(null);
