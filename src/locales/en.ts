@@ -415,6 +415,13 @@ export const en = {
   "login.submit": "Log In",
   "login.hint": "You can log in with any email and password",
   "login.rights": "All rights reserved",
+  "login.loginTab": "Log In",
+  "login.registerTab": "Sign Up",
+  "login.name": "Full Name",
+  "login.registerSubmit": "Create Account",
+  "login.welcome": "Welcome Back",
+  "login.createAccount": "Create a New Account",
+  "login.errorEmpty": "Email and password cannot be empty.",
 
   // General
   "common.language": "Language",

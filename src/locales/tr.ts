@@ -415,6 +415,13 @@ export const tr = {
   "login.submit": "Giriş Yap",
   "login.hint": "Herhangi bir e-posta ve şifre ile giriş yapabilirsiniz",
   "login.rights": "Tüm hakları saklıdır",
+  "login.loginTab": "Giriş Yap",
+  "login.registerTab": "Kayıt Ol",
+  "login.name": "Ad Soyad",
+  "login.registerSubmit": "Hesap Oluştur",
+  "login.welcome": "Hoş Geldiniz",
+  "login.createAccount": "Yeni Hesap Oluşturun",
+  "login.errorEmpty": "E-posta ve şifre boş bırakılamaz.",
 
   // General
   "common.language": "Dil",
