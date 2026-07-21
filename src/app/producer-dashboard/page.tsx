@@ -25,15 +25,6 @@ import {
 } from "recharts";
 
 /* ─── Types & Interfaces ────────────────────────────────────────── */
-interface DraftItem {
-  id: string;
-  name: string;
-  color: string;
-  designName: string;
-  image: string;
-  price: string;
-  status: "Draft" | "Syncing" | "Published";
-}
 
 interface MetricLine {
   name: string;

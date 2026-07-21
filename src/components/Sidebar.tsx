@@ -9,7 +9,6 @@ import {
   Sparkles,
   Library,
   Layers,
-  Zap,
   ChevronRight,
   ShoppingBag,
   Package,
