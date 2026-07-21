@@ -29,7 +29,7 @@ export default function AIDesignStudioPage() {
     }
   };
 
-  const handleGenerate = (e: React.FormEvent) => {
+  const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prompt.trim()) return;
 
@@ -37,22 +37,45 @@ export default function AIDesignStudioPage() {
     setGeneratedImage(null);
     setIsSaved(false);
 
-    // Using Pollinations AI for free, fast, no-auth image generation
-    const seed = Math.floor(Math.random() * 1000000);
-    const finalPrompt = encodeURIComponent(prompt);
-    const imageUrl = `https://image.pollinations.ai/prompt/${finalPrompt}?seed=${seed}&width=1024&height=1024&nologo=true&model=gptimage&transparent=true`;
+    try {
+      let uploadedImageUrl = "";
+      if (referenceImage) {
+        const res = await fetch('/api/upload-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ base64: referenceImage })
+        });
+        const data = await res.json();
+        if (data.url) {
+          uploadedImageUrl = data.url;
+        }
+      }
 
-    // Preload image to avoid showing broken state
-    const img = new Image();
-    img.src = imageUrl;
-    img.onload = () => {
-      setGeneratedImage(imageUrl);
+      // Using Pollinations AI for free, fast, no-auth image generation
+      const seed = Math.floor(Math.random() * 1000000);
+      const finalPrompt = encodeURIComponent(prompt);
+      let imageUrl = `https://image.pollinations.ai/prompt/${finalPrompt}?seed=${seed}&width=1024&height=1024&nologo=true&model=gptimage&transparent=true`;
+      
+      if (uploadedImageUrl) {
+        imageUrl += `&image=${encodeURIComponent(uploadedImageUrl)}`;
+      }
+
+      // Preload image to avoid showing broken state
+      const img = new Image();
+      img.src = imageUrl;
+      img.onload = () => {
+        setGeneratedImage(imageUrl);
+        setIsGenerating(false);
+      };
+      img.onerror = () => {
+        alert("Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
+        setIsGenerating(false);
+      };
+    } catch (err) {
+      console.error(err);
+      alert("Bir hata oluştu.");
       setIsGenerating(false);
-    };
-    img.onerror = () => {
-      alert("Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
-      setIsGenerating(false);
-    };
+    }
   };
 
   const saveToLibrary = () => {
