@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, Download, Trash2, Edit2, Check, X, CalendarDays, ImageIcon } from "lucide-react";
+import { Search, Download, Trash2, Edit2, Check, X, CalendarDays, ImageIcon, Eye } from "lucide-react";
 
 interface DesignItem {
   id: string;
@@ -45,6 +45,9 @@ export default function DesignLibraryPage() {
   // Renaming state
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+
+  // Preview state
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   useEffect(() => {
     // Load from local storage
@@ -184,6 +187,13 @@ export default function DesignLibraryPage() {
                 {/* Hover Overlay Actions */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]">
                   <button 
+                    onClick={() => setPreviewImage(design.url)}
+                    className="p-2.5 bg-blue-500/20 hover:bg-blue-500/40 border border-blue-500/30 rounded-full text-blue-300 transition-colors cursor-pointer"
+                    title="Preview Design"
+                  >
+                    <Eye className="w-5 h-5" />
+                  </button>
+                  <button 
                     onClick={() => handleDownload(design.url)}
                     className="p-2.5 bg-white/10 hover:bg-white/25 rounded-full text-white transition-colors cursor-pointer"
                     title="Download / Open Original"
@@ -250,6 +260,29 @@ export default function DesignLibraryPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Image Preview Modal */}
+      {previewImage && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div className="relative max-w-5xl w-full max-h-[90vh] flex items-center justify-center">
+            <button 
+              onClick={() => setPreviewImage(null)}
+              className="absolute -top-12 right-0 p-2 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <img 
+              src={previewImage} 
+              alt="Preview" 
+              className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
         </div>
       )}
     </div>
