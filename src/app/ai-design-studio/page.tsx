@@ -65,9 +65,10 @@ export default function AIDesignStudioPage() {
       } else {
         throw new Error("Görsel URL'si alınamadı");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      alert("Bir hata oluştu: " + err.message);
+      const errorMessage = err instanceof Error ? err.message : 'Bilinmeyen bir hata oluştu';
+      alert("Bir hata oluştu: " + errorMessage);
       setIsGenerating(false);
     }
   };

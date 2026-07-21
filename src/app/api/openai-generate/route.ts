@@ -52,7 +52,7 @@ Kullanıcı talimatı: ${prompt}`;
       try {
         const parsed = JSON.parse(errorData);
         errMsg = parsed.error?.message || errMsg;
-      } catch(e) {}
+      } catch {}
       return NextResponse.json({ error: errMsg }, { status: response.status });
     }
 
