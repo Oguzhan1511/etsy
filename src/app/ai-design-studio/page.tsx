@@ -122,8 +122,8 @@ export default function AIDesignStudioPage() {
                   Referans Görsel Yükle (Görselden Görsele)
                 </label>
                 {referenceImage ? (
-                  <div className="relative w-full h-40 rounded-xl overflow-hidden border border-white/[0.08] group">
-                    <img src={referenceImage} alt="Reference" className="w-full h-full object-cover" />
+                  <div className="relative w-full h-64 bg-black/40 rounded-xl overflow-hidden border border-white/[0.08] group">
+                    <img src={referenceImage} alt="Reference" className="w-full h-full object-contain" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                       <button 
                         type="button"
@@ -135,7 +135,7 @@ export default function AIDesignStudioPage() {
                     </div>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-40 bg-black/40 border border-dashed border-white/[0.15] hover:border-purple-500/50 hover:bg-black/60 rounded-xl cursor-pointer transition-all group">
+                  <label className="flex flex-col items-center justify-center w-full h-64 bg-black/40 border border-dashed border-white/[0.15] hover:border-purple-500/50 hover:bg-black/60 rounded-xl cursor-pointer transition-all group">
                     <div className="w-10 h-10 rounded-full bg-white/[0.05] flex items-center justify-center mb-3 group-hover:bg-purple-500/20 group-hover:text-purple-400 transition-colors">
                       <UploadCloud className="w-5 h-5 text-[#a09cb0] group-hover:text-purple-400" />
                     </div>
