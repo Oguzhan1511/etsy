@@ -58,28 +58,6 @@ export default function Header() {
           <span className="hidden sm:inline">{t("header.new")}</span>
         </button>
 
-        {/* Language Toggle */}
-        <button
-          onClick={toggleLanguage}
-          className="relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-150 font-bold text-xs"
-          style={{
-            background: "var(--bg-elevated)",
-            border: "1px solid var(--border)",
-            color: "var(--text-secondary)",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
-            (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.background = "var(--bg-elevated)";
-            (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
-          }}
-          title={t("common.language")}
-        >
-          {language === "tr" ? "TR" : "EN"}
-        </button>
-
         {/* Notifications */}
         <button
           className="relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-150"
