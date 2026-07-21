@@ -105,27 +105,26 @@ export async function POST(req: Request) {
           shopName = (shopData.shop_name as string) || shopName;
         }
 
-        // Calculate Opportunity Score
-        // Simple algorithm: 
-        // 1. View Velocity: Views / Days Alive
-        // 2. Engagement: Favs / Views
-        // 3. Normalize to a 0-100 scale
+        // Calculate Opportunity Score & 24h Sales Estimate
         const views = item.views || 0;
         const favs = item.num_favorers || 0;
         const creationTime = item.original_creation_timestamp || item.creation_timestamp;
         
         const daysAlive = Math.max(1, (now - creationTime) / (60 * 60 * 24));
         const viewVelocity = views / daysAlive;
-        const engagementRate = views > 0 ? (favs / views) : 0;
+        const favVelocity = favs / daysAlive;
         
-        // Base score off velocity and engagement, cap at 99
-        let score = (viewVelocity * 2) + (engagementRate * 500);
+        // Estimate 24h sales based on view and favorer velocity (assuming ~2% conversion on views, and higher intent on favs)
+        const estimatedSales24h = Math.max(0, Math.round((viewVelocity * 0.015) + (favVelocity * 0.1)));
+
+        // Base score off estimated sales (highest priority) and engagement
+        let score = (estimatedSales24h * 15) + (viewVelocity * 1.5) + (favVelocity * 5);
         score = Math.min(99, Math.max(10, score)); // Keep between 10 and 99
         score = Math.floor(score);
         
-        // Bonus for bestsellers (simulated or if we detect high velocity)
-        const isBestseller = viewVelocity > 10;
-        if (isBestseller) score = Math.min(99, score + 15);
+        // Bonus for bestsellers (high sales velocity)
+        const isBestseller = estimatedSales24h >= 2 || viewVelocity > 15;
+        if (isBestseller) score = Math.min(99, score + 12);
 
         products.push({
           id: `etsy_${listingId}`,
@@ -134,6 +133,7 @@ export async function POST(req: Request) {
           price: item.price ? (item.price.amount / item.price.divisor) : 0,
           views: views,
           favs: favs,
+          estimatedSales24h: estimatedSales24h,
           opportunityScore: score,
           isBestseller: isBestseller,
           shopName: shopName,
@@ -145,6 +145,9 @@ export async function POST(req: Request) {
         // Continue loop even if one item fails
       }
     }
+
+    // Explicitly sort products from highest opportunity score (potential) to lowest
+    products.sort((a, b) => b.opportunityScore - a.opportunityScore);
 
     return NextResponse.json({ products });
   } catch (err: unknown) {

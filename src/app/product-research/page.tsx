@@ -23,6 +23,7 @@ interface Product {
   price: number;
   views: number;
   favs: number;
+  estimatedSales24h: number;
   opportunityScore: number;
   isBestseller: boolean;
   shopName: string;
@@ -38,6 +39,7 @@ const mockProducts: Product[] = [
     price: 34.90,
     views: 3420,
     favs: 890,
+    estimatedSales24h: 12,
     opportunityScore: 96,
     isBestseller: true,
     shopName: "CozyVibesApparel",
@@ -533,15 +535,15 @@ export default function ProductResearchPage() {
                     {/* Live Metrics */}
                     <div className="grid grid-cols-2 gap-2 bg-black/25 border border-white/[0.04] rounded-lg p-2 text-[11px] text-[#a09cb0] mb-4">
                       <div className="flex items-center gap-1">
-                        <span aria-hidden="true">🔥</span>
+                        <span aria-hidden="true" className="text-emerald-400">💰</span>
                         <span className="truncate">
-                          {t("research.views24h")} <span className="font-semibold text-white">{product.views}</span>
+                          {t("24h Sales:") || "24h Satış:"} <span className="font-bold text-emerald-400">{product.estimatedSales24h || 0}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-1 border-l border-white/[0.06] pl-2">
-                        <span aria-hidden="true">💖</span>
+                        <span aria-hidden="true">🔥</span>
                         <span className="truncate">
-                          {t("research.favs24h")} <span className="font-semibold text-white">{product.favs}</span>
+                          {t("Score:") || "Skor:"} <span className="font-semibold text-purple-400">{product.opportunityScore}</span>
                         </span>
                       </div>
                     </div>
@@ -676,12 +678,12 @@ export default function ProductResearchPage() {
 
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="bg-white/[0.02] p-2.5 rounded-lg border border-white/[0.04]">
-                  <p className="text-[#a09cb0] mb-0.5">{t("research.opportunityIndex")}</p>
+                  <p className="text-[#a09cb0] mb-0.5">Opportunity Index</p>
                   <p className="text-lg font-bold text-emerald-400">{analyzedProduct.opportunityScore}/100</p>
                 </div>
                 <div className="bg-white/[0.02] p-2.5 rounded-lg border border-white/[0.04]">
-                  <p className="text-[#a09cb0] mb-0.5">{t("research.demandRating")}</p>
-                  <p className="text-lg font-bold text-purple-400">{t("research.extremelyHigh")}</p>
+                  <p className="text-[#a09cb0] mb-0.5">Est. 24h Sales</p>
+                  <p className="text-lg font-bold text-purple-400">{analyzedProduct.estimatedSales24h || 0} sales</p>
                 </div>
               </div>
 
