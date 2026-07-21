@@ -25,7 +25,9 @@ export default function AIDesignStudioPage() {
       const params = new URLSearchParams(window.location.search);
       const imgUrl = params.get("image");
       const initPrompt = params.get("prompt");
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (imgUrl) setReferenceImage(imgUrl);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (initPrompt) setPrompt(initPrompt);
     }
   }, []);
