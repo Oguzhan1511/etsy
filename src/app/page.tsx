@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Package,
   CheckCircle,
@@ -236,9 +236,27 @@ const mostFavoritedList: PerformanceItem[] = [
   }
 ];
 
+interface ShopData {
+  shop_name: string;
+  review_average: number | string;
+  review_count: number;
+  listing_active_count: number;
+  transaction_sold_count: number;
+}
+
 export default function SellerDashboard() {
   const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly" | "allTime">("weekly");
   const [selectedMetric, setSelectedMetric] = useState<string>("Sales");
+  const [shopData, setShopData] = useState<ShopData | null>(null);
+
+  useEffect(() => {
+    fetch('/api/etsy/shop')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setShopData(data);
+      })
+      .catch(console.error);
+  }, []);
 
   const activeData = statsData[timeframe];
   const activeChartMetric = chartLines.find(l => l.key === selectedMetric) || chartLines[0];
@@ -274,34 +292,56 @@ export default function SellerDashboard() {
             {/* Avatar image */}
             <div className="w-20 h-20 rounded-full border-4 border-[#16161e] overflow-hidden bg-neutral-900 shadow-xl shrink-0">
               <img 
-                src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=150&q=80" 
-                alt="Woodland Meadow Crafts Logo" 
+                src={shopData ? shopData.icon_url_fullxfull : "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=150&q=80"} 
+                alt="Shop Logo" 
                 className="w-full h-full object-cover" 
               />
             </div>
             <div className="space-y-1 pb-1">
               <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 justify-center sm:justify-start">
-                <span>Woodland Meadow Crafts</span>
+                <span>{shopData ? shopData.shop_name : "Woodland Meadow Crafts"}</span>
                 <CheckCircle size={18} className="text-purple-400 fill-purple-400/20" />
               </h1>
               <div className="flex items-center gap-3 text-xs text-[#a09cb0] justify-center sm:justify-start">
-                <span className="flex items-center gap-1">
-                  <Star size={12} className="text-amber-400 fill-amber-400" />
-                  <span className="text-white font-semibold">4.9</span> (1,482 Reviews)
-                </span>
-                <span>•</span>
-                <span>Active Listings: <strong className="text-white">{activeData.activeListings}</strong></span>
+                {shopData ? (
+                  <>
+                    <span className="flex items-center gap-1">
+                      <Star size={12} className="text-amber-400 fill-amber-400" />
+                      <span className="text-white font-semibold">{shopData.review_average || '5.0'}</span> ({shopData.review_count} Reviews)
+                    </span>
+                    <span>•</span>
+                    <span>Active Listings: <strong className="text-white">{shopData.listing_active_count}</strong></span>
+                    <span>•</span>
+                    <span>Sales: <strong className="text-white">{shopData.transaction_sold_count}</strong></span>
+                  </>
+                ) : (
+                  <>
+                    <span className="flex items-center gap-1">
+                      <Star size={12} className="text-amber-400 fill-amber-400" />
+                      <span className="text-white font-semibold">4.9</span> (1,482 Reviews)
+                    </span>
+                    <span>•</span>
+                    <span>Active Listings: <strong className="text-white">{activeData.activeListings}</strong></span>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
           {/* Sync Connection state */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="flex items-center gap-2">
+            {!shopData ? (
+              <a href="/api/etsy/auth" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs transition-colors shadow-lg">
+                Connect Etsy Shop
+              </a>
+            ) : null}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs">
+              <div className={`w-2 h-2 rounded-full ${shopData ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
             <span className="text-[#a09cb0]">Etsy Sync:</span>
             <span className="text-white font-bold">StarSeller_Store_1</span>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Aktif Siparişler (Active Orders Grid) */}
