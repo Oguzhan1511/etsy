@@ -38,42 +38,36 @@ export default function AIDesignStudioPage() {
     setIsSaved(false);
 
     try {
-      let uploadedImageUrl = "";
-      if (referenceImage) {
-        const res = await fetch('/api/upload-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ base64: referenceImage })
-        });
-        const data = await res.json();
-        if (data.url) {
-          uploadedImageUrl = data.url;
-        }
-      }
-
-      // Using Pollinations AI for free, fast, no-auth image generation
-      const seed = Math.floor(Math.random() * 1000000);
-      const finalPrompt = encodeURIComponent(prompt);
-      let imageUrl = `https://image.pollinations.ai/prompt/${finalPrompt}?seed=${seed}&width=1024&height=1024&nologo=true&model=gptimage&transparent=true`;
+      const res = await fetch('/api/openai-generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base64Image: referenceImage, prompt })
+      });
       
-      if (uploadedImageUrl) {
-        imageUrl += `&image=${encodeURIComponent(uploadedImageUrl)}`;
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Yapay zeka sunucusundan hata döndü');
       }
 
-      // Preload image to avoid showing broken state
-      const img = new Image();
-      img.src = imageUrl;
-      img.onload = () => {
-        setGeneratedImage(imageUrl);
-        setIsGenerating(false);
-      };
-      img.onerror = () => {
-        alert("Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
-        setIsGenerating(false);
-      };
-    } catch (err) {
+      if (data.url) {
+        // Preload image to avoid showing broken state
+        const img = new Image();
+        img.src = data.url;
+        img.onload = () => {
+          setGeneratedImage(data.url);
+          setIsGenerating(false);
+        };
+        img.onerror = () => {
+          setGeneratedImage(data.url); // fallback
+          setIsGenerating(false);
+        };
+      } else {
+        throw new Error("Görsel URL'si alınamadı");
+      }
+    } catch (err: any) {
       console.error(err);
-      alert("Bir hata oluştu.");
+      alert("Bir hata oluştu: " + err.message);
       setIsGenerating(false);
     }
   };
