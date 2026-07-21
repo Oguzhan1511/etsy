@@ -16,27 +16,29 @@ import {
   Loader2,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-
-const navItems = [
-  {
-    label: "Core Platform",
-    items: [
-      { icon: LayoutDashboard, label: "Satıcı Dashboard", href: "/" },
-      { icon: LayoutDashboard, label: "Üretici Dashboard", href: "/producer-dashboard" },
-      { icon: ShoppingBag, label: "Siparişler", href: "/orders" },
-      { icon: Package, label: "Ürünler", href: "/products" },
-      { icon: Search, label: "Product Research", href: "/product-research" },
-      { icon: Sparkles, label: "AI Design Studio", href: "/ai-design-studio" },
-      { icon: Library, label: "Design Library", href: "/design-library" },
-      { icon: Layers, label: "Mockup & Publish", href: "/mockup-publish" },
-    ],
-  },
-];
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout, isLoading } = useAuth();
+  const { t } = useLanguage();
+
+  const navItems = [
+    {
+      label: t("sidebar.corePlatform"),
+      items: [
+        { icon: LayoutDashboard, label: t("sidebar.sellerDashboard"), href: "/" },
+        { icon: LayoutDashboard, label: t("sidebar.producerDashboard"), href: "/producer-dashboard" },
+        { icon: ShoppingBag, label: t("sidebar.orders"), href: "/orders" },
+        { icon: Package, label: t("sidebar.products"), href: "/products" },
+        { icon: Search, label: t("sidebar.productResearch"), href: "/product-research" },
+        { icon: Sparkles, label: t("sidebar.aiDesignStudio"), href: "/ai-design-studio" },
+        { icon: Library, label: t("sidebar.designLibrary"), href: "/design-library" },
+        { icon: Layers, label: t("sidebar.mockupPublish"), href: "/mockup-publish" },
+      ],
+    },
+  ];
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -198,7 +200,7 @@ export default function Sidebar() {
           </span>
           <button
             onClick={logout}
-            title="Çıkış Yap"
+            title={t("sidebar.logout")}
             className="flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-lg transition-all duration-150 cursor-pointer"
             style={{ color: "var(--text-muted)" }}
             onMouseEnter={(e) => {
@@ -211,7 +213,7 @@ export default function Sidebar() {
             }}
           >
             <LogOut size={12} />
-            <span>Çıkış</span>
+            <span>{t("sidebar.logout")}</span>
           </button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   Sparkles,
   Layers,
@@ -376,6 +377,7 @@ const FallbackImage = ({ src, alt }: { src: string, alt: string }) => {
 };
 
 export default function ProducerDashboardPage() {
+  const { t } = useLanguage();
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [activeCat, setActiveCat] = useState<CategoryDetail>(categoryDetails["T-Shirts"]);
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["Search Volume"]);
@@ -547,10 +549,10 @@ export default function ProducerDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
-            Creator Dashboard
+            {t("dashboard.producer")}
           </h1>
           <p className="text-sm mt-0.5 text-[#a09cb0]">
-            Printify and Etsy integration metrics, mockup pipelines, and inventory sync queues.
+            {t("dashboard.producerDesc")}
           </p>
         </div>
         <div

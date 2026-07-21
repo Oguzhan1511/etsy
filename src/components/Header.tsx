@@ -1,8 +1,11 @@
 "use client";
 
 import { Bell, Search, Command, Plus } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Header() {
+  const { language, toggleLanguage, t } = useLanguage();
+  
   return (
     <header
       className="flex items-center h-14 px-5 gap-4 border-b shrink-0"
@@ -27,7 +30,7 @@ export default function Header() {
         }}
       >
         <Search size={13} />
-        <span className="flex-1 text-left text-[13px]">Search…</span>
+        <span className="flex-1 text-left text-[13px]">{t("header.search")}</span>
         <span
           className="flex items-center gap-0.5 text-[11px] px-1.5 py-0.5 rounded"
           style={{ background: "var(--bg-hover)", color: "var(--text-muted)" }}
@@ -52,7 +55,29 @@ export default function Header() {
           }}
         >
           <Plus size={14} strokeWidth={2.5} />
-          <span className="hidden sm:inline">New</span>
+          <span className="hidden sm:inline">{t("header.new")}</span>
+        </button>
+
+        {/* Language Toggle */}
+        <button
+          onClick={toggleLanguage}
+          className="relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-150 font-bold text-xs"
+          style={{
+            background: "var(--bg-elevated)",
+            border: "1px solid var(--border)",
+            color: "var(--text-secondary)",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+            (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.background = "var(--bg-elevated)";
+            (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+          }}
+          title={t("common.language")}
+        >
+          {language === "tr" ? "TR" : "EN"}
         </button>
 
         {/* Notifications */}
