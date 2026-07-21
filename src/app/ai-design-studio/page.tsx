@@ -39,7 +39,7 @@ export default function AIDesignStudioPage() {
 
     // Using Pollinations AI for free, fast, no-auth image generation
     const seed = Math.floor(Math.random() * 1000000);
-    const finalPrompt = encodeURIComponent(`${prompt}, masterpiece, best quality`);
+    const finalPrompt = encodeURIComponent(`${prompt}, highly detailed, photorealistic, cinematic style, masterpiece, best quality, 8k resolution`);
     const imageUrl = `https://image.pollinations.ai/prompt/${finalPrompt}?seed=${seed}&width=1024&height=1024&nologo=true`;
 
     // Preload image to avoid showing broken state
