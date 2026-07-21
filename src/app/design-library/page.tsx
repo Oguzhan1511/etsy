@@ -79,9 +79,13 @@ export default function DesignLibraryPage() {
     }
   };
 
-  const handleDownload = (url: string) => {
-    // Simulate download by opening in a new tab due to cross-origin policies
-    window.open(url, "_blank");
+  const handleDownload = (url: string, name: string) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${name.replace(/\s+/g, '_').toLowerCase()}_design.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const startRename = (design: DesignItem) => {
@@ -197,7 +201,7 @@ export default function DesignLibraryPage() {
                     <Eye className="w-5 h-5" />
                   </button>
                   <button 
-                    onClick={() => handleDownload(design.url)}
+                    onClick={() => handleDownload(design.url, design.name)}
                     className="p-2.5 bg-white/10 hover:bg-white/25 rounded-full text-white transition-colors cursor-pointer"
                     title="Download / Open Original"
                   >
