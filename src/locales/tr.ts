@@ -406,7 +406,6 @@ export const tr = {
   "dashboard.noAnalysisDesc": "Product Research sayfasında arattığınız ürünler burada listelenecektir.",
   "dashboard.analyzeNow": "Araştırma Sayfasına Git",
   "dashboard.sales": "Satış",
-  "dashboard.revenue": "Gelir",
   "dashboard.rating": "Değerlendirme",
 
   // Login

@@ -37,11 +37,13 @@ export default function OrdersPage() {
       .then(res => res.json())
       .then(data => {
         if (!data.error && Array.isArray(data)) {
-          const formatted = data.map((item: Record<string, unknown>) => {
-            const txs = item.transactions as Array<Record<string, unknown>>;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const formatted = data.map((item: any) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const txs = item.transactions as Array<any>;
             const transaction = txs && txs[0] ? txs[0] : null;
             const status = item.is_shipped ? "Shipped" : "Processing";
-            const orderedTime = new Date(item.created_timestamp * 1000).toLocaleString();
+            const orderedTime = new Date(Number(item.created_timestamp) * 1000).toLocaleString();
             
             return {
               id: item.receipt_id.toString(),

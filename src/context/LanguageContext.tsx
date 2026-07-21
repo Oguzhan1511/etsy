@@ -27,6 +27,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     // Check local storage for saved preference on mount
     const savedLang = localStorage.getItem("preferred_language") as Language;
     if (savedLang && (savedLang === "en" || savedLang === "tr")) {
+      // eslint-disable-next-line
       setLanguage(savedLang);
     }
   }, []);

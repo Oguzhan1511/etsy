@@ -406,7 +406,6 @@ export const en = {
   "dashboard.noAnalysisDesc": "Products you analyze in the Product Research page will appear here.",
   "dashboard.analyzeNow": "Go to Research Page",
   "dashboard.sales": "Sales",
-  "dashboard.revenue": "Revenue",
   "dashboard.rating": "Rating",
 
   // Login

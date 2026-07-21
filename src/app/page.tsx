@@ -243,6 +243,7 @@ interface ShopData {
   review_count: number;
   listing_active_count: number;
   transaction_sold_count: number;
+  icon_url_fullxfull?: string;
 }
 
 export default function SellerDashboard() {
@@ -294,7 +295,7 @@ export default function SellerDashboard() {
             {/* Avatar image */}
             <div className="w-20 h-20 rounded-full border-4 border-[#16161e] overflow-hidden bg-neutral-900 shadow-xl shrink-0">
               <img 
-                src={shopData ? shopData.icon_url_fullxfull : "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=150&q=80"} 
+                src={shopData?.icon_url_fullxfull ? shopData.icon_url_fullxfull : "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=150&q=80"} 
                 alt="Shop Logo" 
                 className="w-full h-full object-cover" 
               />

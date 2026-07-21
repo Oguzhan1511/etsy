@@ -483,12 +483,7 @@ export default function ProducerDashboardPage() {
     return dataObj;
   });
 
-  const [apiKey] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("printify_api_key") || "";
-    }
-    return "";
-  });
+
 
   const [totalBlueprints] = useState(() => {
     if (typeof window !== "undefined" && localStorage.getItem("printify_api_key")) {

@@ -4,7 +4,7 @@ import { Bell, Search, Command, Plus } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 
 export default function Header() {
-  const { language, toggleLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   
   return (
     <header
