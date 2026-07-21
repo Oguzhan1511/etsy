@@ -392,41 +392,38 @@ export default function SettingsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => {
-                        if (printifyConnected) {
-                          localStorage.removeItem("printify_api_token");
-                          setPrintifyApiKey("");
-                          setPrintifyConnected(false);
-                        } else if (printifyApiKey.trim()) {
-                          localStorage.setItem("printify_api_token", printifyApiKey.trim());
+                    <input
+                      type="password"
+                      placeholder="API Anahtarını Yapıştırın"
+                      value={printifyApiKey}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setPrintifyApiKey(val);
+                        if (val.trim()) {
+                          localStorage.setItem("printify_api_key", val.trim());
                           setPrintifyConnected(true);
+                        } else {
+                          localStorage.removeItem("printify_api_key");
+                          setPrintifyConnected(false);
                         }
                       }}
+                      className="w-48 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-black/40 text-[11px] text-white placeholder-white/20 focus:outline-none focus:border-purple-500/50 transition-colors"
+                    />
+                    <button
+                      onClick={() => {
+                        window.open("https://printify.com/app/account/api", "_blank");
+                      }}
                       className={`px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                        printifyConnected 
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30" 
+                        printifyConnected
+                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
                           : "bg-purple-500/10 text-purple-400 border border-purple-500/30 hover:bg-purple-500/20"
                       }`}
                     >
-                      {printifyConnected ? t("settings.disconnect") : t("settings.connect")}
+                      {printifyConnected ? "Bağlandı" : t("settings.connect")}
                     </button>
                     <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_10px] ${printifyConnected ? 'bg-emerald-400 shadow-emerald-400/80' : 'bg-red-500 shadow-red-500/80'}`} />
                   </div>
                 </div>
-                {!printifyConnected && (
-                  <div className="pt-2 border-t border-white/[0.05] space-y-1.5">
-                    <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Kişisel Erişim Anahtarı (Token)</label>
-                    <input
-                      type="password"
-                      placeholder="eyJ..."
-                      value={printifyApiKey}
-                      onChange={(e) => setPrintifyApiKey(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white placeholder-white/20 focus:outline-none focus:border-purple-500/50 transition-colors"
-                    />
-                    <p className="text-[9px] text-[#5e5a72]">Bu anahtar tarayıcınızda güvenle saklanır ve Printify verilerinizi çekmek için kullanılır.</p>
-                  </div>
-                )}
               </div>
             </div>
           </div>

@@ -10,6 +10,7 @@ interface DesignItem {
   name: string;
   url: string;
   createdAt: number;
+  printifyImageId?: string;
 }
 
 const DEFAULT_MOCK_DESIGNS: DesignItem[] = [
@@ -52,6 +53,9 @@ export default function DesignLibraryPage() {
   // Preview state
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
+  // Sync state
+  const [syncWarning, setSyncWarning] = useState<string | null>(null);
+
   useEffect(() => {
     // Load from local storage
     const stored = localStorage.getItem("ai_designs_library");
@@ -68,6 +72,57 @@ export default function DesignLibraryPage() {
       localStorage.setItem("ai_designs_library", JSON.stringify(DEFAULT_MOCK_DESIGNS));
     }
   }, []);
+
+  // Background Sync Effect
+  useEffect(() => {
+    const performBackgroundSync = async () => {
+      if (designs.length === 0) return;
+      
+      const unsyncedDesigns = designs.filter(d => !d.printifyImageId);
+      if (unsyncedDesigns.length === 0) return;
+
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      const savedKey = localStorage.getItem("printify_api_key");
+      if (!savedKey) {
+        setSyncWarning("Printify API Anahtarınız ayarlanmadığı için otomatik eşzamanlama yapılamıyor. Lütfen Ayarlar'dan anahtarınızı girin.");
+        return; // cannot sync without key
+      }
+      setSyncWarning(null);
+      headers["x-printify-api-key"] = savedKey;
+
+      let hasChanges = false;
+      const updatedDesigns = [...designs];
+
+      for (const design of unsyncedDesigns) {
+        try {
+          const res = await fetch("/api/printify?action=upload-image", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ url: design.url })
+          });
+          const data = await res.json();
+          if (data.success && data.imageId) {
+            const index = updatedDesigns.findIndex(d => d.id === design.id);
+            if (index !== -1) {
+              updatedDesigns[index] = { ...updatedDesigns[index], printifyImageId: data.imageId };
+              hasChanges = true;
+            }
+          }
+        } catch (err) {
+          console.error("Background sync failed for design", design.id, err);
+        }
+      }
+
+      if (hasChanges) {
+        setDesigns(updatedDesigns);
+        localStorage.setItem("ai_designs_library", JSON.stringify(updatedDesigns));
+      }
+    };
+
+    // Run sync quickly
+    const timer = setTimeout(performBackgroundSync, 500);
+    return () => clearTimeout(timer);
+  }, [designs.length]);
 
   const saveDesigns = (newDesigns: DesignItem[]) => {
     setDesigns(newDesigns);
@@ -162,6 +217,13 @@ export default function DesignLibraryPage() {
         </div>
       </div>
 
+      {syncWarning && (
+        <div className="flex items-center gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl mb-4">
+          <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+          <p className="text-xs text-yellow-300">{syncWarning}</p>
+        </div>
+      )}
+
       {/* Grid Layout */}
       {sortedDesigns.length === 0 ? (
         <div className="text-center py-20 rounded-2xl border border-dashed border-white/10 bg-white/[0.01]">
@@ -192,6 +254,14 @@ export default function DesignLibraryPage() {
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
+                
+                {/* Sync Indicator */}
+                {design.printifyImageId && (
+                  <div className="absolute top-2 right-2 bg-emerald-500/80 backdrop-blur-sm text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-lg">
+                    <Check className="w-3 h-3" />
+                    Synced
+                  </div>
+                )}
                 
                 {/* Hover Overlay Actions */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]">

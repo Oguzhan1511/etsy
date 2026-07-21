@@ -165,6 +165,42 @@ export async function POST(req: Request) {
     const { searchParams } = new URL(req.url);
     const action = searchParams.get("action");
 
+    if (action === "upload-image") {
+      const body = await req.json();
+      if (!body.url) {
+        return NextResponse.json({ error: "Missing url parameter" }, { status: 400 });
+      }
+
+      try {
+        const imgRes = await fetch(body.url);
+        if (!imgRes.ok) throw new Error("Failed to fetch image from URL");
+        const arrayBuffer = await imgRes.arrayBuffer();
+        const base64Str = Buffer.from(arrayBuffer).toString('base64');
+
+        const uploadRes = await fetch("https://api.printify.com/v1/uploads/images.json", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${activeToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: base64Str,
+            file_name: `design_${Date.now()}.png`
+          })
+        });
+
+        if (uploadRes.ok) {
+          const uploadData = await uploadRes.json();
+          return NextResponse.json({ success: true, imageId: uploadData.id });
+        } else {
+          const errTxt = await uploadRes.text();
+          return NextResponse.json({ error: errTxt }, { status: uploadRes.status });
+        }
+      } catch (error: unknown) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : "Upload error" }, { status: 500 });
+      }
+    }
+
     if (action === "publish") {
       const body = await req.json();
 
@@ -191,6 +227,106 @@ export async function POST(req: Request) {
       const isRealShop = !String(shopId).startsWith("sandbox");
 
       if (isRealShop) {
+        let imageId = body.printifyImageId || null;
+        if (!imageId && body.designUrl) {
+          try {
+            // Fetch the image from the URL and convert to Base64
+            const imgRes = await fetch(body.designUrl);
+            if (!imgRes.ok) throw new Error("Failed to fetch image from URL");
+            const arrayBuffer = await imgRes.arrayBuffer();
+            const base64Str = Buffer.from(arrayBuffer).toString('base64');
+
+            // Upload image using base64 'contents'
+            const uploadRes = await fetch("https://api.printify.com/v1/uploads/images.json", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${activeToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                contents: base64Str,
+                file_name: `design_${Date.now()}.png`
+              })
+            });
+
+            if (uploadRes.ok) {
+              const uploadData = await uploadRes.json();
+              imageId = uploadData.id;
+            } else {
+              const errTxt = await uploadRes.text();
+              console.warn("Failed to upload base64 image to Printify:", errTxt);
+            }
+          } catch (err) {
+            console.error("Error processing designUrl for Printify:", err);
+          }
+        }
+
+        let finalProviderId = parseInt(body.providerId);
+        let finalVariants = body.variants || [];
+
+        if (finalVariants.length === 0) {
+          // If no variants, we must fetch providers and variants for the blueprint to make it valid
+          const provRes = await fetch(`https://api.printify.com/v1/catalog/blueprints/${body.blueprintId}/print_providers.json`, {
+            headers: {
+              Authorization: `Bearer ${activeToken}`,
+              "Content-Type": "application/json",
+            }
+          });
+          
+          if (provRes.ok) {
+            const provData = await provRes.json();
+            if (provData && provData.length > 0) {
+              const isValidProvider = provData.some((p: Record<string, unknown>) => p.id === finalProviderId);
+              if (!isValidProvider) {
+                 finalProviderId = provData[0].id;
+              }
+              
+              const varRes = await fetch(`https://api.printify.com/v1/catalog/blueprints/${body.blueprintId}/print_providers/${finalProviderId}/variants.json`, {
+                headers: {
+                  Authorization: `Bearer ${activeToken}`,
+                  "Content-Type": "application/json",
+                }
+              });
+              
+              if (varRes.ok) {
+                const varData = await varRes.json();
+                if (varData && varData.variants) {
+                  finalVariants = varData.variants.map((v: Record<string, unknown>) => ({
+                    id: v.id,
+                    price: 2500,
+                    is_enabled: true
+                  }));
+                }
+              }
+            }
+          }
+        }
+
+        let printAreas = body.printAreas || [];
+        // If image uploaded successfully and no explicit printAreas given, create a default one
+        if (imageId && printAreas.length === 0) {
+          const defaultVariantIds = finalVariants.map((v: Record<string, unknown>) => v.id);
+          printAreas = [
+            {
+              variant_ids: defaultVariantIds,
+              placeholders: [
+                {
+                  position: "front",
+                  images: [
+                    {
+                      id: imageId,
+                      x: 0.5,
+                      y: 0.5,
+                      scale: 1,
+                      angle: 0
+                    }
+                  ]
+                }
+              ]
+            }
+          ];
+        }
+
         // Post product details directly to the real Printify API
         const createProductRes = await fetch(`https://api.printify.com/v1/shops/${shopId}/products.json`, {
           method: "POST",
@@ -202,9 +338,9 @@ export async function POST(req: Request) {
             title: body.title,
             description: body.description,
             blueprint_id: parseInt(body.blueprintId),
-            print_provider_id: parseInt(body.providerId),
-            variants: body.variants || [],
-            print_areas: body.printAreas || [],
+            print_provider_id: finalProviderId,
+            variants: finalVariants,
+            print_areas: printAreas,
           }),
         });
 

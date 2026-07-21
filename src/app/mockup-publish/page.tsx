@@ -195,7 +195,9 @@ export default function MockupPublishPage() {
   };
 
   const handleModelSelect = (model: ProductModel) => {
-    window.open(`https://printify.com/app/products/${model.id}`, "_blank");
+    // Opens directly to Printify's catalog page for this specific blueprint
+    // where user can choose a print provider and start the mockup process
+    window.open(`https://printify.com/app/catalog/${model.id}`, "_blank");
   };
 
   const isApparelCategory = activeSubCat === "Shirt" || activeSubCat === "Sweatshirt Hoodie";
@@ -356,21 +358,16 @@ export default function MockupPublishPage() {
                       )}
                     </div>
                     {model.brand && <h4 className="text-xs text-purple-400 font-bold uppercase tracking-wider mb-0.5">{model.brand}</h4>}
-                    <h3 className="text-sm font-bold text-white line-clamp-2 mb-2 group-hover:text-purple-300 transition-colors">{model.name}</h3>
-                    <div className="text-[11px] text-[#a09cb0] space-y-1 mb-4">
-                      <p className="flex items-center gap-1.5"><span aria-hidden="true">🏢</span><span>{model.providers}</span></p>
-                      <p className="flex items-center gap-1.5"><span aria-hidden="true">📍</span><span>{model.shipsFrom}</span></p>
-                    </div>
+                    <h3 className="text-sm font-bold text-white line-clamp-2 mb-3 group-hover:text-purple-300 transition-colors">{model.name}</h3>
+                    <p className="text-[11px] text-[#5e5a72] mb-3">Blueprint ID: #{model.id}</p>
                   </div>
-                  <div className="pt-3 border-t border-white/[0.05] flex items-center justify-between">
-                    <div>
-                      <span className="text-[9px] text-[#5e5a72] block uppercase font-bold tracking-wider">Taban Fiyat</span>
-                      <span className="text-sm font-bold text-white">${model.baseCost.toFixed(2)}</span>
-                    </div>
-                    <button className="px-4 py-1.5 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 rounded-lg text-xs font-bold transition-colors">
-                      Printify'da Aç ↗
-                    </button>
-                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleModelSelect(model); }}
+                    className="w-full mt-2 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-lg text-xs font-bold tracking-wide transition-all shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] flex items-center justify-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    Printify'da Mokap Oluştur
+                  </button>
                 </div>
               ))}
             </div>

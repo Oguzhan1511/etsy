@@ -10,6 +10,7 @@ interface DesignItem {
   name: string;
   url: string;
   createdAt: number;
+  printifyImageId?: string;
 }
 
 export default function AIDesignStudioPage() {
@@ -103,6 +104,36 @@ export default function AIDesignStudioPage() {
       designs.unshift(newDesign);
       localStorage.setItem("ai_designs_library", JSON.stringify(designs));
       setIsSaved(true);
+
+      // Background sync to Printify
+      const syncDesign = async () => {
+        try {
+          const headers: Record<string, string> = { "Content-Type": "application/json" };
+          const savedKey = localStorage.getItem("printify_api_key");
+          if (savedKey) headers["x-printify-api-key"] = savedKey;
+
+          const res = await fetch("/api/printify?action=upload-image", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ url: generatedImage })
+          });
+          const data = await res.json();
+          if (data.success && data.imageId) {
+            // Update local storage
+            const currentStored = localStorage.getItem("ai_designs_library");
+            if (currentStored) {
+              const currentDesigns = JSON.parse(currentStored);
+              const updatedDesigns = currentDesigns.map((d: DesignItem) => 
+                d.id === newDesign.id ? { ...d, printifyImageId: data.imageId } : d
+              );
+              localStorage.setItem("ai_designs_library", JSON.stringify(updatedDesigns));
+            }
+          }
+        } catch (err) {
+          console.error("Auto-sync to Printify failed:", err);
+        }
+      };
+      syncDesign();
       
       setTimeout(() => setIsSaved(false), 3000);
     } catch (e) {
