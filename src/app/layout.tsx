@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Bot Etsy — Dashboard",
-  description: "Premium SaaS dashboard for Bot Etsy",
+  title: "PrintySell — Dashboard",
+  description: "Premium SaaS dashboard for PrintySell",
 };
 
 export default function RootLayout({

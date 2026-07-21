@@ -57,13 +57,15 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8 gap-3">
           <div
-            className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/20"
-            style={{ background: "linear-gradient(135deg, #7c6af7 0%, #a855f7 100%)" }}
+            className="w-12 h-12 rounded-2xl flex items-center justify-center bg-[#16161f] border border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.3)] relative overflow-hidden shrink-0"
           >
-            <Zap size={20} className="text-white" strokeWidth={2.5} />
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-purple-400/10" />
+            <span className="font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-purple-200 z-10" style={{ fontSize: '24px', lineHeight: 1 }}>
+              PS
+            </span>
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-white tracking-tight">Bot Etsy</h1>
+            <h1 className="text-2xl font-bold text-white tracking-tight">PrintySell</h1>
             <p className="text-xs text-[#6b6880] mt-0.5">Hesabınıza giriş yapın</p>
           </div>
         </div>
@@ -188,7 +190,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="text-center text-[10px] text-[#3a3750] mt-6">
-          © {new Date().getFullYear()} Bot Etsy — Tüm hakları saklıdır
+          © {new Date().getFullYear()} PrintySell — Tüm hakları saklıdır
         </p>
       </div>
     </div>

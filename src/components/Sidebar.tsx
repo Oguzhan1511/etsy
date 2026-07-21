@@ -74,15 +74,15 @@ export default function Sidebar() {
         style={{ borderColor: "var(--border)" }}
       >
         <div
-          className="w-7 h-7 rounded-lg flex items-center justify-center"
-          style={{
-            background: "linear-gradient(135deg, #7c6af7 0%, #a855f7 100%)",
-          }}
+          className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#16161f] border border-purple-500/30 shadow-[0_0_12px_rgba(168,85,247,0.25)] relative overflow-hidden shrink-0"
         >
-          <Zap size={14} className="text-white" strokeWidth={2.5} />
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-purple-400/10" />
+          <span className="font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-purple-200 z-10" style={{ fontSize: '14px', lineHeight: 1 }}>
+            PS
+          </span>
         </div>
-        <span className="font-semibold text-sm tracking-tight" style={{ color: "var(--text-primary)" }}>
-          Bot Etsy
+        <span className="font-semibold text-sm tracking-tight truncate" style={{ color: "var(--text-primary)" }}>
+          PrintySell
         </span>
       </div>
 
