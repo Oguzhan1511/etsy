@@ -18,11 +18,13 @@ import {
   ChevronRight,
   LogOut,
 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 type Tab = "profile" | "settings" | "plan";
 
 export default function SettingsPage() {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
 
   // Profile form state
@@ -65,7 +67,7 @@ export default function SettingsPage() {
   const handleSavePassword = () => {
     if (!oldPassword || !newPassword || !confirmPassword) return;
     if (newPassword !== confirmPassword) {
-      alert("Yeni şifreler eşleşmiyor!");
+      alert(t("settings.passwordMismatch"));
       return;
     }
     setPasswordSaved(true);
@@ -78,9 +80,9 @@ export default function SettingsPage() {
   };
 
   const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
-    { id: "profile", label: "Profil", icon: User },
-    { id: "settings", label: "Ayarlar", icon: Settings },
-    { id: "plan", label: "Plan", icon: CreditCard },
+    { id: "profile", label: t("settings.tabProfile"), icon: User },
+    { id: "settings", label: t("settings.tabSettings"), icon: Settings },
+    { id: "plan", label: t("settings.tabPlan"), icon: CreditCard },
   ];
 
   return (
@@ -89,10 +91,10 @@ export default function SettingsPage() {
       {/* Page Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
-          Hesap & Ayarlar
+          {t("settings.title")}
         </h1>
         <p className="text-sm mt-0.5 text-[#a09cb0]">
-          Profilinizi, tercihlerinizi ve plan bilgilerinizi buradan yönetebilirsiniz.
+          {t("settings.desc")}
         </p>
       </div>
 
@@ -148,11 +150,11 @@ export default function SettingsPage() {
 
           {/* Form Fields */}
           <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-4">
-            <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider">Kişisel Bilgiler</h3>
+            <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider">{t("settings.personalInfo")}</h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Ad Soyad</label>
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.fullName")}</label>
                 <input
                   type="text"
                   value={name}
@@ -161,7 +163,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">E-posta</label>
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.email")}</label>
                 <input
                   type="email"
                   value={email}
@@ -172,7 +174,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Biyografi</label>
+              <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.bio")}</label>
               <textarea
                 rows={3}
                 value={bio}
@@ -191,7 +193,7 @@ export default function SettingsPage() {
                 }`}
               >
                 {saved ? <Check size={12} /> : <Save size={12} />}
-                {saved ? "Kaydedildi!" : "Kaydet"}
+                {saved ? t("settings.saved") : t("settings.save")}
               </button>
             </div>
           </div>
@@ -199,38 +201,38 @@ export default function SettingsPage() {
           {/* Password Change */}
           <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-4">
             <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
-              <Lock size={12} /> Şifre Değiştir
+              <Lock size={12} /> {t("settings.changePassword")}
             </h3>
             
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Mevcut Şifre</label>
+                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.currentPassword")}</label>
                 <input
                   type="password"
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
-                  placeholder="Eski şifrenizi girin"
+                  placeholder={t("settings.enterOldPassword")}
                   className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors"
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Yeni Şifre</label>
+                  <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.newPassword")}</label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Yeni şifrenizi girin"
+                    placeholder={t("settings.enterNewPassword")}
                     className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">Yeni Şifre (Tekrar)</label>
+                  <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.confirmNewPassword")}</label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Yeni şifrenizi tekrar girin"
+                    placeholder={t("settings.enterConfirmNewPassword")}
                     className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors"
                   />
                 </div>
@@ -247,25 +249,25 @@ export default function SettingsPage() {
                 }`}
               >
                 {passwordSaved ? <Check size={12} /> : <Save size={12} />}
-                {passwordSaved ? "Şifre Güncellendi!" : "Şifreyi Güncelle"}
+                {passwordSaved ? t("settings.passwordUpdated") : t("settings.updatePassword")}
               </button>
             </div>
           </div>
 
           {/* Danger Zone */}
           <div className="bg-[#16161e] border border-red-500/15 rounded-2xl p-5 space-y-3">
-            <h3 className="text-xs font-bold text-red-400/80 uppercase tracking-wider">Tehlikeli Alan</h3>
+            <h3 className="text-xs font-bold text-red-400/80 uppercase tracking-wider">{t("settings.dangerZone")}</h3>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-white">Oturumu Kapat</p>
-                <p className="text-[10px] text-[#5e5a72] mt-0.5">Hesabınızdan çıkış yapın</p>
+                <p className="text-xs font-semibold text-white">{t("settings.logOut")}</p>
+                <p className="text-[10px] text-[#5e5a72] mt-0.5">{t("settings.logOutDesc")}</p>
               </div>
               <button
                 onClick={logout}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all cursor-pointer"
               >
                 <LogOut size={12} />
-                Çıkış Yap
+                {t("settings.logOut")}
               </button>
             </div>
           </div>
@@ -278,11 +280,11 @@ export default function SettingsPage() {
           {/* Notifications */}
           <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-3">
             <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
-              <Bell size={12} /> Bildirimler
+              <Bell size={12} /> {t("settings.notifications")}
             </h3>
             <SettingRow
-              label="E-posta Bildirimleri"
-              description="Sipariş ve mesaj bildirimlerini e-posta ile al"
+              label={t("settings.emailNotifications")}
+              description={t("settings.emailNotificationsDesc")}
               checked={emailNotifications}
               onToggle={() => setEmailNotifications(!emailNotifications)}
             />
@@ -291,17 +293,17 @@ export default function SettingsPage() {
           {/* Appearance */}
           <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-3">
             <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
-              <Moon size={12} /> Görünüm
+              <Moon size={12} /> {t("settings.appearance")}
             </h3>
             <SettingRow
-              label="Karanlık Mod"
-              description="Arayüzü koyu tema ile kullan"
+              label={t("settings.darkMode")}
+              description={t("settings.darkModeDesc")}
               checked={darkMode}
               onToggle={() => setDarkMode(!darkMode)}
             />
             <div className="pt-2 border-t border-white/[0.04] space-y-1.5">
               <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
-                <Globe size={11} /> Dil
+                <Globe size={11} /> {t("settings.language")}
               </label>
               <select
                 value={language}
@@ -317,11 +319,11 @@ export default function SettingsPage() {
           {/* Security */}
           <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-3">
             <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
-              <Lock size={12} /> Güvenlik
+              <Lock size={12} /> {t("settings.security")}
             </h3>
             <SettingRow
-              label="İki Faktörlü Doğrulama"
-              description="Hesabınızı ekstra bir güvenlik katmanıyla koruyun"
+              label={t("settings.twoFactor")}
+              description={t("settings.twoFactorDesc")}
               checked={twoFactor}
               onToggle={() => setTwoFactor(!twoFactor)}
             />
@@ -330,7 +332,7 @@ export default function SettingsPage() {
           {/* Integrations */}
           <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-4">
             <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
-              <Globe size={12} /> Entegrasyonlar
+              <Globe size={12} /> {t("settings.integrations")}
             </h3>
             
             <div className="space-y-3">
@@ -342,7 +344,7 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-white">Etsy</h4>
-                    <p className="text-[10px] text-[#a09cb0]">Etsy mağazanızı bağlayın</p>
+                    <p className="text-[10px] text-[#a09cb0]">{t("settings.etsyDesc")}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -354,7 +356,7 @@ export default function SettingsPage() {
                         : "bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20"
                     }`}
                   >
-                    {etsyConnected ? "Bağlantıyı Kes" : "Bağla"}
+                    {etsyConnected ? t("settings.disconnect") : t("settings.connect")}
                   </button>
                   <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_10px] ${etsyConnected ? 'bg-emerald-400 shadow-emerald-400/80' : 'bg-red-500 shadow-red-500/80'}`} />
                 </div>
@@ -390,7 +392,7 @@ export default function SettingsPage() {
                           : "bg-purple-500/10 text-purple-400 border border-purple-500/30 hover:bg-purple-500/20"
                       }`}
                     >
-                      {printifyConnected ? "Kaldır" : "Kaydet"}
+                      {printifyConnected ? t("settings.disconnect") : t("settings.connect")}
                     </button>
                     <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_10px] ${printifyConnected ? 'bg-emerald-400 shadow-emerald-400/80' : 'bg-red-500 shadow-red-500/80'}`} />
                   </div>
@@ -428,17 +430,17 @@ export default function SettingsPage() {
             <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-purple-500/5 blur-2xl pointer-events-none" />
             <div className="flex items-start justify-between">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-purple-400">Mevcut Plan</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-purple-400">{t("settings.currentPlan")}</span>
                 <h2 className="text-xl font-bold text-white mt-1 flex items-center gap-2">
                   <Zap size={18} className="text-purple-400" />
-                  Pro Plan
+                  {t("settings.proPlan")}
                 </h2>
-                <p className="text-xs text-[#a09cb0] mt-1">Tüm premium özelliklere tam erişim</p>
+                <p className="text-xs text-[#a09cb0] mt-1">{t("settings.proPlanDesc")}</p>
               </div>
-              <span className="text-2xl font-bold text-white">₺299<span className="text-xs text-[#5e5a72] font-normal">/ay</span></span>
+              <span className="text-2xl font-bold text-white">₺299<span className="text-xs text-[#5e5a72] font-normal">{t("settings.perMonth")}</span></span>
             </div>
             <div className="grid grid-cols-2 gap-2 pt-2">
-              {["Sınırsız ürün", "AI Design Studio", "Gerçek zamanlı analiz", "Öncelikli destek"].map((f) => (
+              {[t("settings.featureUnlimited"), "AI Design Studio", t("settings.featureAnalytics"), t("settings.featureSupport")].map((f) => (
                 <div key={f} className="flex items-center gap-1.5 text-[11px] text-[#a09cb0]">
                   <Check size={10} className="text-purple-400 shrink-0" />
                   {f}
@@ -450,9 +452,9 @@ export default function SettingsPage() {
           {/* Plan Options */}
           <div className="space-y-2">
             {[
-              { name: "Starter", price: "₺99", desc: "Yeni başlayanlar için", features: ["50 ürün", "Temel analiz", "E-posta destek"] },
-              { name: "Pro", price: "₺299", desc: "Büyüyen satıcılar için", features: ["Sınırsız ürün", "AI Design Studio", "Öncelikli destek"], current: true },
-              { name: "Business", price: "₺699", desc: "Ekipler ve profesyoneller için", features: ["Her şey dahil", "Çoklu hesap", "Özel entegrasyon"] },
+              { name: "Starter", price: "₺99", desc: t("settings.starterDesc"), features: [t("settings.starterFeat1"), t("settings.starterFeat2"), t("settings.starterFeat3")] },
+              { name: "Pro", price: "₺299", desc: t("settings.proDesc"), features: [t("settings.featureUnlimited"), "AI Design Studio", t("settings.featureSupport")], current: true },
+              { name: "Business", price: "₺699", desc: t("settings.businessDesc"), features: [t("settings.businessFeat1"), t("settings.businessFeat2"), t("settings.businessFeat3")] },
             ].map((plan) => (
               <div
                 key={plan.name}
@@ -465,7 +467,7 @@ export default function SettingsPage() {
                     <span className="text-sm font-bold text-white">{plan.name}</span>
                     {plan.current && (
                       <span className="text-[9px] font-bold bg-purple-500/20 border border-purple-500/30 text-purple-400 px-1.5 py-0.5 rounded-full">
-                        AKTİF
+                        {t("settings.active")}
                       </span>
                     )}
                   </div>
@@ -479,10 +481,10 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <div className="text-right shrink-0 ml-4">
-                  <p className="text-base font-bold text-white">{plan.price}<span className="text-[10px] text-[#5e5a72] font-normal">/ay</span></p>
+                  <p className="text-base font-bold text-white">{plan.price}<span className="text-[10px] text-[#5e5a72] font-normal">{t("settings.perMonth")}</span></p>
                   {!plan.current && (
                     <button className="mt-2 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-purple-500/20 border border-white/[0.06] hover:border-purple-500/30 text-[10px] font-bold text-[#a09cb0] hover:text-white transition-all cursor-pointer">
-                      Yükselt <ChevronRight size={10} />
+                      {t("settings.upgrade")} <ChevronRight size={10} />
                     </button>
                   )}
                 </div>
@@ -493,7 +495,7 @@ export default function SettingsPage() {
           {/* Security badge */}
           <div className="flex items-center gap-2 text-[10px] text-[#5e5a72] justify-center pt-1">
             <Shield size={11} />
-            Ödemeler SSL ile güvence altındadır
+            {t("settings.ssl")}
           </div>
         </div>
       )}

@@ -20,6 +20,7 @@ import {
   ChevronLeft,
   Trash2,
 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ProductModel {
   id: string; // Printify Blueprint ID
@@ -489,6 +490,7 @@ const getMockupImageStyle = (color: string): React.CSSProperties => {
 };
 
 export default function MockupPublishPage() {
+  const { t } = useLanguage();
   // Full flat list of all blueprint models returned by the API proxy
   const [allBlueprints, setAllBlueprints] = useState<ProductModel[]>([]);
   const [isLoadingCatalog, setIsLoadingCatalog] = useState(false);
@@ -1086,17 +1088,17 @@ export default function MockupPublishPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 animate-pulse">
-              Studio Matrix Pro
+              {t("mockupPublish.studioMatrixPro")}
             </span>
-            <span className="text-xs text-[#a09cb0]">Printify Real-Time Sync & Etsy publish</span>
+            <span className="text-xs text-[#a09cb0]">{t("mockupPublish.subtitle")}</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
-            {isStudioOpen ? "Printify Studio Sandbox" : "Mockup & Publish Catalog"}
+            {isStudioOpen ? t("mockupPublish.titleSandbox") : t("mockupPublish.titleCatalog")}
           </h1>
           <p className="text-sm mt-1 text-[#a09cb0]">
             {isStudioOpen && selectedModel
-              ? `Designing Mockups for ${selectedModel.name}`
-              : "Search the official catalog, choose print options, configure designs, and list directly to Etsy."
+              ? t("mockupPublish.descDesigning").replace("{modelName}", selectedModel.name)
+              : t("mockupPublish.descCatalog")
             }
           </p>
         </div>
@@ -1104,15 +1106,15 @@ export default function MockupPublishPage() {
         {!isStudioOpen ? (
           <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] p-3 rounded-2xl">
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-[#a09cb0] uppercase tracking-wider font-mono">Printify Token</span>
+              <span className="text-[10px] font-bold text-[#a09cb0] uppercase tracking-wider font-mono">{t("mockupPublish.token")}</span>
               <span className={`text-[11px] font-bold ${isCatalogOffline ? "text-amber-400" : "text-green-400"}`}>
-                {isCatalogOffline ? "Sandbox Mode" : "API Connected"}
+                {isCatalogOffline ? t("mockupPublish.sandboxMode") : t("mockupPublish.apiConnected")}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <input
                 type="password"
-                placeholder="Paste API Key here..."
+                placeholder={t("mockupPublish.pasteApiKey")}
                 value={customApiKey}
                 onChange={(e) => handleApiKeyChange(e.target.value)}
                 className="bg-white/[0.04] border border-white/[0.08] text-white text-xs px-3 py-1.5 rounded-lg focus:outline-none focus:border-purple-500/50 w-44 transition-all"
@@ -1122,7 +1124,7 @@ export default function MockupPublishPage() {
                   onClick={clearApiKey}
                   className="text-xs text-red-400 hover:text-red-300 px-2 py-1 bg-red-500/10 hover:bg-red-500/15 rounded-lg transition-all font-semibold cursor-pointer"
                 >
-                  Clear
+                  {t("mockupPublish.clear")}
                 </button>
               )}
             </div>
@@ -1133,7 +1135,7 @@ export default function MockupPublishPage() {
             className="flex items-center gap-1.5 text-xs text-purple-400 hover:text-purple-300 font-bold transition-colors cursor-pointer border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 px-4 py-2 rounded-xl"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Catalog Overview</span>
+            <span>{t("mockupPublish.catalogOverview")}</span>
           </button>
         )}
       </div>
@@ -1149,7 +1151,7 @@ export default function MockupPublishPage() {
           >
             <h2 className="text-sm font-bold text-white flex items-center gap-1.5 pb-2 border-b border-white/[0.06]">
               <Package className="w-4 h-4 text-purple-400" />
-              <span>Catalog Tree</span>
+              <span>{t("mockupPublish.catalogTree")}</span>
             </h2>
 
             <div className="relative">
@@ -1161,7 +1163,7 @@ export default function MockupPublishPage() {
                   setCatalogSearch(e.target.value);
                   setCurrentPage(1);
                 }}
-                placeholder="Search catalog models..."
+                placeholder={t("mockupPublish.searchModels")}
                 className="w-full h-8 pl-9 pr-3 bg-black/30 border border-white/[0.08] focus:border-purple-500/80 rounded-lg text-xs text-white placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-purple-500/30"
               />
             </div>
@@ -1214,11 +1216,11 @@ export default function MockupPublishPage() {
             <div className="pt-2 border-t border-white/[0.06] text-[10px] text-[#5e5a72] space-y-1">
               <div className="flex items-center gap-1.5">
                 <div className="w-1 h-1 rounded-full bg-emerald-500" />
-                <span>Etsy API Synced</span>
+                <span>{t("mockupPublish.etsySynced")}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="w-1 h-1 rounded-full bg-emerald-500" />
-                <span>Printify Catalog Connected</span>
+                <span>{t("mockupPublish.printifyConnected")}</span>
               </div>
             </div>
           </div>
@@ -1227,9 +1229,9 @@ export default function MockupPublishPage() {
           <div className="lg:col-span-9 space-y-4">
             <div className="flex justify-between items-center text-xs">
               <h3 className="font-bold text-[#f1f0ff] uppercase tracking-wider flex items-center gap-1.5">
-                <span>{activeSubCat} Catalog ({filteredModels.length} models)</span>
+                <span>{activeSubCat} {t("mockupPublish.catalog")} ({filteredModels.length} {t("mockupPublish.models")})</span>
                 {catalogSearch && (
-                  <span className="text-[#5e5a72] font-medium lowercase">filtered for &quot;{catalogSearch}&quot;</span>
+                  <span className="text-[#5e5a72] font-medium lowercase">{t("mockupPublish.filteredFor")} &quot;{catalogSearch}&quot;</span>
                 )}
               </h3>
               <span className="text-[11px] text-[#5e5a72]">{apiLogs}</span>
@@ -1238,17 +1240,17 @@ export default function MockupPublishPage() {
             {isLoadingCatalog ? (
               <div className="flex flex-col items-center py-20 gap-3">
                 <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
-                <p className="text-xs text-[#a09cb0]">Connecting with official Printify blueprints collection...</p>
+                <p className="text-xs text-[#a09cb0]">{t("mockupPublish.connecting")}</p>
               </div>
             ) : filteredModels.length === 0 ? (
               <div className="text-center py-16 rounded-xl border border-dashed border-white/10 bg-white/[0.01]">
-                <p className="text-sm font-semibold text-[#a09cb0]">No catalog models matched this taxonomy tier</p>
+                <p className="text-sm font-semibold text-[#a09cb0]">{t("mockupPublish.noModels")}</p>
                 {catalogSearch && (
                   <button
                     onClick={() => setCatalogSearch("")}
                     className="mt-3 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs rounded-lg font-semibold cursor-pointer"
                   >
-                    Clear search filter
+                    {t("mockupPublish.clearFilter")}
                   </button>
                 )}
               </div>
@@ -1273,11 +1275,11 @@ export default function MockupPublishPage() {
                             />
                             {model.isBestseller && (
                               <span className="absolute top-2 left-2 z-10 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] text-white text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow border border-white/10">
-                                Best Seller
+                                {t("mockupPublish.bestSeller")}
                               </span>
                             )}
                             <span className="absolute bottom-2 right-2 z-10 bg-black/60 backdrop-blur-md border border-white/10 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">
-                              {model.colors.length} Colors
+                              {model.colors.length} {t("mockupPublish.colors")}
                             </span>
                           </div>
 
@@ -1300,14 +1302,14 @@ export default function MockupPublishPage() {
 
                         <div className="pt-3 border-t border-white/[0.05] flex items-center justify-between">
                           <div>
-                            <span className="text-[9px] text-[#5e5a72] block uppercase font-bold tracking-wider">Base cost</span>
-                            <span className="text-sm font-bold text-white">From ${model.baseCost.toFixed(2)}</span>
+                            <span className="text-[9px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("mockupPublish.baseCost")}</span>
+                            <span className="text-sm font-bold text-white">{t("mockupPublish.from")} ${model.baseCost.toFixed(2)}</span>
                           </div>
                           <button
                             type="button"
                             className="px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all bg-gradient-to-r from-[#7c6af7] to-[#8c7bf7] shadow-[0_3px_10px_rgba(124,106,247,0.2)]"
                           >
-                            Design →
+                            {t("mockupPublish.designBtn")}
                           </button>
                         </div>
                       </div>
@@ -1326,7 +1328,7 @@ export default function MockupPublishPage() {
                       >
                         <ChevronLeft className="w-4 h-4 text-white" />
                       </button>
-                      <span>Page <span className="font-semibold text-white">{currentPage}</span> of <span className="font-semibold text-white">{totalPages}</span></span>
+                      <span>{t("mockupPublish.page")} <span className="font-semibold text-white">{currentPage}</span> {t("mockupPublish.of")} <span className="font-semibold text-white">{totalPages}</span></span>
                       <button
                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                         disabled={currentPage === totalPages}
@@ -1337,14 +1339,14 @@ export default function MockupPublishPage() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span>Jump:</span>
+                      <span>{t("mockupPublish.jump")}</span>
                       <select
                         value={currentPage}
                         onChange={(e) => setCurrentPage(parseInt(e.target.value))}
                         className="bg-black/45 border border-white/[0.08] text-xs text-white rounded p-1"
                       >
                         {Array.from({ length: totalPages }).map((_, i) => (
-                          <option key={i + 1} value={i + 1}>Page {i + 1}</option>
+                          <option key={i + 1} value={i + 1}>{t("mockupPublish.page")} {i + 1}</option>
                         ))}
                       </select>
                     </div>
@@ -1370,13 +1372,13 @@ export default function MockupPublishPage() {
                 >
                   <h2 className="text-sm font-bold text-white flex items-center gap-1.5 pb-2 border-b border-white/[0.06]">
                     <Package className="w-4 h-4 text-purple-400" />
-                    <span>Choose Provider</span>
+                    <span>{t("mockupPublish.chooseProvider")}</span>
                   </h2>
 
                   {isLoadingProviders ? (
                     <div className="flex flex-col items-center py-6 gap-2">
                       <Loader2 className="w-5 h-5 animate-spin text-purple-400" />
-                      <span className="text-[10px] text-[#a09cb0]">Retrieving provider catalogs...</span>
+                      <span className="text-[10px] text-[#a09cb0]">{t("mockupPublish.retrievingProviders")}</span>
                     </div>
                   ) : (
                     <div className="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
@@ -1397,11 +1399,11 @@ export default function MockupPublishPage() {
                               <span className="text-purple-300 font-bold shrink-0">${prov.shippingCost.toFixed(2)} shp</span>
                             </div>
                             <div className="flex justify-between w-full text-[10px] text-[#5e5a72]">
-                              <span>Rating: <span className="font-semibold text-white">⭐ {prov.rating || 9.4}</span></span>
+                              <span>{t("mockupPublish.rating")} <span className="font-semibold text-white">⭐ {prov.rating || 9.4}</span></span>
                               <span>{prov.productionTime}</span>
                             </div>
                             <div className="text-[9px] text-[#5e5a72] border-t border-white/[0.04] pt-1">
-                              Ships from: <span className="font-medium text-white/80">{prov.shipsFrom}</span>
+                              {t("mockupPublish.shipsFrom")} <span className="font-medium text-white/80">{prov.shipsFrom}</span>
                             </div>
                           </button>
                         );
@@ -1415,11 +1417,11 @@ export default function MockupPublishPage() {
                   style={{ background: "var(--bg-card)" }}
                 >
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                    Blueprint Details
+                    {t("mockupPublish.blueprintDetails")}
                   </h3>
                   <div className="space-y-1 text-xs text-[#a09cb0]">
-                    <p><span className="text-white/60">Brand:</span> {selectedModel.brand}</p>
-                    <p><span className="text-white/60">Model ID:</span> {selectedModel.id}</p>
+                    <p><span className="text-white/60">{t("mockupPublish.brand")}</span> {selectedModel.brand}</p>
+                    <p><span className="text-white/60">{t("mockupPublish.modelId")}</span> {selectedModel.id}</p>
                     <p className="text-[11px] leading-relaxed pt-1.5 text-[#5e5a72] border-t border-white/[0.04]">
                       {selectedModel.description.slice(0, 160)}...
                     </p>
@@ -1437,7 +1439,7 @@ export default function MockupPublishPage() {
                   <div className="w-full flex items-center justify-between border-b border-white/[0.06] pb-2 text-xs">
                     <span className="font-bold text-white flex items-center gap-1.5">
                       <Palette className="w-4 h-4 text-purple-400" />
-                      <span>Canvas Editor</span>
+                      <span>{t("mockupPublish.canvasEditor")}</span>
                     </span>
 
                     <div className="flex gap-1 bg-black/40 border border-white/[0.06] p-0.5 rounded-lg shrink-0">
@@ -1482,7 +1484,7 @@ export default function MockupPublishPage() {
                     {isImageLoading && (
                       <div className="absolute inset-0 bg-[#0d0d14]/75 backdrop-blur-sm flex flex-col items-center justify-center gap-2 z-10 pointer-events-none">
                         <Loader2 className="w-7 h-7 animate-spin text-[#7c6af7]" />
-                        <span className="text-[9px] text-purple-300 font-bold uppercase tracking-widest animate-pulse">Rendering Canvas...</span>
+                        <span className="text-[9px] text-purple-300 font-bold uppercase tracking-widest animate-pulse">{t("mockupPublish.renderingCanvas")}</span>
                       </div>
                     )}
 
@@ -1520,7 +1522,7 @@ export default function MockupPublishPage() {
                             </div>
                           ) : (
                             <div className="text-[6px] text-purple-400/20 uppercase tracking-widest font-bold text-center p-2">
-                              No Layer Applied
+                              {t("mockupPublish.noLayer")}
                             </div>
                           )}
                         </div>
@@ -1533,14 +1535,14 @@ export default function MockupPublishPage() {
                         <button
                           onClick={handleCenterHorizontal}
                           className="p-1 hover:bg-white/10 rounded text-[#a09cb0] hover:text-white transition-colors cursor-pointer"
-                          title="Center Horizontally"
+                          title={t("mockupPublish.centerHoriz")}
                         >
                           <AlignCenter className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={handleCenterVertical}
                           className="p-1 hover:bg-white/10 rounded text-[#a09cb0] hover:text-white transition-colors cursor-pointer"
-                          title="Center Vertically"
+                          title={t("mockupPublish.centerVert")}
                         >
                           <AlignCenter className="w-3.5 h-3.5 rotate-90" />
                         </button>
@@ -1548,15 +1550,15 @@ export default function MockupPublishPage() {
                         <button
                           onClick={handleFitCanvas}
                           className="px-2 py-1 text-[9px] font-bold bg-[#7c6af7]/20 hover:bg-[#7c6af7]/35 text-purple-300 rounded-md transition-all cursor-pointer"
-                          title="Fit to Area"
+                          title={t("mockupPublish.fitArea")}
                         >
-                          Fit Area
+                          {t("mockupPublish.fitArea")}
                         </button>
                         <div className="w-[1px] h-3.5 bg-white/10 self-center" />
                         <button
                           onClick={() => setSelectedDesign("")}
                           className="p-1 hover:bg-red-500/20 hover:text-red-400 rounded text-[#a09cb0] transition-colors cursor-pointer"
-                          title="Delete Design"
+                          title={t("mockupPublish.deleteDesign")}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -1568,7 +1570,7 @@ export default function MockupPublishPage() {
                   <div className="w-full space-y-3 pt-3 border-t border-white/[0.06] text-xs">
                     
                     <div className="flex items-center justify-between gap-4">
-                      <span className="text-[#a09cb0] shrink-0 font-medium">Design Scale: <span className="text-white font-bold">{designScale}%</span></span>
+                      <span className="text-[#a09cb0] shrink-0 font-medium">{t("mockupPublish.designScale")} <span className="text-white font-bold">{designScale}%</span></span>
                       <input
                         type="range"
                         min="10"
@@ -1586,14 +1588,14 @@ export default function MockupPublishPage() {
                           className="px-2.5 py-1.5 bg-[#16161f] border border-white/[0.06] hover:bg-[#1a1a26] text-[10px] text-[#a09cb0] hover:text-white rounded-md flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <AlignCenter className="w-3.5 h-3.5" />
-                          <span>Center Horiz</span>
+                          <span>{t("mockupPublish.centerHoriz")}</span>
                         </button>
                         <button
                           onClick={handleCenterVertical}
                           className="px-2.5 py-1.5 bg-[#16161f] border border-white/[0.06] hover:bg-[#1a1a26] text-[10px] text-[#a09cb0] hover:text-white rounded-md flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <AlignCenter className="w-3.5 h-3.5 rotate-90" />
-                          <span>Center Vert</span>
+                          <span>{t("mockupPublish.centerVert")}</span>
                         </button>
                       </div>
 
@@ -1602,13 +1604,13 @@ export default function MockupPublishPage() {
                           onClick={handleFillCanvas}
                           className="px-2 py-1 bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 text-[9px] text-purple-300 rounded font-semibold cursor-pointer transition-all"
                         >
-                          Fill
+                          {t("mockupPublish.fill")}
                         </button>
                         <button
                           onClick={handleFitCanvas}
                           className="px-2 py-1 bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 text-[9px] text-purple-300 rounded font-semibold cursor-pointer transition-all"
                         >
-                          Fit
+                          {t("mockupPublish.fit")}
                         </button>
                       </div>
                     </div>
@@ -1616,10 +1618,10 @@ export default function MockupPublishPage() {
                     <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-black/25 border border-white/[0.04] text-[10px]">
                       <div className="flex items-center gap-1 text-[#5e5a72]">
                         <Info className="w-3.5 h-3.5" />
-                        <span>Resolution Quality:</span>
+                        <span>{t("mockupPublish.resolutionQuality")}</span>
                         <span className={`font-semibold ${dpiInfo.color}`}>{dpiInfo.dpi} DPI ({dpiInfo.quality})</span>
                       </div>
-                      <span className="text-[#5e5a72]">Optimal: 150+ DPI</span>
+                      <span className="text-[#5e5a72]">{t("mockupPublish.optimalDpi")}</span>
                     </div>
 
                   </div>
@@ -1632,7 +1634,7 @@ export default function MockupPublishPage() {
                 >
                   <h3 className="text-xs font-bold text-[#f1f0ff] flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                    <span>Apply Design Layer</span>
+                    <span>{t("mockupPublish.applyLayer")}</span>
                   </h3>
                   
                   <div className="grid grid-cols-4 gap-2">
@@ -1669,7 +1671,7 @@ export default function MockupPublishPage() {
                 >
                   <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
                     <Palette className="w-3.5 h-3.5 text-purple-400" />
-                    <span>Choose Mockup Color</span>
+                    <span>{t("mockupPublish.chooseColor")}</span>
                   </h3>
 
                   <div className="flex flex-wrap gap-2">
@@ -1708,7 +1710,7 @@ export default function MockupPublishPage() {
                 <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
                   <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
                     <Layers className="w-3.5 h-3.5 text-purple-400" />
-                    <span>Select Mockup Views</span>
+                    <span>{t("mockupPublish.selectViews")}</span>
                   </h3>
                   <select
                     value={mockupTheme}
@@ -1856,15 +1858,15 @@ export default function MockupPublishPage() {
           >
             <h2 className="text-sm font-bold text-[#f1f0ff] flex items-center gap-1.5 pb-2 border-b border-white/[0.06]">
               <Info className="w-4 h-4 text-purple-400" />
-              <span>Etsy Listing Metadata Details</span>
+              <span>{t("mockupPublish.etsyMetadataDetails")}</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <label htmlFor="listing-title" className="text-xs text-[#a09cb0] font-semibold">Etsy Listing Title</label>
+                  <label htmlFor="listing-title" className="text-xs text-[#a09cb0] font-semibold">{t("mockupPublish.etsyListingTitle")}</label>
                   <span className="text-[10px] text-[#5e5a72] block">
-                    {title.length}/140 chars
+                    {title.length}/140 {t("mockupPublish.chars")}
                   </span>
                 </div>
                 <textarea
@@ -1872,19 +1874,19 @@ export default function MockupPublishPage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   rows={3}
-                  placeholder="E.g., Aesthetic Floral T-Shirt..."
+                  placeholder={t("mockupPublish.egAesthetic")}
                   className="w-full p-3 bg-black/25 border border-white/[0.08] focus:border-purple-500/80 rounded-lg text-xs text-[#f1f0ff] placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-purple-500/30 transition-all resize-none font-medium leading-relaxed"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="listing-description" className="text-xs text-[#a09cb0] font-semibold">Description / Specifications</label>
+                <label htmlFor="listing-description" className="text-xs text-[#a09cb0] font-semibold">{t("mockupPublish.descSpecs")}</label>
                 <textarea
                   id="listing-description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
-                  placeholder="Specifications, size metrics..."
+                  placeholder={t("mockupPublish.specsSizeMetrics")}
                   className="w-full p-3 bg-black/25 border border-white/[0.08] focus:border-purple-500/80 rounded-lg text-xs text-[#f1f0ff] placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-purple-500/30 transition-all resize-none text-[11px] leading-relaxed"
                 />
               </div>
@@ -1900,9 +1902,9 @@ export default function MockupPublishPage() {
               <div>
                 <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
                   <Palette className="w-4 h-4 text-purple-400" />
-                  <span>Variant Pricing Matrix</span>
+                  <span>{t("mockupPublish.variantPricingMatrix")}</span>
                 </h2>
-                <p className="text-[11px] text-[#a09cb0] mt-0.5">Configure individual variation retail prices and check margins.</p>
+                <p className="text-[11px] text-[#a09cb0] mt-0.5">{t("mockupPublish.configureMargins")}</p>
               </div>
 
               {/* Bulk pricing helper tools */}
@@ -1913,7 +1915,7 @@ export default function MockupPublishPage() {
                     type="text"
                     value={bulkPriceInput}
                     onChange={(e) => setBulkPriceInput(e.target.value)}
-                    placeholder="Bulk price..."
+                    placeholder={t("mockupPublish.bulkPrice")}
                     className="h-8 pl-7 pr-2 w-28 bg-black/30 border border-white/[0.08] focus:border-purple-500/80 rounded-lg text-xs text-white"
                   />
                 </div>
@@ -1923,7 +1925,7 @@ export default function MockupPublishPage() {
                   className="h-8 px-3 rounded-lg text-[10px] font-bold text-white bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/30 cursor-pointer transition-colors flex items-center gap-1"
                 >
                   <Percent className="w-3 h-3 text-purple-400" />
-                  <span>Apply Bulk</span>
+                  <span>{t("mockupPublish.applyBulk")}</span>
                 </button>
               </div>
             </div>
@@ -1931,7 +1933,7 @@ export default function MockupPublishPage() {
             {isLoadingVariants ? (
               <div className="flex flex-col items-center py-8 gap-2">
                 <Loader2 className="w-6 h-6 animate-spin text-purple-400" />
-                <span className="text-[11px] text-[#a09cb0]">Syncing variant options metadata...</span>
+                <span className="text-[11px] text-[#a09cb0]">{t("mockupPublish.syncingVariantOptions")}</span>
               </div>
             ) : (
               <div className="overflow-x-auto border border-white/[0.05] rounded-xl bg-black/10">
@@ -1946,12 +1948,12 @@ export default function MockupPublishPage() {
                           className="rounded border-white/20 accent-[#7c6af7] cursor-pointer"
                         />
                       </th>
-                      <th className="px-4 py-3">Color</th>
-                      <th className="px-4 py-3">Size</th>
-                      <th className="px-4 py-3">Stock Status</th>
-                      <th className="px-4 py-3">Base Cost</th>
-                      <th className="px-4 py-3">Retail Price</th>
-                      <th className="px-4 py-3 text-right">Profit Margin</th>
+                      <th className="px-4 py-3">{t("mockupPublish.colorCol")}</th>
+                      <th className="px-4 py-3">{t("mockupPublish.sizeCol")}</th>
+                      <th className="px-4 py-3">{t("mockupPublish.stockStatusCol")}</th>
+                      <th className="px-4 py-3">{t("mockupPublish.baseCostCol")}</th>
+                      <th className="px-4 py-3">{t("mockupPublish.retailPriceCol")}</th>
+                      <th className="px-4 py-3 text-right">{t("mockupPublish.profitMarginCol")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.04]">
@@ -1983,9 +1985,9 @@ export default function MockupPublishPage() {
                           <td className="px-4 py-3 font-semibold">{row.size}</td>
                           <td className="px-4 py-3">
                             {row.inStock ? (
-                              <span className="text-[10px] text-emerald-400 bg-emerald-500/5 px-2 py-0.5 border border-emerald-500/10 rounded">In Stock</span>
+                              <span className="text-[10px] text-emerald-400 bg-emerald-500/5 px-2 py-0.5 border border-emerald-500/10 rounded">{t("mockupPublish.inStock")}</span>
                             ) : (
-                              <span className="text-[10px] text-red-400 bg-red-500/5 px-2 py-0.5 border border-red-500/10 rounded font-bold">Out of Stock</span>
+                              <span className="text-[10px] text-red-400 bg-red-500/5 px-2 py-0.5 border border-red-500/10 rounded font-bold">{t("mockupPublish.outOfStock")}</span>
                             )}
                           </td>
                           <td className="px-4 py-3 font-semibold text-white">${row.baseCost.toFixed(2)}</td>
@@ -2004,7 +2006,7 @@ export default function MockupPublishPage() {
                           <td className="px-4 py-3 text-right">
                             <div className="inline-flex flex-col items-end">
                               <span className="font-bold text-white">${marginProfit.toFixed(2)}</span>
-                              <span className="text-[9px] text-purple-300 font-semibold mt-0.5">{marginPct.toFixed(1)}% margin</span>
+                              <span className="text-[9px] text-purple-300 font-semibold mt-0.5">{marginPct.toFixed(1)}% {t("mockupPublish.marginPct")}</span>
                             </div>
                           </td>
                         </tr>
@@ -2018,7 +2020,7 @@ export default function MockupPublishPage() {
             {/* Matrix buttons list */}
             <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
               <div className="text-xs text-[#5e5a72]">
-                Selected variations: <span className="font-semibold text-white">{variantsList.filter(v => v.selected && v.inStock).length}</span> items
+                {t("mockupPublish.selectedVariations")} <span className="font-semibold text-white">{variantsList.filter(v => v.selected && v.inStock).length}</span> {t("mockupPublish.items")}
               </div>
 
               <button
@@ -2032,12 +2034,12 @@ export default function MockupPublishPage() {
                 {isPublishing ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin text-white" />
-                    <span>Syncing inventory...</span>
+                    <span>{t("mockupPublish.syncingInventory")}</span>
                   </>
                 ) : (
                   <>
                     <Layers className="w-4 h-4" />
-                    <span>Publish to Etsy via Printify</span>
+                    <span>{t("mockupPublish.publishToEtsyViaPrintify")}</span>
                   </>
                 )}
               </button>
@@ -2063,8 +2065,8 @@ export default function MockupPublishPage() {
             </div>
 
             <div>
-              <h3 className="text-lg font-bold text-white">Publishing in Progress</h3>
-              <p className="text-xs text-[#a09cb0] mt-1">Pushing variables to live Etsy & Printify API nodes.</p>
+              <h3 className="text-lg font-bold text-white">{t("mockupPublish.publishingInProgress")}</h3>
+              <p className="text-xs text-[#a09cb0] mt-1">{t("mockupPublish.pushingVariables")}</p>
             </div>
 
             <div className="text-left space-y-3 max-w-xs mx-auto text-xs bg-black/20 p-4 rounded-xl border border-white/[0.05]">
@@ -2075,7 +2077,7 @@ export default function MockupPublishPage() {
                   <Loader2 className="w-4 h-4 animate-spin text-purple-400 shrink-0" />
                 )}
                 <span className={publishStep > 1 ? "text-white/60 line-through" : "text-white font-semibold"}>
-                  Generating mockup image renders
+                  {t("mockupPublish.generatingMockups")}
                 </span>
               </div>
 
@@ -2088,7 +2090,7 @@ export default function MockupPublishPage() {
                   <div className="w-4 h-4 rounded-full border border-white/10 shrink-0" />
                 )}
                 <span className={publishStep > 2 ? "text-white/60 line-through" : publishStep === 2 ? "text-white font-semibold" : "text-[#5e5a72]"}>
-                  Uploading designs to Printify catalog
+                  {t("mockupPublish.uploadingDesigns")}
                 </span>
               </div>
 
@@ -2101,7 +2103,7 @@ export default function MockupPublishPage() {
                   <div className="w-4 h-4 rounded-full border border-white/10 shrink-0" />
                 )}
                 <span className={publishStep === 3 ? "text-white font-semibold" : "text-[#5e5a72]"}>
-                  Syncing drafts to Etsy Shop Listings
+                  {t("mockupPublish.syncingDrafts")}
                 </span>
               </div>
             </div>
@@ -2125,30 +2127,30 @@ export default function MockupPublishPage() {
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-white">Listing Draft Created!</h3>
+              <h3 className="text-xl font-bold text-white">{t("mockupPublish.listingDraftCreated")}</h3>
               <p className="text-xs text-[#a09cb0] mt-1.5 max-w-sm mx-auto leading-relaxed">
-                The product has been successfully created on Printify and sent as a draft to your connected Etsy shop listing inventory.
+                {t("mockupPublish.draftCreatedDesc")}
               </p>
             </div>
 
             <div className="bg-black/20 p-4 rounded-xl border border-white/[0.04] text-left text-xs space-y-2">
               <div className="flex justify-between">
-                <span className="text-[#a09cb0]">Product Title:</span>
+                <span className="text-[#a09cb0]">{t("mockupPublish.productTitle")}</span>
                 <span className="font-semibold text-white truncate max-w-[200px]">{title}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#a09cb0]">Synced Variants:</span>
+                <span className="text-[#a09cb0]">{t("mockupPublish.syncedVariants")}</span>
                 <span className="font-semibold text-purple-300">
-                  {variantsList.filter(v => v.selected && v.inStock).length} variations mapped
+                  {variantsList.filter(v => v.selected && v.inStock).length} {t("mockupPublish.variationsMapped")}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#a09cb0]">Print Provider:</span>
+                <span className="text-[#a09cb0]">{t("mockupPublish.printProvider")}</span>
                 <span className="font-semibold text-white">{selectedProvider?.name || "Monster Digital"}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#a09cb0]">Etsy Sync:</span>
-                <span className="font-semibold text-emerald-400 font-bold">Draft Sync Complete (v3)</span>
+                <span className="text-[#a09cb0]">{t("mockupPublish.etsySync")}</span>
+                <span className="font-semibold text-emerald-400 font-bold">{t("mockupPublish.draftSyncComplete")}</span>
               </div>
             </div>
 
@@ -2157,7 +2159,7 @@ export default function MockupPublishPage() {
                 onClick={() => setShowSuccessModal(false)}
                 className="flex-1 py-2.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white rounded-xl text-xs font-semibold cursor-pointer"
               >
-                Close Studio
+                {t("mockupPublish.closeStudio")}
               </button>
               
               <a
@@ -2166,7 +2168,7 @@ export default function MockupPublishPage() {
                 rel="noopener noreferrer"
                 className="flex-1 py-2.5 bg-gradient-to-r from-[#22c55e] to-[#10b981] hover:brightness-110 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1 shadow-[0_4px_12px_rgba(34,197,94,0.25)]"
               >
-                <span>View Etsy Shop</span>
+                <span>{t("mockupPublish.viewEtsyShop")}</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>

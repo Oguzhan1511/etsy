@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Search, Download, Trash2, Edit2, Check, X, CalendarDays, ImageIcon, Eye } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface DesignItem {
   id: string;
@@ -39,6 +40,7 @@ const DEFAULT_MOCK_DESIGNS: DesignItem[] = [
 ];
 
 export default function DesignLibraryPage() {
+  const { t } = useLanguage();
   const [designs, setDesigns] = useState<DesignItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("newest");
@@ -73,7 +75,7 @@ export default function DesignLibraryPage() {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this design?")) {
+    if (window.confirm(t("designLibrary.deleteConfirm"))) {
       const newDesigns = designs.filter((d) => d.id !== id);
       saveDesigns(newDesigns);
     }
@@ -94,7 +96,7 @@ export default function DesignLibraryPage() {
   };
 
   const saveRename = (id: string) => {
-    const newDesigns = designs.map(d => d.id === id ? { ...d, name: editName || "Untitled Design" } : d);
+    const newDesigns = designs.map(d => d.id === id ? { ...d, name: editName || t("designLibrary.untitled") } : d);
     saveDesigns(newDesigns);
     setEditingId(null);
   };
@@ -119,15 +121,15 @@ export default function DesignLibraryPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
-              Storage Vault
+              {t("designLibrary.storageVault")}
             </span>
             <span className="text-xs text-[#a09cb0]">AI Design Studio</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
-            Design Library
+            {t("designLibrary.title")}
           </h1>
           <p className="text-sm mt-1 text-[#a09cb0]">
-            Manage, download, and organize all your generated artwork.
+            {t("designLibrary.desc")}
           </p>
         </div>
       </div>
@@ -138,7 +140,7 @@ export default function DesignLibraryPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#a09cb0]" />
           <input
             type="text"
-            placeholder="Search designs by name..."
+            placeholder={t("designLibrary.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-black/40 border border-white/[0.08] text-sm text-white rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-purple-500/50 transition-all"
@@ -146,16 +148,16 @@ export default function DesignLibraryPage() {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-          <span className="text-xs font-semibold text-[#a09cb0] hidden sm:block">Sort by:</span>
+          <span className="text-xs font-semibold text-[#a09cb0] hidden sm:block">{t("designLibrary.sortBy")}</span>
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
             className="w-full sm:w-auto bg-black/40 border border-white/[0.08] text-sm text-white rounded-lg px-4 py-2.5 focus:outline-none focus:border-purple-500/50 transition-all appearance-none cursor-pointer"
           >
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="az">Name (A-Z)</option>
-            <option value="za">Name (Z-A)</option>
+            <option value="newest">{t("designLibrary.sortNewest")}</option>
+            <option value="oldest">{t("designLibrary.sortOldest")}</option>
+            <option value="az">{t("designLibrary.sortAZ")}</option>
+            <option value="za">{t("designLibrary.sortZA")}</option>
           </select>
         </div>
       </div>
@@ -168,11 +170,11 @@ export default function DesignLibraryPage() {
               <ImageIcon className="w-8 h-8 text-purple-400" />
             </div>
           </div>
-          <h3 className="text-lg font-bold text-white mb-2">No designs found</h3>
+          <h3 className="text-lg font-bold text-white mb-2">{t("designLibrary.noDesigns")}</h3>
           <p className="text-sm text-[#a09cb0] max-w-md mx-auto">
             {searchQuery 
-              ? "We couldn't find any designs matching your search criteria."
-              : "Your library is empty. Head over to the AI Design Studio to generate some amazing artwork!"}
+              ? t("designLibrary.noMatch")
+              : t("designLibrary.empty")}
           </p>
         </div>
       ) : (
@@ -196,28 +198,28 @@ export default function DesignLibraryPage() {
                   <button 
                     onClick={() => setPreviewImage(design.url)}
                     className="p-2.5 bg-blue-500/20 hover:bg-blue-500/40 border border-blue-500/30 rounded-full text-blue-300 transition-colors cursor-pointer"
-                    title="Preview Design"
+                    title={t("designLibrary.preview")}
                   >
                     <Eye className="w-5 h-5" />
                   </button>
                   <button 
                     onClick={() => handleDownload(design.url, design.name)}
                     className="p-2.5 bg-white/10 hover:bg-white/25 rounded-full text-white transition-colors cursor-pointer"
-                    title="Download / Open Original"
+                    title={t("designLibrary.download")}
                   >
                     <Download className="w-5 h-5" />
                   </button>
                   <button 
                     onClick={() => startRename(design)}
                     className="p-2.5 bg-purple-500/20 hover:bg-purple-500/40 border border-purple-500/30 rounded-full text-purple-300 transition-colors cursor-pointer"
-                    title="Rename Design"
+                    title={t("designLibrary.rename")}
                   >
                     <Edit2 className="w-5 h-5" />
                   </button>
                   <button 
                     onClick={() => handleDelete(design.id)}
                     className="p-2.5 bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 rounded-full text-red-300 transition-colors cursor-pointer"
-                    title="Delete Design"
+                    title={t("designLibrary.delete")}
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
