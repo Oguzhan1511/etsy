@@ -33,6 +33,14 @@ export const en = {
   "dashboard.revenue": "Revenue",
   "dashboard.rating": "Rating",
 
+  // Login
+  "login.title": "Log in to your account",
+  "login.email": "Email",
+  "login.password": "Password",
+  "login.submit": "Log In",
+  "login.hint": "You can log in with any email and password",
+  "login.rights": "All rights reserved",
+
   // General
   "common.language": "Language",
 };

@@ -33,6 +33,14 @@ export const tr = {
   "dashboard.revenue": "Gelir",
   "dashboard.rating": "Değerlendirme",
 
+  // Login
+  "login.title": "Hesabınıza giriş yapın",
+  "login.email": "E-posta",
+  "login.password": "Şifre",
+  "login.submit": "Giriş Yap",
+  "login.hint": "Herhangi bir e-posta ve şifre ile giriş yapabilirsiniz",
+  "login.rights": "Tüm hakları saklıdır",
+
   // General
   "common.language": "Dil",
 };

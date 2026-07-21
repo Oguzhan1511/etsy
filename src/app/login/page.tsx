@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, Globe } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function LoginPage() {
   const { login, user, isLoading } = useAuth();
+  const { t, language, toggleLanguage } = useLanguage();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -48,6 +50,30 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#09090b] flex items-center justify-center p-4 relative overflow-hidden">
       
+      {/* Language Toggle */}
+      <button
+        onClick={toggleLanguage}
+        className="absolute top-6 right-6 flex items-center justify-center w-12 h-10 rounded-xl transition-all duration-150 font-bold text-xs shadow-lg z-50 cursor-pointer"
+        style={{
+          background: "rgba(22, 22, 30, 0.8)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          color: "var(--text-secondary)",
+          backdropFilter: "blur(12px)",
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLElement).style.background = "rgba(124,106,247,0.15)";
+          (e.currentTarget as HTMLElement).style.color = "#fff";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLElement).style.background = "rgba(22, 22, 30, 0.8)";
+          (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+        }}
+        title={t("common.language")}
+      >
+        <Globe size={14} className="mr-1 opacity-70" />
+        {language === "tr" ? "TR" : "EN"}
+      </button>
+      
       {/* Background glow blobs */}
       <div className="absolute top-[-10%] left-[-5%] w-96 h-96 rounded-full bg-purple-600/10 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-5%] w-80 h-80 rounded-full bg-violet-500/8 blur-[120px] pointer-events-none" />
@@ -66,7 +92,7 @@ export default function LoginPage() {
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white tracking-tight">PrintySell</h1>
-            <p className="text-xs text-[#6b6880] mt-0.5">Hesabınıza giriş yapın</p>
+            <p className="text-xs text-[#6b6880] mt-0.5">{t("login.title")}</p>
           </div>
         </div>
 
@@ -84,7 +110,7 @@ export default function LoginPage() {
             {/* Email */}
             <div className="space-y-1.5">
               <label className="text-[11px] font-semibold text-[#6b6880] uppercase tracking-wider block">
-                E-posta
+                {t("login.email")}
               </label>
               <div className="relative">
                 <Mail size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4a4760]" />
@@ -114,7 +140,7 @@ export default function LoginPage() {
             {/* Password */}
             <div className="space-y-1.5">
               <label className="text-[11px] font-semibold text-[#6b6880] uppercase tracking-wider block">
-                Şifre
+                {t("login.password")}
               </label>
               <div className="relative">
                 <Lock size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4a4760]" />
@@ -175,7 +201,7 @@ export default function LoginPage() {
                 <Loader2 size={14} className="animate-spin" />
               ) : (
                 <>
-                  <span>Giriş Yap</span>
+                  <span>{t("login.submit")}</span>
                   <ArrowRight size={14} />
                 </>
               )}
@@ -184,13 +210,13 @@ export default function LoginPage() {
 
           {/* Hint */}
           <p className="text-center text-[11px] text-[#4a4760]">
-            Herhangi bir e-posta ve şifre ile giriş yapabilirsiniz
+            {t("login.hint")}
           </p>
         </div>
 
         {/* Footer */}
         <p className="text-center text-[10px] text-[#3a3750] mt-6">
-          © {new Date().getFullYear()} PrintySell — Tüm hakları saklıdır
+          © {new Date().getFullYear()} PrintySell — {t("login.rights")}
         </p>
       </div>
     </div>
