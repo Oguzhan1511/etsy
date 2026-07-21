@@ -727,8 +727,7 @@ export default function ProductResearchPage() {
                 <button
                   onClick={() => {
                     const encodedUrl = encodeURIComponent(analyzedProduct.imageUrl);
-                    const encodedPrompt = encodeURIComponent(analyzedProduct.title);
-                    router.push(`/ai-design-studio?image=${encodedUrl}&prompt=${encodedPrompt}`);
+                    router.push(`/ai-design-studio?image=${encodedUrl}`);
                   }}
                   className="flex-1 py-2.5 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 transition-all font-bold text-xs text-white rounded-xl flex items-center justify-center gap-1.5 shadow-[0_4px_15px_rgba(124,106,247,0.3)]"
                 >
