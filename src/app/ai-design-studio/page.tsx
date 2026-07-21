@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Wand2, Loader2, Download, Library, CheckCircle2, Image as ImageIcon, Settings2, UploadCloud, X } from "lucide-react";
+import { Sparkles, Wand2, Loader2, Download, Library, CheckCircle2, Image as ImageIcon, Settings2 } from "lucide-react";
 import Link from "next/link";
 
 interface DesignItem {
@@ -17,18 +17,6 @@ export default function AIDesignStudioPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
-  const [referenceImage, setReferenceImage] = useState<string | null>(null);
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setReferenceImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const STYLES = [
     { id: "cinematic", label: "Cinematic", desc: "Photorealistic and dramatic lighting" },
@@ -138,40 +126,6 @@ export default function AIDesignStudioPage() {
                   className="w-full h-32 bg-black/40 border border-white/[0.08] text-sm text-white rounded-xl p-4 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all resize-none placeholder:text-[#5e5a72]"
                   required
                 />
-              </div>
-
-              {/* Reference Image Upload */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-white flex items-center gap-2">
-                  <UploadCloud className="w-4 h-4 text-purple-400" />
-                  Referans Görsel (Opsiyonel)
-                </label>
-                {referenceImage ? (
-                  <div className="relative w-full h-32 rounded-xl overflow-hidden border border-white/[0.08] group">
-                    <img src={referenceImage} alt="Reference" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                      <button 
-                        type="button"
-                        onClick={() => setReferenceImage(null)}
-                        className="p-2 bg-red-500/20 hover:bg-red-500/40 text-red-300 rounded-full transition-colors"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-32 bg-black/40 border border-dashed border-white/[0.15] hover:border-purple-500/50 hover:bg-black/60 rounded-xl cursor-pointer transition-all">
-                    <UploadCloud className="w-6 h-6 text-[#a09cb0] mb-2" />
-                    <span className="text-sm text-[#a09cb0] font-medium">Görsel yüklemek için tıklayın</span>
-                    <span className="text-[10px] text-[#5e5a72] mt-1">Sürükle bırak veya bilgisayardan seç</span>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={handleImageUpload}
-                    />
-                  </label>
-                )}
               </div>
 
               {/* Style Selection */}
