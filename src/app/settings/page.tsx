@@ -49,6 +49,16 @@ export default function SettingsPage() {
   const [printifyApiKey, setPrintifyApiKey] = useState("");
 
   React.useEffect(() => {
+    // Check Etsy connection
+    fetch('/api/etsy/shop')
+      .then(res => {
+        if (res.ok) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          setEtsyConnected(true);
+        }
+      })
+      .catch(console.error);
+
     if (typeof window !== "undefined") {
       const savedToken = localStorage.getItem("printify_api_token");
       if (savedToken) {
@@ -349,7 +359,14 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => setEtsyConnected(!etsyConnected)}
+                    onClick={() => {
+                      if (!etsyConnected) {
+                        window.location.href = '/api/etsy/auth';
+                      } else {
+                        // Disconnect logic (for now just toggle UI)
+                        setEtsyConnected(false);
+                      }
+                    }}
                     className={`px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                       etsyConnected 
                         ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30" 
