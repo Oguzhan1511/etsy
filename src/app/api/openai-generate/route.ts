@@ -57,7 +57,18 @@ Kullanıcı talimatı: ${prompt}`;
     }
 
     const data = await response.json();
-    return NextResponse.json({ url: data.data[0].url });
+    
+    // gpt-image-1 usually returns b64_json
+    if (data.data && data.data[0]) {
+      const resultData = data.data[0];
+      if (resultData.url) {
+        return NextResponse.json({ url: resultData.url });
+      } else if (resultData.b64_json) {
+        return NextResponse.json({ url: `data:image/png;base64,${resultData.b64_json}` });
+      }
+    }
+    
+    return NextResponse.json({ error: "Görsel formatı API'den beklenmeyen şekilde döndü" }, { status: 500 });
 
   } catch (error: unknown) {
     console.error('OpenAI Generation Error:', error);
