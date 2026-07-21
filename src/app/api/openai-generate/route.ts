@@ -4,8 +4,8 @@ export async function POST(req: Request) {
   try {
     const { base64Image, prompt } = await req.json();
 
-    if (!prompt) {
-      return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
+    if (!base64Image) {
+      return NextResponse.json({ error: 'Lütfen bir referans görsel yükleyin.' }, { status: 400 });
     }
 
     const apiKey = process.env.OPENAI_API_KEY;
@@ -13,68 +13,51 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'OpenAI API Key is missing in .env.local' }, { status: 500 });
     }
 
-    let dallePrompt = prompt;
+    // Harika prompt şablonunu kullanıyoruz
+    const fullPrompt = `Extract and isolate ONLY the print/pattern design from this image, removing the garment, model, fabric folds, shadows, and any clothing texture entirely. Present the design as a standalone flat print asset, photographed straight-on with even studio lighting, as if for a print-on-demand catalog. Preserve the exact composition, element positions, color palette, and artistic style of the original design with maximum fidelity - do not reinterpret, simplify, or stylize differently. Background must be solid, flat, pure white (#FFFFFF), completely uniform with no gradient, texture, vignette, or shadow. No mockup, no fabric, no text, no watermark.
+Kullanıcı talimatı: ${prompt}`;
 
-    // If an image is provided, use GPT-4o to analyze it and write a DALL-E 3 prompt
-    if (base64Image) {
-      const gpt4Response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are an expert prompt engineer for DALL-E 3. Your goal is to look at the user\'s uploaded design, and write a DALL-E 3 prompt that EXACTLY recreates the style, layout, aesthetics, and subject of the uploaded design, but incorporates the user\'s requested modifications. DO NOT output conversational text, ONLY output the final DALL-E 3 english prompt. Ensure the background is white so it can be easily removed later.'
-            },
-            {
-              role: 'user',
-              content: [
-                { type: 'text', text: `User request: ${prompt}. Describe this image perfectly so DALL-E 3 can recreate it with the requested changes.` },
-                { type: 'image_url', image_url: { url: base64Image } }
-              ]
-            }
-          ],
-          max_tokens: 500
-        })
-      });
+    // Base64'ü form-data için Blob/File formatına çevir
+    const base64Data = base64Image.includes(',') ? base64Image.split(',')[1] : base64Image;
+    const mimeMatch = base64Image.match(/^data:(image\/\w+);base64,/);
+    const mimeType = mimeMatch ? mimeMatch[1] : 'image/png';
+    const ext = mimeType.split('/')[1] || 'png';
+    
+    // Buffer for Node.js environment
+    const buffer = Buffer.from(base64Data, 'base64');
+    const blob = new Blob([buffer], { type: mimeType });
 
-      if (gpt4Response.ok) {
-        const gpt4Data = await gpt4Response.json();
-        if (gpt4Data.choices?.[0]?.message?.content) {
-          dallePrompt = gpt4Data.choices[0].message.content;
-          console.log("GPT-4o generated DALL-E prompt:", dallePrompt);
-        }
-      }
-    }
+    const formData = new FormData();
+    formData.append('model', 'gpt-image-1');
+    formData.append('image', blob, `image.${ext}`);
+    formData.append('prompt', fullPrompt);
+    formData.append('input_fidelity', 'high');
+    formData.append('background', 'opaque');
+    formData.append('quality', 'high');
+    formData.append('size', '1024x1024');
+    formData.append('n', '1');
 
-    // Now call DALL-E 3
-    const dalleResponse = await fetch('https://api.openai.com/v1/images/generations', {
+    const response = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`
       },
-      body: JSON.stringify({
-        model: 'dall-e-3',
-        prompt: dallePrompt,
-        n: 1,
-        size: '1024x1024',
-        quality: 'hd',
-      })
+      body: formData
     });
 
-    if (!dalleResponse.ok) {
-      const errorData = await dalleResponse.json();
-      console.error("DALL-E 3 Error:", errorData);
-      return NextResponse.json({ error: errorData.error?.message || 'Failed to generate image' }, { status: 500 });
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error("OpenAI Error:", errorData);
+      let errMsg = "OpenAI API hatası";
+      try {
+        const parsed = JSON.parse(errorData);
+        errMsg = parsed.error?.message || errMsg;
+      } catch(e) {}
+      return NextResponse.json({ error: errMsg }, { status: response.status });
     }
 
-    const dalleData = await dalleResponse.json();
-    return NextResponse.json({ url: dalleData.data[0].url });
+    const data = await response.json();
+    return NextResponse.json({ url: data.data[0].url });
 
   } catch (error: unknown) {
     console.error('OpenAI Generation Error:', error);
