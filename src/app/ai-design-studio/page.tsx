@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Wand2, Loader2, Download, Library, CheckCircle2, Image as ImageIcon, Settings2 } from "lucide-react";
+import { Sparkles, Wand2, Loader2, Download, Library, CheckCircle2, Image as ImageIcon, UploadCloud, X } from "lucide-react";
 import Link from "next/link";
 
 interface DesignItem {
@@ -13,19 +13,21 @@ interface DesignItem {
 
 export default function AIDesignStudioPage() {
   const [prompt, setPrompt] = useState("");
-  const [style, setStyle] = useState("cinematic");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
+  const [referenceImage, setReferenceImage] = useState<string | null>(null);
 
-  const STYLES = [
-    { id: "cinematic", label: "Cinematic", desc: "Photorealistic and dramatic lighting" },
-    { id: "anime", label: "Anime", desc: "Japanese animation style" },
-    { id: "digital-art", label: "Digital Art", desc: "High quality digital painting" },
-    { id: "3d-model", label: "3D Render", desc: "Octane render, unreal engine 5" },
-    { id: "pixel-art", label: "Pixel Art", desc: "Retro 8-bit / 16-bit style" },
-    { id: "watercolor", label: "Watercolor", desc: "Soft and artistic paint" },
-  ];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setReferenceImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleGenerate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +39,7 @@ export default function AIDesignStudioPage() {
 
     // Using Pollinations AI for free, fast, no-auth image generation
     const seed = Math.floor(Math.random() * 1000000);
-    const finalPrompt = encodeURIComponent(`${prompt}, ${style} style, masterpiece, best quality`);
+    const finalPrompt = encodeURIComponent(`${prompt}, masterpiece, best quality`);
     const imageUrl = `https://image.pollinations.ai/prompt/${finalPrompt}?seed=${seed}&width=1024&height=1024&nologo=true`;
 
     // Preload image to avoid showing broken state
@@ -113,50 +115,62 @@ export default function AIDesignStudioPage() {
           <div className="bg-[#16161f] rounded-2xl border border-white/[0.06] p-6 shadow-2xl">
             <form onSubmit={handleGenerate} className="space-y-6">
               
+              {/* Reference Image Upload */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-white flex items-center gap-2">
+                  <UploadCloud className="w-4 h-4 text-purple-400" />
+                  Referans Görsel Yükle (Görselden Görsele)
+                </label>
+                {referenceImage ? (
+                  <div className="relative w-full h-40 rounded-xl overflow-hidden border border-white/[0.08] group">
+                    <img src={referenceImage} alt="Reference" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                      <button 
+                        type="button"
+                        onClick={() => setReferenceImage(null)}
+                        className="p-2 bg-red-500/20 hover:bg-red-500/40 text-red-300 rounded-full transition-colors"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-full h-40 bg-black/40 border border-dashed border-white/[0.15] hover:border-purple-500/50 hover:bg-black/60 rounded-xl cursor-pointer transition-all group">
+                    <div className="w-10 h-10 rounded-full bg-white/[0.05] flex items-center justify-center mb-3 group-hover:bg-purple-500/20 group-hover:text-purple-400 transition-colors">
+                      <UploadCloud className="w-5 h-5 text-[#a09cb0] group-hover:text-purple-400" />
+                    </div>
+                    <span className="text-sm text-white font-medium">Görsel yüklemek için tıklayın</span>
+                    <span className="text-[10px] text-[#5e5a72] mt-1">Sürükle bırak veya bilgisayardan seç</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                )}
+              </div>
+
               {/* Prompt Input */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-white flex items-center gap-2">
                   <Wand2 className="w-4 h-4 text-purple-400" />
-                  Ne tasarlamak istiyorsunuz?
+                  Görselde ne değiştirmek istiyorsunuz?
                 </label>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Örn: Kahve içen şirin bir kedi illüstrasyonu, neon renkler, cyberpunk arkaplan..."
-                  className="w-full h-32 bg-black/40 border border-white/[0.08] text-sm text-white rounded-xl p-4 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all resize-none placeholder:text-[#5e5a72]"
+                  placeholder="Örn: Kahve içen şirin bir kedi illüstrasyonu yap, arka plana neon ışıklar ekle..."
+                  className="w-full h-24 bg-black/40 border border-white/[0.08] text-sm text-white rounded-xl p-4 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all resize-none placeholder:text-[#5e5a72]"
                   required
                 />
-              </div>
-
-              {/* Style Selection */}
-              <div className="space-y-3">
-                <label className="text-sm font-semibold text-white flex items-center gap-2">
-                  <Settings2 className="w-4 h-4 text-purple-400" />
-                  Sanat Stili Seçin
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  {STYLES.map((s) => (
-                    <div 
-                      key={s.id}
-                      onClick={() => setStyle(s.id)}
-                      className={`p-3 rounded-xl border cursor-pointer transition-all duration-200 ${
-                        style === s.id 
-                          ? 'bg-purple-500/10 border-purple-500 text-white' 
-                          : 'bg-black/20 border-white/[0.06] text-[#a09cb0] hover:border-white/[0.15] hover:bg-black/40'
-                      }`}
-                    >
-                      <div className="font-semibold text-sm mb-0.5">{s.label}</div>
-                      <div className="text-[10px] opacity-70 leading-tight">{s.desc}</div>
-                    </div>
-                  ))}
-                </div>
               </div>
 
               {/* Generate Button */}
               <button
                 type="submit"
                 disabled={isGenerating || !prompt.trim()}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden mt-2"
                 style={{
                   background: "linear-gradient(135deg, #7c6af7 0%, #a855f7 100%)",
                   boxShadow: "0 4px 20px rgba(124,106,247,0.3)",
