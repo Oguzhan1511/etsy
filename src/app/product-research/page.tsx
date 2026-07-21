@@ -13,6 +13,7 @@ import {
   HelpCircle,
   ExternalLink,
 } from "lucide-react";
+import Image from "next/image";
 
 interface Product {
   id: string;
@@ -464,10 +465,12 @@ export default function ProductResearchPage() {
                     {/* Image Area */}
                     <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-neutral-900 border border-white/[0.04]">
                       {/* Product Image */}
-                      <img
+                      <Image
                         src={product.imageUrl}
                         alt={product.title}
-                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                        fill
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                        unoptimized={false}
                       />
                       
                       {/* Bestseller Badge */}
@@ -578,10 +581,12 @@ export default function ProductResearchPage() {
           >
             <div className="flex items-center gap-3 min-w-0">
               <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/10 bg-black/40">
-                <img
+                <Image
                   src={selectedProduct.imageUrl}
                   alt={selectedProduct.title}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  unoptimized={false}
                 />
               </div>
               <div className="min-w-0">
@@ -645,11 +650,15 @@ export default function ProductResearchPage() {
             </button>
 
             <div className="flex gap-4 items-start mb-5">
-              <img
-                src={analyzedProduct.imageUrl}
-                alt={analyzedProduct.title}
-                className="w-16 h-16 object-cover rounded-xl border border-white/10 shrink-0"
-              />
+              <div className="relative w-16 h-16 shrink-0 rounded-xl border border-white/10 overflow-hidden">
+                <Image
+                  src={analyzedProduct.imageUrl}
+                  alt={analyzedProduct.title}
+                  fill
+                  className="object-cover"
+                  unoptimized={false}
+                />
+              </div>
               <div>
                 <span className="text-xs text-purple-400 font-semibold">{analyzedProduct.shopName}</span>
                 <h3 className="text-sm font-bold text-white line-clamp-2 leading-tight">

@@ -43,8 +43,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Etsy Developer keys missing in environment variables" }, { status: 500 });
     }
 
-    // 1. Fetch listings using global search
-    const searchRes = await fetch(`https://api.etsy.com/v3/application/listings/active?keywords=${encodeURIComponent(keyword)}&limit=12`, {
+    // 1. Fetch listings using global search (get 50 to find the best ones)
+    const searchRes = await fetch(`https://api.etsy.com/v3/application/listings/active?keywords=${encodeURIComponent(keyword)}&limit=50&sort_on=score`, {
       headers: getEtsyHeaders()
     });
 
@@ -55,9 +55,20 @@ export async function POST(req: Request) {
     }
 
     const data = (await searchRes.json()) as Record<string, unknown>;
-    const rawListings = (data.results as EtsyListing[]) || [];
+    let rawListings = (data.results as EtsyListing[]) || [];
 
-    // 2. Fetch images and shop names in parallel, but throttle to respect rate limits
+    // 2. Filter out 0-view items and sort by views/favorites to get the most "winning" products
+    rawListings = rawListings.filter(item => (item.views || 0) > 5 || (item.num_favorers || 0) > 0);
+    rawListings.sort((a, b) => {
+      const scoreA = (a.views || 0) + (a.num_favorers || 0) * 10;
+      const scoreB = (b.views || 0) + (b.num_favorers || 0) * 10;
+      return scoreB - scoreA;
+    });
+
+    // Take top 12
+    rawListings = rawListings.slice(0, 12);
+
+    // 3. Fetch images and shop names in parallel, but throttle to respect rate limits
     const products = [];
     const now = Date.now() / 1000;
 
