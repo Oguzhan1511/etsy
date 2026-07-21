@@ -53,7 +53,6 @@ export default function SettingsPage() {
     fetch('/api/etsy/shop')
       .then(res => {
         if (res.ok) {
-          // eslint-disable-next-line react-hooks/set-state-in-effect
           setEtsyConnected(true);
         }
       })
@@ -62,7 +61,6 @@ export default function SettingsPage() {
     if (typeof window !== "undefined") {
       const savedToken = localStorage.getItem("printify_api_token");
       if (savedToken) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPrintifyApiKey(savedToken);
         setPrintifyConnected(true);
       }
