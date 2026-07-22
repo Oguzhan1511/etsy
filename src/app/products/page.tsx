@@ -87,8 +87,11 @@ export default function ProductsPage() {
         }
         
         if (allProducts) {
+           // Published products have an external.id. Unpublished (drafts) have external.id == '' or null.
+           const isPublished = (p: any) => p.external && p.external.id && p.external.id !== "";
+           
            // Map Printify products to ListingProduct for Active tab (which uses ListingProduct rendering)
-           const formatted = allProducts.filter((p: any) => p.visible).map((item: any) => {
+           const formatted = allProducts.filter(isPublished).map((item: any) => {
              return {
                 id: String(item.id),
                 title: String(item.title),
@@ -108,7 +111,7 @@ export default function ProductsPage() {
            setProducts(formatted);
 
            // Store inactive directly as Printify drafts
-           const drafts = allProducts.filter((p: any) => !p.visible);
+           const drafts = allProducts.filter((p: any) => !isPublished(p));
            setPrintifyDrafts(drafts);
         } else {
            showToast(t("products.fetchPrintifyDraftsError"), "error");

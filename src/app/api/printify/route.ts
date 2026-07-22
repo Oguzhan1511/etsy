@@ -190,6 +190,11 @@ export async function GET(req: Request) {
       }
 
       console.log("Printify products data length:", allProducts.length);
+      if (allProducts.length > 0) {
+        console.log("Sample Printify Product keys:", Object.keys(allProducts[0]));
+        console.log("Sample external object:", allProducts[0].external);
+        console.log("Sample visible:", allProducts[0].visible);
+      }
       return NextResponse.json({ data: allProducts });
     }
 
