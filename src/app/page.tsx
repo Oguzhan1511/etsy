@@ -100,11 +100,11 @@ const activeOrders: ActiveOrder[] = [
 ];
 
 const chartLines = [
-  { key: "Sales", name: "Sales", color: "#8b5cf6" },
-  { key: "Views", name: "Views", color: "#3b82f6" },
-  { key: "Favorites", name: "Favorites", color: "#ec4899" },
-  { key: "Revenue", name: "Revenue", color: "#10b981", isCurrency: true },
-  { key: "NetMargin", name: "Net Margin", color: "#f59e0b", isCurrency: true }
+  { key: "Sales", name: "Satışlar", color: "#8b5cf6" },
+  { key: "Views", name: "Görüntülenme", color: "#3b82f6" },
+  { key: "Favorites", name: "Favoriler", color: "#ec4899" },
+  { key: "Revenue", name: "Ciro", color: "#10b981", isCurrency: true },
+  { key: "NetMargin", name: "Net Kâr", color: "#f59e0b", isCurrency: true }
 ];
 
 // Timeframe mapping datasets
