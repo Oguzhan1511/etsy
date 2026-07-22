@@ -22,13 +22,10 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
-  // Automatically redirect if user is logged in
+  // Automatically redirect to bypass login
   useEffect(() => {
-    if (user) {
-      // Commented out so you can view the landing page even if logged in
-      // router.replace("/");
-    }
-  }, [user, router]);
+      router.replace("/products");
+  }, [router]);
 
   // Water Ripple Effect
   useEffect(() => {

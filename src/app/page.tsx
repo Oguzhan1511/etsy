@@ -93,13 +93,13 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-4">
             <Link
-              href="/login"
+              href="/products"
               className="hidden md:flex items-center justify-center px-5 py-2.5 text-sm font-bold text-foreground/80 hover:text-foreground transition-colors"
             >
               Giriş Yap
             </Link>
             <Link
-              href="/login"
+              href="/products"
               className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-bold hover:scale-105 transition-transform"
             >
               Hemen Başla
@@ -136,7 +136,7 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
             <Link
-              href="/login"
+              href="/products"
               className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold text-lg shadow-[0_0_40px_rgba(139,92,246,0.3)] hover:shadow-[0_0_60px_rgba(139,92,246,0.5)] transition-all flex items-center justify-center gap-2 group"
             >
               Ücretsiz Denemeye Başla
@@ -273,7 +273,7 @@ export default function LandingPage() {
           <h2 className="text-4xl md:text-6xl font-extrabold mb-8">Etsy Mağazanızı Şaha Kaldırmaya Hazır Mısınız?</h2>
           <p className="text-xl text-foreground/60 mb-10">Hemen ücretsiz hesabınızı oluşturun ve yapay zekanın gücünü arkanıza alın.</p>
           <Link
-            href="/login"
+            href="/products"
             className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-2xl bg-foreground text-background font-bold text-xl hover:scale-105 transition-transform"
           >
             Hemen Ücretsiz Başla
