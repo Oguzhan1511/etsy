@@ -22,11 +22,13 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
-  // If already logged in, redirect based on payment status
+  // Automatically redirect if user is logged in
   useEffect(() => {
-    // BYPASS: Always redirect to dashboard
-    router.replace("/");
-  }, [router]);
+    if (user) {
+      // Commented out so you can view the landing page even if logged in
+      // router.replace("/");
+    }
+  }, [user, router]);
 
   // Water Ripple Effect
   useEffect(() => {
