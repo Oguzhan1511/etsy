@@ -77,7 +77,7 @@ export default function Sidebar() {
         <div className="w-8 h-8 flex items-center justify-center relative overflow-visible shrink-0">
           <img src="/logo.png" alt="PrintySell Logo" className="w-full h-full object-contain" />
         </div>
-        <span className="font-semibold text-sm tracking-tight truncate" style={{ color: "var(--text-primary)" }}>
+        <span className="font-bold text-lg tracking-tight truncate" style={{ color: "var(--text-primary)" }}>
           PrintySell
         </span>
       </div>
