@@ -73,47 +73,47 @@ const categoryDetails: Record<string, CategoryDetail> = {
     insight: "T-Shirts are experiencing extreme summer demand. Direct-to-garment (DTG) prints with retro typography and botanical elements are currently converting highest on Etsy.",
     lines: [
       {
-        name: "Arama Hacmi",
-        label: "Arama Hacmi",
+        name: "Search Volume",
+        label: "Search Volume",
         color: "#7c6af7",
         path: "M 50 140 C 115 125, 180 115, 245 80 S 375 45, 440 30",
         areaPath: "M 50 140 C 115 125, 180 115, 245 80 S 375 45, 440 30 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 140 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 80 }, { cx: 310, cy: 60 }, { cx: 375, cy: 45 }, { cx: 440, cy: 30 }],
         gradientId: "purple-fade",
-        value: "145k arama/ay",
+        value: "145k queries/mo",
         weeklyValues: ["140k", "130k", "110k", "80k", "60k", "45k", "30k"],
       },
       {
-        name: "Aktif Satıcılar",
-        label: "Aktif Satıcılar",
+        name: "Active Sellers",
+        label: "Active Sellers",
         color: "#3b82f6",
         path: "M 50 80 C 115 82, 180 78, 245 83 S 375 80, 440 75",
         areaPath: "M 50 80 C 115 82, 180 78, 245 83 S 375 80, 440 75 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 80 }, { cx: 115, cy: 82 }, { cx: 180, cy: 78 }, { cx: 245, cy: 83 }, { cx: 310, cy: 80 }, { cx: 375, cy: 80 }, { cx: 440, cy: 75 }],
         gradientId: "blue-fade",
-        value: "14.2k mağaza",
+        value: "14.2k shops",
         weeklyValues: ["14.2k", "14.2k", "14.1k", "14.3k", "14.2k", "14.2k", "14.3k"],
       },
       {
-        name: "Favori Oranı",
-        label: "Favori Oranı",
+        name: "Favorites Rate",
+        label: "Favorites Rate",
         color: "#f43f5e",
         path: "M 50 155 C 115 145, 180 135, 245 105 S 375 80, 440 65",
         areaPath: "M 50 155 C 115 145, 180 135, 245 105 S 375 80, 440 65 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 155 }, { cx: 115, cy: 145 }, { cx: 180, cy: 130 }, { cx: 245, cy: 105 }, { cx: 310, cy: 90 }, { cx: 375, cy: 75 }, { cx: 440, cy: 65 }],
         gradientId: "red-fade",
-        value: "6.4% favori",
+        value: "6.4% fav rate",
         weeklyValues: ["6.1%", "6.2%", "6.3%", "6.4%", "6.4%", "6.5%", "6.4%"],
       },
       {
-        name: "Dönüşüm Oranı",
-        label: "Dönüşüm Oranı",
+        name: "Conversion Rate",
+        label: "Conversion Rate",
         color: "#22c55e",
         path: "M 50 170 C 115 160, 180 150, 245 130 S 375 110, 440 95",
         areaPath: "M 50 170 C 115 160, 180 150, 245 130 S 375 110, 440 95 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 170 }, { cx: 115, cy: 160 }, { cx: 180, cy: 145 }, { cx: 245, cy: 130 }, { cx: 310, cy: 120 }, { cx: 375, cy: 110 }, { cx: 440, cy: 95 }],
         gradientId: "green-fade",
-        value: "3.2% dönüşüm",
+        value: "3.2% conversion",
         weeklyValues: ["3.0%", "3.1%", "3.1%", "3.2%", "3.2%", "3.3%", "3.2%"],
       },
     ],
@@ -134,47 +134,47 @@ const categoryDetails: Record<string, CategoryDetail> = {
     insight: "Sweatshirts are seeing steady early autumn stock build-up. Custom sleeve printing (like Roman numerals or initials) is a high-margin opportunity.",
     lines: [
       {
-        name: "Arama Hacmi",
-        label: "Arama Hacmi",
+        name: "Search Volume",
+        label: "Search Volume",
         color: "#7c6af7",
         path: "M 50 160 C 115 152, 180 140, 245 118 S 375 80, 440 70",
         areaPath: "M 50 160 C 115 152, 180 140, 245 118 S 375 80, 440 70 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 150 }, { cx: 180, cy: 140 }, { cx: 245, cy: 120 }, { cx: 310, cy: 100 }, { cx: 375, cy: 85 }, { cx: 440, cy: 70 }],
         gradientId: "purple-fade",
-        value: "92k arama/ay",
+        value: "92k queries/mo",
         weeklyValues: ["90k", "91k", "91k", "92k", "92k", "93k", "92k"],
       },
       {
-        name: "Aktif Satıcılar",
-        label: "Aktif Satıcılar",
+        name: "Active Sellers",
+        label: "Active Sellers",
         color: "#3b82f6",
         path: "M 50 110 C 115 112, 180 108, 245 113 S 375 110, 440 105",
         areaPath: "M 50 110 C 115 112, 180 108, 245 113 S 375 110, 440 105 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 110 }, { cx: 115, cy: 112 }, { cx: 180, cy: 108 }, { cx: 245, cy: 113 }, { cx: 310, cy: 110 }, { cx: 375, cy: 110 }, { cx: 440, cy: 105 }],
         gradientId: "blue-fade",
-        value: "8.8k mağaza",
+        value: "8.8k shops",
         weeklyValues: ["8.8k", "8.8k", "8.7k", "8.9k", "8.8k", "8.8k", "8.9k"],
       },
       {
-        name: "Favori Oranı",
-        label: "Favori Oranı",
+        name: "Favorites Rate",
+        label: "Favorites Rate",
         color: "#f43f5e",
         path: "M 50 175 C 115 165, 180 155, 245 135 S 375 115, 440 100",
         areaPath: "M 50 175 C 115 165, 180 155, 245 135 S 375 115, 440 100 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 175 }, { cx: 115, cy: 165 }, { cx: 180, cy: 155 }, { cx: 245, cy: 135 }, { cx: 310, cy: 125 }, { cx: 375, cy: 115 }, { cx: 440, cy: 100 }],
         gradientId: "red-fade",
-        value: "5.8% favori",
+        value: "5.8% fav rate",
         weeklyValues: ["5.5%", "5.6%", "5.7%", "5.8%", "5.8%", "5.9%", "5.8%"],
       },
       {
-        name: "Dönüşüm Oranı",
-        label: "Dönüşüm Oranı",
+        name: "Conversion Rate",
+        label: "Conversion Rate",
         color: "#22c55e",
         path: "M 50 185 C 115 178, 180 170, 245 155 S 375 140, 440 125",
         areaPath: "M 50 185 C 115 178, 180 170, 245 155 S 375 140, 440 125 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 185 }, { cx: 115, cy: 178 }, { cx: 180, cy: 170 }, { cx: 245, cy: 155 }, { cx: 310, cy: 145 }, { cx: 375, cy: 140 }, { cx: 440, cy: 125 }],
         gradientId: "green-fade",
-        value: "2.9% dönüşüm",
+        value: "2.9% conversion",
         weeklyValues: ["2.7%", "2.8%", "2.8%", "2.9%", "2.9%", "3.0%", "2.9%"],
       },
     ],
@@ -195,47 +195,47 @@ const categoryDetails: Record<string, CategoryDetail> = {
     insight: "Soy candles carry low catalog competition with high profit margins. Personalized gift items for birthdays and corporate coworker farewells have excellent traction.",
     lines: [
       {
-        name: "Arama Hacmi",
-        label: "Arama Hacmi",
+        name: "Search Volume",
+        label: "Search Volume",
         color: "#7c6af7",
         path: "M 50 185 C 115 170, 180 152, 245 120 S 375 75, 440 50",
         areaPath: "M 50 185 C 115 170, 180 152, 245 120 S 375 75, 440 50 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 185 }, { cx: 115, cy: 170 }, { cx: 180, cy: 152 }, { cx: 245, cy: 120 }, { cx: 310, cy: 95 }, { cx: 375, cy: 80 }, { cx: 440, cy: 50 }],
         gradientId: "purple-fade",
-        value: "58k arama/ay",
+        value: "58k queries/mo",
         weeklyValues: ["45k", "48k", "52k", "55k", "56k", "57k", "58k"],
       },
       {
-        name: "Aktif Satıcılar",
-        label: "Aktif Satıcılar",
+        name: "Active Sellers",
+        label: "Active Sellers",
         color: "#3b82f6",
         path: "M 50 160 C 115 155, 180 150, 245 145 S 375 140, 440 135",
         areaPath: "M 50 160 C 115 155, 180 150, 245 145 S 375 140, 440 135 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 155 }, { cx: 180, cy: 150 }, { cx: 245, cy: 145 }, { cx: 310, cy: 140 }, { cx: 375, cy: 140 }, { cx: 440, cy: 135 }],
         gradientId: "blue-fade",
-        value: "2.1k mağaza",
+        value: "2.1k shops",
         weeklyValues: ["2.0k", "2.1k", "2.1k", "2.1k", "2.1k", "2.1k", "2.1k"],
       },
       {
-        name: "Favori Oranı",
-        label: "Favori Oranı",
+        name: "Favorites Rate",
+        label: "Favorites Rate",
         color: "#f43f5e",
         path: "M 50 145 C 115 130, 180 110, 245 80 S 375 55, 440 40",
         areaPath: "M 50 145 C 115 130, 180 110, 245 80 S 375 55, 440 40 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 145 }, { cx: 115, cy: 130 }, { cx: 180, cy: 110 }, { cx: 245, cy: 80 }, { cx: 310, cy: 65 }, { cx: 375, cy: 55 }, { cx: 440, cy: 40 }],
         gradientId: "red-fade",
-        value: "8.2% favori",
+        value: "8.2% fav rate",
         weeklyValues: ["7.9%", "8.0%", "8.1%", "8.2%", "8.2%", "8.3%", "8.2%"],
       },
       {
-        name: "Dönüşüm Oranı",
-        label: "Dönüşüm Oranı",
+        name: "Conversion Rate",
+        label: "Conversion Rate",
         color: "#22c55e",
         path: "M 50 170 C 115 155, 180 135, 245 105 S 375 80, 440 65",
         areaPath: "M 50 170 C 115 155, 180 135, 245 105 S 375 80, 440 65 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 170 }, { cx: 115, cy: 155 }, { cx: 180, cy: 135 }, { cx: 245, cy: 105 }, { cx: 310, cy: 90 }, { cx: 375, cy: 80 }, { cx: 440, cy: 65 }],
         gradientId: "green-fade",
-        value: "4.1% dönüşüm",
+        value: "4.1% conversion",
         weeklyValues: ["3.8%", "3.9%", "3.9%", "4.1%", "4.1%", "4.2%", "4.1%"],
       },
     ],
@@ -256,47 +256,47 @@ const categoryDetails: Record<string, CategoryDetail> = {
     insight: "Mugs are a stable year-round staple. Focus on birth flower illustrations or high-contrast office humor text designs to stand out in high-competition listings.",
     lines: [
       {
-        name: "Arama Hacmi",
-        label: "Arama Hacmi",
+        name: "Search Volume",
+        label: "Search Volume",
         color: "#7c6af7",
         path: "M 50 120 C 115 122, 180 118, 245 123 S 375 120, 440 115",
         areaPath: "M 50 120 C 115 122, 180 118, 245 123 S 375 120, 440 115 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 120 }, { cx: 115, cy: 122 }, { cx: 180, cy: 118 }, { cx: 245, cy: 123 }, { cx: 310, cy: 120 }, { cx: 375, cy: 120 }, { cx: 440, cy: 115 }],
         gradientId: "purple-fade",
-        value: "74k arama/ay",
+        value: "74k queries/mo",
         weeklyValues: ["72k", "73k", "73k", "74k", "74k", "75k", "74k"],
       },
       {
-        name: "Aktif Satıcılar",
-        label: "Aktif Satıcılar",
+        name: "Active Sellers",
+        label: "Active Sellers",
         color: "#3b82f6",
         path: "M 50 90 C 115 92, 180 88, 245 93 S 375 90, 440 85",
         areaPath: "M 50 90 C 115 92, 180 88, 245 93 S 375 90, 440 85 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 90 }, { cx: 115, cy: 92 }, { cx: 180, cy: 88 }, { cx: 245, cy: 93 }, { cx: 310, cy: 90 }, { cx: 375, cy: 90 }, { cx: 440, cy: 85 }],
         gradientId: "blue-fade",
-        value: "11.5k mağaza",
+        value: "11.5k shops",
         weeklyValues: ["11.4k", "11.5k", "11.5k", "11.5k", "11.5k", "11.6k", "11.5k"],
       },
       {
-        name: "Favori Oranı",
-        label: "Favori Oranı",
+        name: "Favorites Rate",
+        label: "Favorites Rate",
         color: "#f43f5e",
         path: "M 50 140 C 115 138, 180 135, 245 142 S 375 135, 440 130",
         areaPath: "M 50 140 C 115 138, 180 135, 245 142 S 375 135, 440 130 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 140 }, { cx: 115, cy: 138 }, { cx: 180, cy: 135 }, { cx: 245, cy: 142 }, { cx: 310, cy: 138 }, { cx: 375, cy: 135 }, { cx: 440, cy: 130 }],
         gradientId: "red-fade",
-        value: "4.2% favori",
+        value: "4.2% fav rate",
         weeklyValues: ["4.0%", "4.1%", "4.1%", "4.2%", "4.2%", "4.3%", "4.2%"],
       },
       {
-        name: "Dönüşüm Oranı",
-        label: "Dönüşüm Oranı",
+        name: "Conversion Rate",
+        label: "Conversion Rate",
         color: "#22c55e",
         path: "M 50 160 C 115 158, 180 155, 245 162 S 375 155, 440 150",
         areaPath: "M 50 160 C 115 158, 180 155, 245 162 S 375 155, 440 150 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 160 }, { cx: 115, cy: 158 }, { cx: 180, cy: 155 }, { cx: 245, cy: 162 }, { cx: 310, cy: 158 }, { cx: 375, cy: 155 }, { cx: 440, cy: 150 }],
         gradientId: "green-fade",
-        value: "2.1% dönüşüm",
+        value: "2.1% conversion",
         weeklyValues: ["1.9%", "2.0%", "2.0%", "2.1%", "2.1%", "2.2%", "2.1%"],
       },
     ],
@@ -317,47 +317,47 @@ const categoryDetails: Record<string, CategoryDetail> = {
     insight: "Phone case demand is currently consolidating. Aesthetic retro designs or high-protection dual-layer cases are preferred over generic patterns.",
     lines: [
       {
-        name: "Arama Hacmi",
-        label: "Arama Hacmi",
+        name: "Search Volume",
+        label: "Search Volume",
         color: "#7c6af7",
         path: "M 50 70 C 115 85, 180 102, 245 122 S 375 138, 440 155",
         areaPath: "M 50 70 C 115 85, 180 102, 245 122 S 375 138, 440 155 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 70 }, { cx: 115, cy: 85 }, { cx: 180, cy: 102 }, { cx: 245, cy: 122 }, { cx: 310, cy: 138 }, { cx: 375, cy: 140 }, { cx: 440, cy: 155 }],
         gradientId: "purple-fade",
-        value: "41k arama/ay",
+        value: "41k queries/mo",
         weeklyValues: ["65k", "60k", "55k", "50k", "45k", "42k", "41k"],
       },
       {
-        name: "Aktif Satıcılar",
-        label: "Aktif Satıcılar",
+        name: "Active Sellers",
+        label: "Active Sellers",
         color: "#3b82f6",
         path: "M 50 100 C 115 102, 180 98, 245 103 S 375 100, 440 95",
         areaPath: "M 50 100 C 115 102, 180 98, 245 103 S 375 100, 440 95 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 100 }, { cx: 115, cy: 102 }, { cx: 180, cy: 98 }, { cx: 245, cy: 103 }, { cx: 310, cy: 100 }, { cx: 375, cy: 100 }, { cx: 440, cy: 95 }],
         gradientId: "blue-fade",
-        value: "9.4k mağaza",
+        value: "9.4k shops",
         weeklyValues: ["9.4k", "9.4k", "9.3k", "9.5k", "9.4k", "9.4k", "9.5k"],
       },
       {
-        name: "Favori Oranı",
-        label: "Favori Oranı",
+        name: "Favorites Rate",
+        label: "Favorites Rate",
         color: "#f43f5e",
         path: "M 50 90 C 115 105, 180 122, 245 142 S 375 158, 440 175",
         areaPath: "M 50 90 C 115 105, 180 122, 245 142 S 375 158, 440 175 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 90 }, { cx: 115, cy: 105 }, { cx: 180, cy: 122 }, { cx: 245, cy: 142 }, { cx: 310, cy: 158 }, { cx: 375, cy: 158 }, { cx: 440, cy: 175 }],
         gradientId: "red-fade",
-        value: "3.9% favori",
+        value: "3.9% fav rate",
         weeklyValues: ["4.2%", "4.1%", "4.0%", "3.9%", "3.9%", "3.8%", "3.9%"],
       },
       {
-        name: "Dönüşüm Oranı",
-        label: "Dönüşüm Oranı",
+        name: "Conversion Rate",
+        label: "Conversion Rate",
         color: "#22c55e",
         path: "M 50 110 C 115 125, 180 142, 245 162 S 375 178, 440 190",
         areaPath: "M 50 110 C 115 125, 180 142, 245 162 S 375 178, 440 190 L 440 160 L 50 160 Z",
         points: [{ cx: 50, cy: 110 }, { cx: 115, cy: 125 }, { cx: 180, cy: 142 }, { cx: 245, cy: 162 }, { cx: 310, cy: 178 }, { cx: 375, cy: 180 }, { cx: 440, cy: 190 }],
         gradientId: "green-fade",
-        value: "1.8% dönüşüm",
+        value: "1.8% conversion",
         weeklyValues: ["2.0%", "1.9%", "1.9%", "1.8%", "1.8%", "1.7%", "1.8%"],
       },
     ],
@@ -380,7 +380,7 @@ export default function ProducerDashboardPage() {
   const { t } = useLanguage();
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [activeCat, setActiveCat] = useState<CategoryDetail>(categoryDetails["T-Shirts"]);
-  const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["Arama Hacmi"]);
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["Search Volume"]);
 
   const handleSearch = (kw: string) => {
     if (!kw.trim()) return;
@@ -428,35 +428,35 @@ export default function ProducerDashboardPage() {
       insight: `${kw.trim()} is showing steady activity. Focus on unique designs and high-quality mockups to stand out in this niche.`,
       lines: [
         {
-          name: "Arama Hacmi",
-          label: "Arama Hacmi",
+          name: "Search Volume",
+          label: "Search Volume",
           color: "#7c6af7",
           path: "", areaPath: "", points: [], gradientId: "purple-fade",
-          value: searchVol + "k arama/ay",
+          value: searchVol + "k queries/mo",
           weeklyValues: searchVolWeekly,
         },
         {
-          name: "Aktif Satıcılar",
-          label: "Aktif Satıcılar",
+          name: "Active Sellers",
+          label: "Active Sellers",
           color: "#3b82f6",
           path: "", areaPath: "", points: [], gradientId: "blue-fade",
-          value: activeSellers.toFixed(1) + "k mağaza",
+          value: activeSellers.toFixed(1) + "k shops",
           weeklyValues: activeSellersWeekly,
         },
         {
-          name: "Favori Oranı",
-          label: "Favori Oranı",
+          name: "Favorites Rate",
+          label: "Favorites Rate",
           color: "#f43f5e",
           path: "", areaPath: "", points: [], gradientId: "red-fade",
-          value: favRate + "% favori",
+          value: favRate + "% fav rate",
           weeklyValues: favRateWeekly,
         },
         {
-          name: "Dönüşüm Oranı",
-          label: "Dönüşüm Oranı",
+          name: "Conversion Rate",
+          label: "Conversion Rate",
           color: "#22c55e",
           path: "", areaPath: "", points: [], gradientId: "green-fade",
-          value: convRate + "% dönüşüm",
+          value: convRate + "% conversion",
           weeklyValues: convRateWeekly,
         }
       ]
@@ -742,7 +742,7 @@ export default function ProducerDashboardPage() {
                   const isHoveredOrClicked = selectedMetrics.includes(l.name);
                   return (
                     <button
-                      key={l.name}
+                      key={t(`metric.${l.name.replace(/ /g, "")}`)}
                       
                       onClick={() => {
                           if (selectedMetrics.includes(l.name)) {
@@ -760,8 +760,8 @@ export default function ProducerDashboardPage() {
                       }`}
                     >
                       <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: l.color }} />
-                      <span className="font-semibold">{l.name}</span>
-                      <span className="opacity-60 text-[8px] font-mono">({l.value})</span>
+                      <span className="font-semibold">{t(`metric.${l.name.replace(/ /g, "")}`)}</span>
+                      <span className="opacity-60 text-[8px] font-mono">({l.value.replace('queries/mo', t('metric.queriesMo')).replace('shops', t('metric.shops')).replace('fav rate', t('metric.favRate')).replace('conversion', t('metric.conversion'))})</span>
                     </button>
                   );
                 })}
@@ -849,7 +849,7 @@ export default function ProducerDashboardPage() {
                   <span>{t("dashboard.activeSellers")}</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {activeCat.lines.find(l => l.name === "Aktif Satıcılar")?.value}
+                  {activeCat.lines.find(l => l.name === "Active Sellers")?.value.replace('queries/mo', t('metric.queriesMo')).replace('shops', t('metric.shops')).replace('fav rate', t('metric.favRate')).replace('conversion', t('metric.conversion'))}
                 </div>
               </div>
 
@@ -860,7 +860,7 @@ export default function ProducerDashboardPage() {
                   <span>{t("dashboard.searchVolume")}</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {activeCat.lines.find(l => l.name === "Arama Hacmi")?.value}
+                  {activeCat.lines.find(l => l.name === "Search Volume")?.value.replace('queries/mo', t('metric.queriesMo')).replace('shops', t('metric.shops')).replace('fav rate', t('metric.favRate')).replace('conversion', t('metric.conversion'))}
                 </div>
               </div>
 
@@ -871,7 +871,7 @@ export default function ProducerDashboardPage() {
                   <span>{t("dashboard.favoritesRate")}</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {activeCat.lines.find(l => l.name === "Favori Oranı")?.value}
+                  {activeCat.lines.find(l => l.name === "Favorites Rate")?.value.replace('queries/mo', t('metric.queriesMo')).replace('shops', t('metric.shops')).replace('fav rate', t('metric.favRate')).replace('conversion', t('metric.conversion'))}
                 </div>
               </div>
 
@@ -882,7 +882,7 @@ export default function ProducerDashboardPage() {
                   <span>{t("dashboard.conversionRate")}</span>
                 </div>
                 <div className="text-[11px] font-bold text-white">
-                  {activeCat.lines.find(l => l.name === "Dönüşüm Oranı")?.value}
+                  {activeCat.lines.find(l => l.name === "Conversion Rate")?.value.replace('queries/mo', t('metric.queriesMo')).replace('shops', t('metric.shops')).replace('fav rate', t('metric.favRate')).replace('conversion', t('metric.conversion'))}
                 </div>
               </div>
 

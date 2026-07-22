@@ -1,4 +1,17 @@
 export const tr = {
+  "metric.Sales": "Satışlar",
+  "metric.Views": "Görüntülenme",
+  "metric.Favorites": "Favoriler",
+  "metric.Revenue": "Ciro",
+  "metric.NetMargin": "Net Kâr",
+  "metric.SearchVolume": "Arama Hacmi",
+  "metric.ActiveSellers": "Aktif Satıcılar",
+  "metric.FavoritesRate": "Favori Oranı",
+  "metric.ConversionRate": "Dönüşüm Oranı",
+  "metric.queriesMo": "arama/ay",
+  "metric.shops": "mağaza",
+  "metric.favRate": "favori",
+  "metric.conversion": "dönüşüm",
   // Header
   "header.search": "Ara…",
   "header.new": "Yeni",

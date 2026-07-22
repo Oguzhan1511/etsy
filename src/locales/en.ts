@@ -1,4 +1,17 @@
 export const en = {
+  "metric.Sales": "Sales",
+  "metric.Views": "Views",
+  "metric.Favorites": "Favorites",
+  "metric.Revenue": "Revenue",
+  "metric.NetMargin": "Net Margin",
+  "metric.SearchVolume": "Search Volume",
+  "metric.ActiveSellers": "Active Sellers",
+  "metric.FavoritesRate": "Favorites Rate",
+  "metric.ConversionRate": "Conversion Rate",
+  "metric.queriesMo": "queries/mo",
+  "metric.shops": "shops",
+  "metric.favRate": "fav rate",
+  "metric.conversion": "conversion",
   // Header
   "header.search": "Search…",
   "header.new": "New",
