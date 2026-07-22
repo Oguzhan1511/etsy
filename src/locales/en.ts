@@ -70,6 +70,7 @@ export const en = {
   "sellerDashboard.seoHealth": "Etsy SEO & Store Health Score",
   "sellerDashboard.seoDesc": "100% of listings contain tags and image alt-texts. Shipping dispatch latency is optimized at 1-2 days.",
   "sellerDashboard.excellentHealth": "Excellent Health",
+  "sellerDashboard.connectEtsyStore": "Connect Etsy Store",
 
   // Producer Dashboard
   "dashboard.producer": "Producer Dashboard",

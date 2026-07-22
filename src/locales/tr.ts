@@ -70,6 +70,7 @@ export const tr = {
   "sellerDashboard.seoHealth": "Etsy SEO & Mağaza Sağlığı Puanı",
   "sellerDashboard.seoDesc": "İlanların %100'ü etiket ve görsel alt metinleri içeriyor. Gönderim süresi 1-2 gün olarak optimize edildi.",
   "sellerDashboard.excellentHealth": "Mükemmel Sağlık",
+  "sellerDashboard.connectEtsyStore": "Etsy Mağazanı Bağla",
 
   // Producer Dashboard
   "dashboard.producer": "Üretici Dashboard",

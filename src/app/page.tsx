@@ -335,7 +335,7 @@ export default function SellerDashboard() {
           <div className="flex items-center gap-2">
             {!shopData ? (
               <a href="/api/etsy/auth" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs transition-colors shadow-lg">
-                Etsy Mağazanı Bağla
+                {t("sellerDashboard.connectEtsyStore")}
               </a>
             ) : null}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs">
