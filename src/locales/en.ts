@@ -333,10 +333,14 @@ export const en = {
 
   // Products
   "products.deleteConfirm": "Are you sure you want to delete this product?",
+  "products.publishToEtsy": "Publish to Etsy",
+  "products.publishSuccess": "Product successfully published to store!",
+  "products.fetchPrintifyDraftsError": "Error fetching draft products.",
+  "products.variantCount": "Variant",
   "products.title": "Etsy Listings Inventory",
   "products.subtitle": "List active and inactive products in your Etsy shop, track statistics, and manage your listings.",
   "products.activeProducts": "Active Products",
-  "products.inactiveProducts": "Inactive Products",
+  "products.inactiveProducts": "Drafts / Unpublished",
   "products.totalInventoryRevenue": "Total Inventory Revenue",
   "products.netInventoryProfit": "Net Inventory Profit",
   "products.searchPlaceholder": "Search by title or SKU...",

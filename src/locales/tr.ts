@@ -333,10 +333,14 @@ export const tr = {
 
   // Products
   "products.deleteConfirm": "Bu ürünü silmek istediğinize emin misiniz?",
+  "products.publishToEtsy": "Mağazada Yayınla",
+  "products.publishSuccess": "Ürün başarıyla mağazaya gönderildi!",
+  "products.fetchPrintifyDraftsError": "Taslak ürünler getirilirken hata oluştu.",
+  "products.variantCount": "Varyant",
   "products.title": "Etsy Listings Envanteri",
   "products.subtitle": "Etsy mağazanızdaki aktif ve inaktif ürünleri listeleyin, istatistikleri takip edin ve listelemelerinizi yönetin.",
   "products.activeProducts": "Aktif Ürünler",
-  "products.inactiveProducts": "İnaktif Ürünler",
+  "products.inactiveProducts": "Yayınlanmayı Bekleyenler",
   "products.totalInventoryRevenue": "Toplam Envanter Cirosu",
   "products.netInventoryProfit": "Net Envanter Kârı",
   "products.searchPlaceholder": "Başlık veya SKU ara...",

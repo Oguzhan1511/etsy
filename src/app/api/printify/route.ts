@@ -147,6 +147,44 @@ export async function GET(req: Request) {
       return NextResponse.json(variants);
     }
 
+    if (action === "products") {
+      // 1. Fetch linked Printify shops list
+      const shopsResponse = await fetch("https://api.printify.com/v1/shops.json", {
+        headers: {
+          Authorization: `Bearer ${activeToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      let shopId = null;
+      if (shopsResponse.ok) {
+        const shops = await shopsResponse.json();
+        if (shops && shops.length > 0) {
+          shopId = shops[0].id;
+        }
+      }
+
+      if (!shopId) {
+        return NextResponse.json({ error: "No Printify shop found" }, { status: 404 });
+      }
+
+      // Fetch products for the shop (Drafts/Unpublished usually means visible=false or has no external link)
+      // Printify products.json will return all products
+      const productsRes = await fetch(`https://api.printify.com/v1/shops/${shopId}/products.json?limit=100`, {
+        headers: {
+          Authorization: `Bearer ${activeToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!productsRes.ok) {
+        throw new Error(`Printify products API returned status: ${productsRes.status}`);
+      }
+
+      const productsData = await productsRes.json();
+      return NextResponse.json(productsData);
+    }
+
     return NextResponse.json({ error: "Invalid action parameter" }, { status: 400 });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Internal Server Error";
@@ -368,10 +406,90 @@ export async function POST(req: Request) {
       });
     }
 
+    if (action === "publish-product") {
+      const body = await req.json();
+      const { shopId, productId } = body;
+
+      if (!shopId || !productId) {
+        return NextResponse.json({ error: "shopId and productId are required" }, { status: 400 });
+      }
+
+      // Publish to Etsy
+      const publishRes = await fetch(`https://api.printify.com/v1/shops/${shopId}/products/${productId}/publish.json`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${activeToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: true,
+          description: true,
+          images: true,
+          variants: true,
+          tags: true,
+          keyFeatures: true,
+          shipping_template: true
+        })
+      });
+
+      if (!publishRes.ok) {
+        const errorText = await publishRes.text();
+        throw new Error(`Printify API publish failed: ${errorText}`);
+      }
+
+      return NextResponse.json({ success: true });
+    }
+
     return NextResponse.json({ error: "Invalid action parameter" }, { status: 400 });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Printify proxy POST error:", error);
+    return NextResponse.json({ error: errorMessage }, { status: 502 });
+  }
+}
+
+export async function PUT(req: Request) {
+  const userApiKey = req.headers.get("x-printify-api-key");
+  const activeToken = userApiKey || PRINTIFY_API_KEY;
+
+  try {
+    const { searchParams } = new URL(req.url);
+    const action = searchParams.get("action");
+
+    if (action === "update-product") {
+      const body = await req.json();
+      const { shopId, productId, title, description, tags } = body;
+
+      if (!shopId || !productId) {
+        return NextResponse.json({ error: "shopId and productId are required" }, { status: 400 });
+      }
+
+      const updateRes = await fetch(`https://api.printify.com/v1/shops/${shopId}/products/${productId}.json`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${activeToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          tags,
+        }),
+      });
+
+      if (!updateRes.ok) {
+        const errorText = await updateRes.text();
+        throw new Error(`Printify API update failed: ${errorText}`);
+      }
+
+      const updatedProduct = await updateRes.json();
+      return NextResponse.json({ success: true, product: updatedProduct });
+    }
+
+    return NextResponse.json({ error: "Invalid action parameter" }, { status: 400 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Internal Server Error";
+    console.error("Printify proxy PUT error:", error);
     return NextResponse.json({ error: errorMessage }, { status: 502 });
   }
 }
