@@ -46,7 +46,8 @@ export async function POST(req: Request) {
       name: user.name,
       email: user.email,
       initials,
-      plan: "Pro Plan",
+      plan: user.plan,
+      paymentStatus: user.paymentStatus,
     };
 
     return NextResponse.json({ success: true, user: safeUser });

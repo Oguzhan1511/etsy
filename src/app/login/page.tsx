@@ -22,10 +22,14 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
-  // If already logged in, redirect to home
+  // If already logged in, redirect based on payment status
   useEffect(() => {
     if (!isLoading && user) {
-      router.replace("/");
+      if (user.plan === "none" || !user.paymentStatus) {
+        router.replace("/plans");
+      } else {
+        router.replace("/");
+      }
     }
   }, [user, isLoading, router]);
 
