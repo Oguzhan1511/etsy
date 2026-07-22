@@ -210,7 +210,7 @@ export async function GET(req: Request) {
       }
 
       // Fetch products for the shop (Drafts/Unpublished usually means visible=false or has no external link)
-      const productsRes = await fetch(`https://api.printify.com/v1/shops/${shopId}/products.json?limit=100`, {
+      const productsRes = await fetch(`https://api.printify.com/v1/shops/${shopId}/products.json`, {
         headers: {
           Authorization: `Bearer ${activeToken}`,
           "Content-Type": "application/json",
@@ -218,7 +218,9 @@ export async function GET(req: Request) {
       });
 
       if (!productsRes.ok) {
-        throw new Error(`Printify products API returned status: ${productsRes.status}`);
+        const errorText = await productsRes.text();
+        console.error("Printify products API failed:", productsRes.status, errorText);
+        throw new Error(`Printify products API returned status: ${productsRes.status} - ${errorText}`);
       }
 
       const productsData = await productsRes.json();
