@@ -40,12 +40,16 @@ export default function Sidebar() {
     },
   ];
 
-  // Auth bypass: login requirement disabled
-  // useEffect(() => {
-  //   if (!isLoading && !user) {
-  //     router.replace("/login");
-  //   }
-  // }, [user, isLoading, router]);
+  // Redirect to login if not authenticated, or to plans if not paid
+  useEffect(() => {
+    if (!isLoading) {
+      if (!user) {
+        router.replace("/login");
+      } else if (user.plan === "none" || !user.paymentStatus) {
+        router.replace("/plans");
+      }
+    }
+  }, [user, isLoading, router]);
 
   // Show minimal loading state while checking auth
   if (isLoading) {
