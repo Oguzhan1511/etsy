@@ -195,9 +195,10 @@ export default function MockupPublishPage() {
   };
 
   const handleModelSelect = (model: ProductModel) => {
-    // Opens directly to Printify's catalog page for this specific blueprint
-    // where user can choose a print provider and start the mockup process
-    window.open(`https://printify.com/app/catalog/${model.id}`, "_blank");
+    // Printify's URL to start creating a product from a specific blueprint
+    // The correct format is: /app/products/new/{blueprintId}
+    // This opens directly in the product editor/mockup page
+    window.open(`https://printify.com/app/products/new/${model.id}`, "_blank");
   };
 
   const isApparelCategory = activeSubCat === "Shirt" || activeSubCat === "Sweatshirt Hoodie";
@@ -217,7 +218,8 @@ export default function MockupPublishPage() {
             Katalog
           </h1>
           <p className="text-sm mt-1 text-[#a09cb0]">
-            Baskı yapmak istediğiniz ürünü seçip anında Printify üzerinden işleminize devam edebilirsiniz.
+            Ürüne tıkladığınızda Printify'da mokaplama sayfası açılır.
+            <span className="text-amber-400 font-medium"> ⚠️ Çalışması için Printify hesabınıza giriş yapmış olmanız gerekmektedir.</span>
           </p>
         </div>
       </div>
