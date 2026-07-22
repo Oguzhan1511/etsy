@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body className="flex h-screen overflow-hidden bg-background text-foreground antialiased transition-colors duration-200">
+      <body suppressHydrationWarning className="flex h-screen overflow-hidden bg-background text-foreground antialiased transition-colors duration-200">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <LanguageProvider>
