@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { LanguageProvider } from "../context/LanguageContext";
+import { TokenProvider } from "../context/TokenContext";
 import ClientShell from "../components/ClientShell";
 
 const inter = Inter({
@@ -27,8 +28,10 @@ export default function RootLayout({
       <body suppressHydrationWarning className="flex h-screen overflow-hidden bg-background text-foreground antialiased transition-colors duration-200">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
-            <LanguageProvider>
-              <ClientShell>{children}</ClientShell>
+          <LanguageProvider>
+              <TokenProvider>
+                <ClientShell>{children}</ClientShell>
+              </TokenProvider>
             </LanguageProvider>
           </AuthProvider>
         </ThemeProvider>

@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, Wand2, Loader2, Download, Library, CheckCircle2, Image as ImageIcon, UploadCloud, X } from "lucide-react";
+import { Sparkles, Wand2, Loader2, Download, Library, CheckCircle2, Image as ImageIcon, UploadCloud, X, Zap, Coins } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTokens } from "@/context/TokenContext";
 
 interface DesignItem {
   id: string;
@@ -15,11 +17,14 @@ interface DesignItem {
 
 export default function AIDesignStudioPage() {
   const { t } = useLanguage();
+  const router = useRouter();
+  const { availableTokens, useToken } = useTokens();
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
+  const [tokenError, setTokenError] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -48,6 +53,20 @@ export default function AIDesignStudioPage() {
     e.preventDefault();
     if (!prompt.trim()) return;
 
+    // Token check
+    if (availableTokens <= 0) {
+      setTokenError(true);
+      return;
+    }
+
+    // Deduct 1 token immediately
+    const tokenConsumed = useToken();
+    if (!tokenConsumed) {
+      setTokenError(true);
+      return;
+    }
+
+    setTokenError(false);
     setIsGenerating(true);
     setGeneratedImage(null);
     setIsSaved(false);
@@ -162,14 +181,42 @@ export default function AIDesignStudioPage() {
             {t("aiDesign.desc")}
           </p>
         </div>
-        <Link 
-          href="/design-library"
-          className="flex items-center gap-2 px-4 py-2 bg-card border border-border hover:border-purple-500/50 rounded-lg text-sm text-foreground transition-all group"
-        >
-          <Library className="w-4 h-4 text-secondary group-hover:text-purple-400 transition-colors" />
-          {t("aiDesign.goToLibrary")}
-        </Link>
+        <div className="flex items-center gap-3">
+          {/* Token badge */}
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold ${
+            availableTokens <= 5
+              ? "bg-red-500/10 border-red-500/30 text-red-300"
+              : "bg-amber-500/10 border-amber-500/20 text-amber-300"
+          }`}>
+            <Coins size={12} />
+            <span>{availableTokens} Token</span>
+          </div>
+          <Link 
+            href="/design-library"
+            className="flex items-center gap-2 px-4 py-2 bg-card border border-border hover:border-purple-500/50 rounded-lg text-sm text-foreground transition-all group"
+          >
+            <Library className="w-4 h-4 text-secondary group-hover:text-purple-400 transition-colors" />
+            {t("aiDesign.goToLibrary")}
+          </Link>
+        </div>
       </div>
+
+      {/* Token error banner */}
+      {tokenError && (
+        <div className="flex items-center gap-4 p-4 rounded-2xl bg-red-500/10 border border-red-500/30">
+          <Zap size={20} className="text-red-400 shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-bold text-red-300">Token Bakiyeniz Yetersiz!</p>
+            <p className="text-xs text-red-400/80 mt-0.5">Yapay zeka tasarımı oluşturabilmek için Token satın almanız gerekiyor.</p>
+          </div>
+          <Link
+            href="/token-management"
+            className="shrink-0 px-4 py-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white text-xs font-bold rounded-xl hover:brightness-110 transition-all"
+          >
+            Token Satın Al →
+          </Link>
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-12 gap-8">
         

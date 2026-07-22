@@ -14,15 +14,18 @@ import {
   Package,
   LogOut,
   Loader2,
+  Coins,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTokens } from "@/context/TokenContext";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout, isLoading } = useAuth();
   const { t } = useLanguage();
+  const { availableTokens, planType } = useTokens();
 
   const navItems = [
     {
@@ -36,6 +39,12 @@ export default function Sidebar() {
         { icon: Sparkles, label: t("sidebar.aiDesignStudio"), href: "/ai-design-studio" },
         { icon: Library, label: t("sidebar.designLibrary"), href: "/design-library" },
         { icon: Layers, label: t("sidebar.mockupPublish"), href: "/mockup-publish" },
+      ],
+    },
+    {
+      label: "Hesap",
+      items: [
+        { icon: Coins, label: "Token Yönetimi", href: "/token-management" },
       ],
     },
   ];
@@ -185,18 +194,31 @@ export default function Sidebar() {
           <ChevronRight size={12} className="opacity-30 group-hover:opacity-60 transition-opacity" style={{ color: "var(--text-muted)" }} />
         </Link>
 
-        {/* Plan badge + logout row */}
-        <div className="flex items-center justify-between px-2">
-          <span
-            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-            style={{
-              background: "rgba(124,106,247,0.12)",
-              color: "#9d8df5",
-              border: "1px solid rgba(124,106,247,0.2)",
-            }}
-          >
-            {user.plan}
-          </span>
+        {/* Plan badge + tokens + logout row */}
+        <div className="flex items-center justify-between px-2 gap-1 flex-wrap">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              style={{
+                background: "rgba(124,106,247,0.12)",
+                color: "#9d8df5",
+                border: "1px solid rgba(124,106,247,0.2)",
+              }}
+            >
+              {planType}
+            </span>
+            <span
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1"
+              style={{
+                background: "rgba(250,204,21,0.08)",
+                color: availableTokens <= 5 ? "#f87171" : "#fbbf24",
+                border: `1px solid ${availableTokens <= 5 ? "rgba(248,113,113,0.3)" : "rgba(250,204,21,0.2)"}`,
+              }}
+            >
+              <Coins size={10} />
+              {availableTokens}
+            </span>
+          </div>
           <button
             onClick={logout}
             title={t("sidebar.logout")}
