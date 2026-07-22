@@ -7,15 +7,15 @@ import { Globe } from "lucide-react";
 
 export default function ClientShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLoginPage = pathname === "/login";
+  const isStandalonePage = pathname === "/login" || pathname === "/";
   const { t, language, toggleLanguage } = useLanguage();
 
   return (
     <>
-      {!isLoginPage && <Sidebar />}
+      {!isStandalonePage && <Sidebar />}
       <div className="flex flex-1 flex-col min-w-0 overflow-hidden relative">
         {/* Global Action Buttons for Authenticated Pages */}
-        {!isLoginPage && (
+        {!isStandalonePage && (
           <div className="absolute top-6 right-8 flex items-center gap-3 z-50">
             <button
               onClick={toggleLanguage}

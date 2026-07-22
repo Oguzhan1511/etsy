@@ -84,7 +84,7 @@ export default function LoginPage() {
     setSubmitting(false);
 
     if (res.success) {
-      router.replace("/");
+      router.replace("/dashboard");
     } else {
       setError(res.error || t("login.errorEmpty") || "E-posta ve şifre boş bırakılamaz.");
     }

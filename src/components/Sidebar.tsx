@@ -28,7 +28,7 @@ export default function Sidebar() {
     {
       label: t("sidebar.corePlatform"),
       items: [
-        { icon: LayoutDashboard, label: t("sidebar.sellerDashboard"), href: "/" },
+        { icon: LayoutDashboard, label: t("sidebar.sellerDashboard"), href: "/dashboard" },
         { icon: LayoutDashboard, label: t("sidebar.producerDashboard"), href: "/producer-dashboard" },
         { icon: ShoppingBag, label: t("sidebar.orders"), href: "/orders" },
         { icon: Package, label: t("sidebar.products"), href: "/products" },
