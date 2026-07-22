@@ -135,9 +135,8 @@ export default function LoginPage() {
         
         {/* Logo */}
         <div className="flex flex-col items-center mb-8 gap-4 group">
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-black/40 border border-white/10 shadow-[0_0_30px_rgba(139,92,246,0.2)] relative overflow-hidden shrink-0 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+          <div className="w-24 h-24 flex items-center justify-center relative overflow-visible shrink-0 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
             <img src="/logo.png" alt="PrintySell Logo" className="w-full h-full object-contain z-10" />
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -translate-x-full group-hover:translate-x-full" />
           </div>
           <div className="text-center">
             <h1 className="text-3xl font-bold text-white tracking-tight">PrintySell</h1>
