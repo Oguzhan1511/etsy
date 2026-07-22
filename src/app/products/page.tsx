@@ -128,6 +128,50 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
+  // AI Autofill States
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [referenceHistory, setReferenceHistory] = useState<any[]>([]);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+
+  const handleOpenAiModal = () => {
+    try {
+      const hist = JSON.parse(localStorage.getItem("researched_products_history") || "[]");
+      setReferenceHistory(hist);
+    } catch {}
+    setShowAiModal(true);
+  };
+
+  const handleAiAutofill = async (referenceProduct: any) => {
+    setIsAiLoading(true);
+    setShowAiModal(false);
+    try {
+      const response = await fetch('/api/ai-product-details', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          referenceTitle: referenceProduct.title,
+          referenceDescription: referenceProduct.description || "",
+          referenceCategory: referenceProduct.category || "",
+          targetProductTitle: editTitle || "Printify T-Shirt"
+        })
+      });
+      const data = await response.json();
+      if (data.error) {
+        showToast(data.error, "error");
+      } else {
+        if (data.title) setEditTitle(data.title);
+        if (data.description) setEditDescription(data.description);
+        if (data.tags) setEditTags(data.tags);
+        setHasUnsavedChanges(true);
+        showToast("Yapay Zeka ile içerikler başarıyla oluşturuldu!", "success");
+      }
+    } catch (err) {
+      showToast("Yapay zeka bağlantı hatası.", "error");
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
   useEffect(() => {
     // Drafts are already fetched on mount, so no need to fetch again here.
   }, [filterTab]);
@@ -746,6 +790,26 @@ export default function ProductsPage() {
             </div>
 
             <div className="space-y-4 pt-1">
+              <div className="flex justify-between items-center bg-purple-500/10 border border-purple-500/20 p-3 rounded-xl mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
+                    <Sparkles size={14} />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-foreground">Yapay Zeka Asistanı</h4>
+                    <p className="text-[10px] text-secondary">Etsy'de başarılı olmuş ürünleri referans alarak otomatik doldurun.</p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleOpenAiModal}
+                  disabled={isAiLoading}
+                  className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-foreground rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-lg shadow-purple-500/10"
+                >
+                  {isAiLoading ? <Loader2 size={12} className="animate-spin" /> : <Zap size={12} />}
+                  <span>{isAiLoading ? "Oluşturuluyor..." : "Referans Seç"}</span>
+                </button>
+              </div>
+
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("products.productTitle")}</label>
                 <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50" />
@@ -791,6 +855,60 @@ export default function ProductsPage() {
         </div>
       )}
 
+      {/* AI Reference Selection Modal */}
+      {showAiModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-surface border border-border w-full max-w-2xl rounded-xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-4 animate-scale-up max-h-[80vh] flex flex-col">
+            <div className="flex justify-between items-center pb-2 border-b border-border shrink-0">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <Sparkles size={14} className="text-purple-400" />
+                <span>Referans Ürün Seçin</span>
+              </h3>
+              <button 
+                type="button"
+                onClick={() => setShowAiModal(false)}
+                className="w-6 h-6 rounded-lg hover:bg-white/5 flex items-center justify-center text-secondary hover:text-foreground cursor-pointer"
+              >
+                <X size={14} />
+              </button>
+            </div>
+            
+            <div className="overflow-y-auto pr-2 space-y-3 flex-1 min-h-[300px]">
+              {referenceHistory.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-secondary space-y-3">
+                  <Search size={24} className="text-muted" />
+                  <p className="text-xs">Henüz araştırılmış bir ürününüz yok.</p>
+                  <button onClick={() => router.push('/product-research')} className="text-purple-400 hover:text-purple-300 text-xs font-semibold">Ürün Araştırması Sayfasına Git</button>
+                </div>
+              ) : (
+                referenceHistory.map((product) => (
+                  <div 
+                    key={`ref-${product.id}`}
+                    onClick={() => handleAiAutofill(product)}
+                    className="flex items-center gap-4 p-3 rounded-xl border border-border hover:border-purple-500/50 bg-black/20 hover:bg-purple-500/5 transition-all cursor-pointer group"
+                  >
+                    <div className="w-12 h-12 rounded-lg bg-black/40 overflow-hidden shrink-0 border border-border/50">
+                      <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xs font-bold text-foreground line-clamp-1 group-hover:text-purple-300 transition-colors">{product.title}</h4>
+                      <div className="text-[10px] text-secondary mt-0.5 flex gap-2">
+                        <span>Mağaza: {product.shopName}</span>
+                        {product.isBestseller && <span className="text-yellow-500 font-bold">Bestseller</span>}
+                      </div>
+                    </div>
+                    <div className="shrink-0 pl-2">
+                      <button className="text-[10px] bg-white/5 hover:bg-purple-500/20 text-foreground px-3 py-1.5 rounded-lg border border-border group-hover:border-purple-500/30 transition-colors flex items-center gap-1">
+                        Seç <ArrowRight size={10} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
