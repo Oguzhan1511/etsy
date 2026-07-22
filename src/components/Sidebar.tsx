@@ -40,12 +40,12 @@ export default function Sidebar() {
     },
   ];
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace("/login");
-    }
-  }, [user, isLoading, router]);
+  // Auth bypass: login requirement disabled
+  // useEffect(() => {
+  //   if (!isLoading && !user) {
+  //     router.replace("/login");
+  //   }
+  // }, [user, isLoading, router]);
 
   // Show minimal loading state while checking auth
   if (isLoading) {

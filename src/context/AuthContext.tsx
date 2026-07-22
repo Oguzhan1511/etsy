@@ -50,14 +50,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   useEffect(() => {
+    // Auth bypass: always use a default guest user, skip login requirement
     const stored = localStorage.getItem("printysell-auth-user");
     let parsed: User | null = null;
     if (stored) {
-      try {
-        parsed = JSON.parse(stored) as User;
-      } catch {
-        localStorage.removeItem("printysell-auth-user");
-      }
+      try { parsed = JSON.parse(stored) as User; } catch {}
+    }
+    // If no stored user, inject a default guest so the app doesn't redirect to login
+    if (!parsed) {
+      parsed = { id: "guest", name: "Admin", email: "admin@printysell.com", plan: "Pro", initials: "AD" };
     }
     dispatch({ type: "INIT", payload: parsed });
   }, []);
