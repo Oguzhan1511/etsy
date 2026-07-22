@@ -218,14 +218,14 @@ export default function MockupPublishPage() {
             <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 animate-pulse">
               {t("mockupPublish.studioMatrixPro")}
             </span>
-            <span className="text-xs text-[#a09cb0]">Printify Yönlendirme Merkezi</span>
+            <span className="text-xs text-[#a09cb0]">{t("mockupPublish.printifyCenter")}</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
-            Katalog
+            {t("mockupPublish.catalog")}
           </h1>
           <p className="text-sm mt-1 text-[#a09cb0]">
-            Ürüne tıklayın → Printify'da mokaplama sayfası açılır.{" "}
-            <span className="text-amber-400 font-medium">⚠️ Printify hesabınıza giriş yapmış olmanız gerekir.</span>
+            {t("mockupPublish.desc1")} {" "}
+            <span className="text-amber-400 font-medium">{t("mockupPublish.desc2")}</span>
           </p>
         </div>
       </div>
@@ -245,7 +245,7 @@ export default function MockupPublishPage() {
         <div className="lg:col-span-3 rounded-xl border border-white/[0.07] p-4 space-y-4 backdrop-blur-md bg-white/[0.01]">
           <h2 className="text-sm font-bold text-white flex items-center gap-1.5 pb-2 border-b border-white/[0.06]">
             <Package className="w-4 h-4 text-purple-400" />
-            <span>Katalog Ağacı</span>
+            <span>{t("mockupPublish.catalogTree")}</span>
           </h2>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#5e5a72]" />
@@ -253,7 +253,7 @@ export default function MockupPublishPage() {
               type="text"
               value={catalogSearch}
               onChange={(e) => { setCatalogSearch(e.target.value); setCurrentPage(1); }}
-              placeholder="Ürün ara..."
+              placeholder={t("mockupPublish.searchProduct")}
               className="w-full h-8 pl-9 pr-3 bg-black/30 border border-white/[0.08] focus:border-purple-500/80 rounded-lg text-xs text-white placeholder-white/30 focus:outline-none"
             />
           </div>
@@ -305,7 +305,7 @@ export default function MockupPublishPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs">
             <div className="space-y-2">
               <h3 className="font-bold text-[#f1f0ff] uppercase tracking-wider">
-                {activeSubCat} Katalog ({filteredModels.length} Ürün)
+                {activeSubCat} {t("mockupPublish.catalogUpper")} ({filteredModels.length} {t("mockupPublish.products")})
                 {catalogSearch && <span className="text-[#5e5a72] font-medium normal-case ml-2">"{catalogSearch}" için</span>}
               </h3>
               {isApparelCategory && (
@@ -320,7 +320,7 @@ export default function MockupPublishPage() {
                           : "bg-black/30 text-[#a09cb0] border-white/[0.08] hover:bg-white/[0.05] hover:text-white"
                       }`}
                     >
-                      {option}
+                      {t(`mockupPublish.gender_${option}`)}
                     </button>
                   ))}
                 </div>
@@ -331,7 +331,7 @@ export default function MockupPublishPage() {
                 <Loader2 className="w-3 h-3 animate-spin" /> Yükleniyor...
               </span>
             ) : (
-              <span className="text-[11px] text-green-400 shrink-0">⚡ {allBlueprints.length} Ürün Yüklendi</span>
+              <span className="text-[11px] text-green-400 shrink-0">⚡ {allBlueprints.length} {t("mockupPublish.productsLoaded")}</span>
             )}
           </div>
 
