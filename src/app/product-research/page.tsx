@@ -150,6 +150,7 @@ export default function ProductResearchPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [analyzedProduct, setAnalyzedProduct] = useState<Product | null>(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [historyProducts, setHistoryProducts] = useState<Product[]>([]);
   
   const router = useRouter();
 
@@ -210,6 +211,11 @@ export default function ProductResearchPage() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      try {
+        const hist = JSON.parse(localStorage.getItem("researched_products_history") || "[]");
+        setHistoryProducts(hist);
+      } catch {}
+
       const params = new URLSearchParams(window.location.search);
       const q = params.get("q");
       if (q) {
@@ -232,6 +238,7 @@ export default function ProductResearchPage() {
       const hist = JSON.parse(localStorage.getItem("researched_products_history") || "[]");
       const newHist = [product, ...hist.filter((p: Product) => p.id !== product.id)].slice(0, 10);
       localStorage.setItem("researched_products_history", JSON.stringify(newHist));
+      setHistoryProducts(newHist);
     } catch {
       // Ignore local storage errors
     }
@@ -583,6 +590,75 @@ export default function ProductResearchPage() {
           </div>
         )}
       </div>
+
+      {/* History Section */}
+      {historyProducts.length > 0 && (
+        <div className="mt-12 space-y-4">
+          <div className="flex items-center gap-2 border-b border-border pb-3">
+            <RotateCcw className="w-5 h-5 text-purple-400" />
+            <h2 className="text-xl font-bold text-foreground">
+              {t("research.searchHistory") || "Geçmiş Aranan Ürünler"}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
+            {historyProducts.map((product) => (
+              <div 
+                key={`hist-${product.id}`}
+                className={`group relative bg-card border border-border hover:border-purple-500/50 rounded-2xl p-3 md:p-4 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(124,106,247,0.15)] flex flex-col justify-between ${selectedProduct?.id === product.id ? 'ring-2 ring-purple-500 border-purple-500' : ''}`}
+                onClick={() => handleCardClick(product)}
+              >
+                <div className="absolute top-5 md:top-6 left-5 md:left-6 z-10 flex gap-1.5 flex-col">
+                  {product.isBestseller && (
+                    <span className="bg-yellow-500/90 backdrop-blur text-black text-[10px] font-bold px-2 py-0.5 rounded-md shadow-lg shadow-black/50">
+                      Bestseller
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="aspect-[4/3] w-full rounded-xl overflow-hidden relative border border-border/50 bg-black/40">
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      unoptimized={false}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-purple-400 text-xs font-semibold hover:underline truncate">
+                      {product.shopName}
+                    </span>
+                  </div>
+
+                  <h3 className="text-sm font-medium leading-snug line-clamp-2 text-foreground mb-2 min-h-[40px] group-hover:text-purple-300/90 transition-colors">
+                    {product.title}
+                  </h3>
+
+                  <div className="text-lg font-bold text-foreground mb-3">
+                    ${product.price.toFixed(2)}
+                  </div>
+                </div>
+
+                <div>
+                  <button
+                    type="button"
+                    onClick={(e) => handleAIAnalyze(product, e)}
+                    className="w-full py-2 px-3 rounded-lg text-xs font-semibold text-foreground transition-all duration-300 flex items-center justify-center gap-1.5 relative overflow-hidden group-hover:shadow-[0_0_15px_rgba(124,106,247,0.35)] cursor-pointer"
+                    style={{
+                      background: "linear-gradient(135deg, #7c6af7 0%, #8c7bf7 100%)",
+                    }}
+                  >
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>{t("research.aiAnalyzeDesign") || "Yapay Zeka ile Analiz Et"}</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Floating Action Banner */}
       {selectedProduct && (
