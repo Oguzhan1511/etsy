@@ -156,75 +156,41 @@ export async function GET(req: Request) {
         },
       });
 
-      let shopId = null;
-      if (shopsResponse.ok) {
-        const shops = await shopsResponse.json();
-        if (shops && shops.length > 0) {
-          shopId = shops[0].id;
+      if (!shopsResponse.ok) {
+        return NextResponse.json({ error: "No Printify shops found" }, { status: 404 });
+      }
+
+      const shops = await shopsResponse.json();
+      if (!shops || shops.length === 0) {
+        return NextResponse.json({ error: "No Printify shops found" }, { status: 404 });
+      }
+
+      let allProducts: any[] = [];
+      
+      for (const shop of shops) {
+        const shopId = shop.id;
+        const productsRes = await fetch(`https://api.printify.com/v1/shops/${shopId}/products.json`, {
+          headers: {
+            Authorization: `Bearer ${activeToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (productsRes.ok) {
+          const productsData = await productsRes.json();
+          if (Array.isArray(productsData.data)) {
+             // attach shop_id to each product just in case
+             const shopProducts = productsData.data.map((p: any) => ({ ...p, shop_id: shopId }));
+             allProducts = [...allProducts, ...shopProducts];
+          } else if (Array.isArray(productsData)) {
+             const shopProducts = productsData.map((p: any) => ({ ...p, shop_id: shopId }));
+             allProducts = [...allProducts, ...shopProducts];
+          }
         }
       }
 
-      // If we cannot find a shop (e.g. token expired, unauthenticated), return mock data for demonstration
-      if (!shopId) {
-        console.warn("Printify shops fetch failed or no shop found. Returning mock drafts.");
-        return NextResponse.json({
-          data: [
-            {
-              id: "mock_draft_1",
-              title: "Vintage Sunset Unisex T-Shirt",
-              description: "A beautiful vintage sunset design on a premium quality unisex t-shirt.",
-              tags: ["vintage", "sunset", "tshirt", "retro"],
-              visible: false, // This makes it a draft
-              images: [
-                { src: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80", is_default: true }
-              ],
-              variants: [{ price: 2500 }, { price: 2750 }],
-              shop_id: "mock_shop_id"
-            },
-            {
-              id: "mock_draft_2",
-              title: "Minimalist Coffee Mug",
-              description: "Start your day with this elegant minimalist ceramic coffee mug.",
-              tags: ["mug", "coffee", "minimalist", "ceramic"],
-              visible: false,
-              images: [
-                { src: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=600&q=80", is_default: true }
-              ],
-              variants: [{ price: 1500 }],
-              shop_id: "mock_shop_id"
-            },
-            {
-              id: "mock_draft_3",
-              title: "Cyberpunk Cityscape Hoodie",
-              description: "Stay warm with this heavy blend hoodie featuring a futuristic cyberpunk city.",
-              tags: ["hoodie", "cyberpunk", "futuristic", "apparel"],
-              visible: false,
-              images: [
-                { src: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80", is_default: true }
-              ],
-              variants: [{ price: 4500 }, { price: 4500 }, { price: 4800 }],
-              shop_id: "mock_shop_id"
-            }
-          ]
-        });
-      }
-
-      // Fetch products for the shop (Drafts/Unpublished usually means visible=false or has no external link)
-      const productsRes = await fetch(`https://api.printify.com/v1/shops/${shopId}/products.json`, {
-        headers: {
-          Authorization: `Bearer ${activeToken}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!productsRes.ok) {
-        const errorText = await productsRes.text();
-        console.error("Printify products API failed:", productsRes.status, errorText);
-        throw new Error(`Printify products API returned status: ${productsRes.status} - ${errorText}`);
-      }
-
-      const productsData = await productsRes.json();
-      return NextResponse.json(productsData);
+      console.log("Printify products data length:", allProducts.length);
+      return NextResponse.json({ data: allProducts });
     }
 
     return NextResponse.json({ error: "Invalid action parameter" }, { status: 400 });
