@@ -24,14 +24,9 @@ export default function LoginPage() {
 
   // If already logged in, redirect based on payment status
   useEffect(() => {
-    if (!isLoading && user) {
-      if (user.plan === "none" || !user.paymentStatus) {
-        router.replace("/plans");
-      } else {
-        router.replace("/");
-      }
-    }
-  }, [user, isLoading, router]);
+    // BYPASS: Always redirect to dashboard
+    router.replace("/");
+  }, [router]);
 
   // Water Ripple Effect
   useEffect(() => {

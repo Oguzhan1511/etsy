@@ -56,6 +56,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (stored) {
       try { parsed = JSON.parse(stored) as User; } catch {}
     }
+    
+    // BYPASS: Provide a default guest user if no user is found
+    if (!parsed) {
+      parsed = {
+        id: "guest_123",
+        name: "Guest User",
+        email: "guest@printysell.com",
+        plan: "PRO",
+        paymentStatus: true,
+        initials: "GU"
+      };
+      localStorage.setItem("printysell-auth-user", JSON.stringify(parsed));
+    }
+    
     dispatch({ type: "INIT", payload: parsed });
   }, []);
 
@@ -100,8 +114,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    localStorage.removeItem("printysell-auth-user");
-    dispatch({ type: "LOGOUT" });
+    // BYPASS: Prevent actual logout to keep guest session
+    // localStorage.removeItem("printysell-auth-user");
+    // dispatch({ type: "LOGOUT" });
+    window.location.href = "/";
   };
 
   return (
