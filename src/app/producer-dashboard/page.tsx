@@ -368,7 +368,7 @@ const categoryDetails: Record<string, CategoryDetail> = {
 const FallbackImage = ({ src, alt }: { src: string, alt: string }) => {
   const [error, setError] = React.useState(false);
   return error ? (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-white/5 text-[#5e5a72]">
+    <div className="w-full h-full flex flex-col items-center justify-center bg-white/5 text-muted">
       <Package size={16} className="mb-0.5 opacity-50"/>
     </div>
   ) : (
@@ -569,23 +569,23 @@ export default function ProducerDashboardPage() {
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
             {t("dashboard.producer")}
           </h1>
-          <p className="text-sm mt-0.5 text-[#a09cb0]">
+          <p className="text-sm mt-0.5 text-secondary">
             {t("dashboard.producerDesc")}
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <div
-            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl border border-white/[0.08] backdrop-blur-md bg-white/[0.02]"
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl border border-border backdrop-blur-md bg-white/[0.02]"
           >
             <div className={`w-1.5 h-1.5 rounded-full ${shopData ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-red-500'} `} />
-            <span className="text-[#a09cb0]">
-              {t("dashboard.connection")} <span className="text-white font-semibold">{shopData ? t("dashboard.liveApi") : t("dashboard.sandbox")}</span>
+            <span className="text-secondary">
+              {t("dashboard.connection")} <span className="text-foreground font-semibold">{shopData ? t("dashboard.liveApi") : t("dashboard.sandbox")}</span>
             </span>
           </div>
           {!shopData && (
             <button
               onClick={() => window.location.href = '/api/etsy/auth'}
-              className="px-4 py-1.5 text-xs font-bold text-white bg-[#F16421] hover:bg-[#E35D1F] rounded-xl transition-colors shadow-[0_0_10px_rgba(241,100,33,0.2)] flex items-center justify-center"
+              className="px-4 py-1.5 text-xs font-bold text-foreground bg-[#F16421] hover:bg-[#E35D1F] rounded-xl transition-colors shadow-[0_0_10px_rgba(241,100,33,0.2)] flex items-center justify-center"
             >
               {t("settings.connect") || "Etsy Bağla"}
             </button>
@@ -597,9 +597,9 @@ export default function ProducerDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Card 1: Discovered Blueprints */}
-        <div className="group rounded-xl p-5 border border-white/[0.07] bg-[#16161e] hover:border-white/[0.14] transition-all hover:-translate-y-0.5 cursor-default">
+        <div className="group rounded-xl p-5 border border-border bg-card hover:border-border-hover transition-all hover:-translate-y-0.5 cursor-default">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#a09cb0]">
+            <span className="text-xs font-bold uppercase tracking-wider text-secondary">
               {t("dashboard.discoveredBlueprints")}
             </span>
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-purple-500/10 text-purple-400 group-hover:scale-105 transition-transform">
@@ -608,10 +608,10 @@ export default function ProducerDashboardPage() {
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-3xl font-extrabold tracking-tight text-white">
+              <span className="text-3xl font-extrabold tracking-tight text-foreground">
                 {totalBlueprints}
               </span>
-              <span className="text-[10px] text-[#5e5a72] block mt-0.5">{t("dashboard.catalogBlueprints")}</span>
+              <span className="text-[10px] text-muted block mt-0.5">{t("dashboard.catalogBlueprints")}</span>
             </div>
             <div className="text-[10px] font-semibold text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full border border-purple-500/30 text-xs">
               {t("dashboard.syncActive")}
@@ -620,9 +620,9 @@ export default function ProducerDashboardPage() {
         </div>
 
         {/* Card 2: Rendered Mockups */}
-        <div className="group rounded-xl p-5 border border-white/[0.07] bg-[#16161e] hover:border-white/[0.14] transition-all hover:-translate-y-0.5 cursor-default">
+        <div className="group rounded-xl p-5 border border-border bg-card hover:border-border-hover transition-all hover:-translate-y-0.5 cursor-default">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#a09cb0]">
+            <span className="text-xs font-bold uppercase tracking-wider text-secondary">
               {t("dashboard.renderedMockups")}
             </span>
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-500/10 text-blue-400 group-hover:scale-105 transition-transform">
@@ -631,10 +631,10 @@ export default function ProducerDashboardPage() {
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-3xl font-extrabold tracking-tight text-white">
+              <span className="text-3xl font-extrabold tracking-tight text-foreground">
                 {designedCount}
               </span>
-              <span className="text-[10px] text-[#5e5a72] block mt-0.5">{t("dashboard.mockupRenderFiles")}</span>
+              <span className="text-[10px] text-muted block mt-0.5">{t("dashboard.mockupRenderFiles")}</span>
             </div>
             <div className="text-[10px] font-semibold text-blue-300 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30 text-xs">
               {t("dashboard.weeklyGrowth")}
@@ -643,9 +643,9 @@ export default function ProducerDashboardPage() {
         </div>
 
         {/* Card 3: Draft Blueprints */}
-        <div className="group rounded-xl p-5 border border-white/[0.07] bg-[#16161e] hover:border-white/[0.14] transition-all hover:-translate-y-0.5 cursor-default">
+        <div className="group rounded-xl p-5 border border-border bg-card hover:border-border-hover transition-all hover:-translate-y-0.5 cursor-default">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#a09cb0]">
+            <span className="text-xs font-bold uppercase tracking-wider text-secondary">
               {t("dashboard.draftBlueprints")}
             </span>
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500/10 text-amber-400 group-hover:scale-105 transition-transform">
@@ -654,10 +654,10 @@ export default function ProducerDashboardPage() {
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-3xl font-extrabold tracking-tight text-white">
+              <span className="text-3xl font-extrabold tracking-tight text-foreground">
                 {draftCount}
               </span>
-              <span className="text-[10px] text-[#5e5a72] block mt-0.5">{t("dashboard.notSyncEtsy")}</span>
+              <span className="text-[10px] text-muted block mt-0.5">{t("dashboard.notSyncEtsy")}</span>
             </div>
             <div className="text-[10px] font-semibold text-amber-300 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/30 text-xs">
               {t("dashboard.pendingSync")}
@@ -666,9 +666,9 @@ export default function ProducerDashboardPage() {
         </div>
 
         {/* Card 4: Active Listings */}
-        <div className="group rounded-xl p-5 border border-white/[0.07] bg-[#16161e] hover:border-white/[0.14] transition-all hover:-translate-y-0.5 cursor-default">
+        <div className="group rounded-xl p-5 border border-border bg-card hover:border-border-hover transition-all hover:-translate-y-0.5 cursor-default">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#a09cb0]">
+            <span className="text-xs font-bold uppercase tracking-wider text-secondary">
               {t("dashboard.activeListings")}
             </span>
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-500/10 text-emerald-400 group-hover:scale-105 transition-transform">
@@ -677,10 +677,10 @@ export default function ProducerDashboardPage() {
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-3xl font-extrabold tracking-tight text-white">
+              <span className="text-3xl font-extrabold tracking-tight text-foreground">
                 {publishedCount}
               </span>
-              <span className="text-[10px] text-[#5e5a72] block mt-0.5">{t("dashboard.activeEtsyListings")}</span>
+              <span className="text-[10px] text-muted block mt-0.5">{t("dashboard.activeEtsyListings")}</span>
             </div>
             <div className="text-[10px] font-semibold text-emerald-300 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30 text-xs">
               {t("dashboard.liveStores")}
@@ -692,16 +692,16 @@ export default function ProducerDashboardPage() {
 
       {/* Etsy Category Sales Volume Trends Chart - Full Width */}
       <div
-        className="rounded-xl border border-white/[0.07] p-5 space-y-5 backdrop-blur-md"
+        className="rounded-xl border border-border p-5 space-y-5 backdrop-blur-md"
         style={{ background: "var(--bg-card)" }}
       >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-white/[0.06]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-border">
           <div>
-            <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
+            <h2 className="text-sm font-bold text-foreground flex items-center gap-1.5">
               <TrendingUp className="w-4 h-4 text-purple-400" />
               <span>{t("dashboard.categorySales")}</span>
             </h2>
-            <p className="text-[11px] text-[#a09cb0] mt-0.5">{t("dashboard.categorySalesDesc")}</p>
+            <p className="text-[11px] text-secondary mt-0.5">{t("dashboard.categorySalesDesc")}</p>
           </div>
 
           {/* Keyword Search Input */}
@@ -710,18 +710,18 @@ export default function ProducerDashboardPage() {
             className="flex items-center gap-2"
           >
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5e5a72]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
               <input 
                 type="text" 
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 placeholder={t("dashboard.searchPlaceholder")}
-                className="bg-black/20 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:border-purple-500/50 w-64 transition-colors placeholder:text-[#5e5a72]"
+                className="bg-black/20 border border-border rounded-lg pl-9 pr-4 py-2 text-xs text-foreground focus:outline-none focus:border-purple-500/50 w-64 transition-colors placeholder:text-muted"
               />
             </div>
             <button 
               type="submit"
-              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors"
+              className="bg-purple-500 hover:bg-purple-600 text-foreground px-4 py-2 rounded-lg text-xs font-bold transition-colors"
             >
               {t("dashboard.analyze")}
             </button>
@@ -734,10 +734,10 @@ export default function ProducerDashboardPage() {
           {/* Chart Container (2/3 width) */}
           <div className="lg:col-span-2 flex flex-col justify-between bg-black/10 rounded-xl border border-white/[0.03] p-4 relative">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-2">
-              <span className="text-[10px] text-[#5e5a72] font-semibold">{t("dashboard.weeklyProjection")}</span>
+              <span className="text-[10px] text-muted font-semibold">{t("dashboard.weeklyProjection")}</span>
               
               {/* Interactive metric selectors */}
-              <div className="flex flex-wrap gap-2 text-[9px] text-[#a09cb0]">
+              <div className="flex flex-wrap gap-2 text-[9px] text-secondary">
                 {activeCat.lines.map((l) => {
                   const isHoveredOrClicked = selectedMetrics.includes(l.name);
                   return (
@@ -755,8 +755,8 @@ export default function ProducerDashboardPage() {
                         }}
                       className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
                         isHoveredOrClicked
-                          ? "bg-white/10 border-white/20 text-white scale-[1.02] shadow-[0_2px_8px_rgba(255,255,255,0.05)] font-bold"
-                          : "border-white/[0.04] bg-white/[0.01] hover:bg-white/5 hover:text-white"
+                          ? "bg-white/10 border-border-hover text-foreground scale-[1.02] shadow-[0_2px_8px_rgba(255,255,255,0.05)] font-bold"
+                          : "border-border bg-white/[0.01] hover:bg-white/5 hover:text-foreground"
                       }`}
                     >
                       <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: l.color }} />
@@ -779,17 +779,17 @@ export default function ProducerDashboardPage() {
                       </linearGradient>
                     ))}
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                   <XAxis 
                     dataKey="name" 
-                    stroke="#5e5a72" 
+                    stroke="var(--text-muted)" 
                     fontSize={10} 
                     tickLine={false} 
                     axisLine={false} 
                     dy={10}
                   />
                   <YAxis 
-                    stroke="#5e5a72" 
+                    stroke="var(--text-muted)" 
                     fontSize={10} 
                     tickLine={false} 
                     axisLine={false}
@@ -828,13 +828,13 @@ export default function ProducerDashboardPage() {
           </div>
 
           {/* Niche Insights Panel (1/3 width) */}
-          <div className="flex flex-col justify-between space-y-4 bg-black/15 p-4 rounded-xl border border-white/[0.04]">
+          <div className="flex flex-col justify-between space-y-4 bg-black/15 p-4 rounded-xl border border-border">
             <div className="space-y-2">
               <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">{t("dashboard.marketIntelligence")}</span>
-              <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
                 <span>{activeCat.name} {t("dashboard.nicheDetails")}</span>
               </h3>
-              <p className="text-xs text-[#a09cb0] leading-relaxed">
+              <p className="text-xs text-secondary leading-relaxed">
                 {activeCat.insight}
               </p>
             </div>
@@ -844,44 +844,44 @@ export default function ProducerDashboardPage() {
               
               {/* Active Sellers Ratio */}
               <div className="bg-black/25 p-2.5 rounded-lg border border-white/[0.03] space-y-1">
-                <div className="flex items-center gap-1 text-[9px] text-[#5e5a72] font-semibold uppercase">
+                <div className="flex items-center gap-1 text-[9px] text-muted font-semibold uppercase">
                   <Users className="w-3 h-3 text-purple-400" />
                   <span>{t("dashboard.activeSellers")}</span>
                 </div>
-                <div className="text-[11px] font-bold text-white">
+                <div className="text-[11px] font-bold text-foreground">
                   {activeCat.lines.find(l => l.name === "Active Sellers")?.value.replace('queries/mo', t('metric.queriesMo')).replace('shops', t('metric.shops')).replace('fav rate', t('metric.favRate')).replace('conversion', t('metric.conversion'))}
                 </div>
               </div>
 
               {/* Search Rate */}
               <div className="bg-black/25 p-2.5 rounded-lg border border-white/[0.03] space-y-1">
-                <div className="flex items-center gap-1 text-[9px] text-[#5e5a72] font-semibold uppercase">
+                <div className="flex items-center gap-1 text-[9px] text-muted font-semibold uppercase">
                   <Search className="w-3 h-3 text-blue-400" />
                   <span>{t("dashboard.searchVolume")}</span>
                 </div>
-                <div className="text-[11px] font-bold text-white">
+                <div className="text-[11px] font-bold text-foreground">
                   {activeCat.lines.find(l => l.name === "Search Volume")?.value.replace('queries/mo', t('metric.queriesMo')).replace('shops', t('metric.shops')).replace('fav rate', t('metric.favRate')).replace('conversion', t('metric.conversion'))}
                 </div>
               </div>
 
               {/* Favorite Rate */}
               <div className="bg-black/25 p-2.5 rounded-lg border border-white/[0.03] space-y-1">
-                <div className="flex items-center gap-1 text-[9px] text-[#5e5a72] font-semibold uppercase">
+                <div className="flex items-center gap-1 text-[9px] text-muted font-semibold uppercase">
                   <Heart className="w-3 h-3 text-pink-400" />
                   <span>{t("dashboard.favoritesRate")}</span>
                 </div>
-                <div className="text-[11px] font-bold text-white">
+                <div className="text-[11px] font-bold text-foreground">
                   {activeCat.lines.find(l => l.name === "Favorites Rate")?.value.replace('queries/mo', t('metric.queriesMo')).replace('shops', t('metric.shops')).replace('fav rate', t('metric.favRate')).replace('conversion', t('metric.conversion'))}
                 </div>
               </div>
 
               {/* Purchase Conversion Rate */}
               <div className="bg-black/25 p-2.5 rounded-lg border border-white/[0.03] space-y-1">
-                <div className="flex items-center gap-1 text-[9px] text-[#5e5a72] font-semibold uppercase">
+                <div className="flex items-center gap-1 text-[9px] text-muted font-semibold uppercase">
                   <ShoppingBag className="w-3 h-3 text-emerald-400" />
                   <span>{t("dashboard.conversionRate")}</span>
                 </div>
-                <div className="text-[11px] font-bold text-white">
+                <div className="text-[11px] font-bold text-foreground">
                   {activeCat.lines.find(l => l.name === "Conversion Rate")?.value.replace('queries/mo', t('metric.queriesMo')).replace('shops', t('metric.shops')).replace('fav rate', t('metric.favRate')).replace('conversion', t('metric.conversion'))}
                 </div>
               </div>
@@ -891,15 +891,15 @@ export default function ProducerDashboardPage() {
             {/* Metrics Checklist Stack */}
             <div className="space-y-1.5 bg-black/10 p-2.5 rounded-lg border border-white/[0.02]">
               <div className="flex justify-between text-[10px]">
-                <span className="text-[#5e5a72]">{t("dashboard.monthlyOrderVol")}</span>
-                <span className="font-semibold text-white">{activeCat.monthlySales}</span>
+                <span className="text-muted">{t("dashboard.monthlyOrderVol")}</span>
+                <span className="font-semibold text-foreground">{activeCat.monthlySales}</span>
               </div>
               <div className="flex justify-between text-[10px]">
-                <span className="text-[#5e5a72]">{t("dashboard.avgRetailPrice")}</span>
-                <span className="font-semibold text-white">{activeCat.avgPrice}</span>
+                <span className="text-muted">{t("dashboard.avgRetailPrice")}</span>
+                <span className="font-semibold text-foreground">{activeCat.avgPrice}</span>
               </div>
               <div className="flex justify-between text-[10px]">
-                <span className="text-[#5e5a72]">{t("dashboard.etsyCompetition")}</span>
+                <span className="text-muted">{t("dashboard.etsyCompetition")}</span>
                 <span className={`font-semibold ${
                   activeCat.competition === "Low" ? "text-emerald-400" : "text-amber-400"
                 }`}>
@@ -907,7 +907,7 @@ export default function ProducerDashboardPage() {
                 </span>
               </div>
               <div className="flex justify-between text-[10px]">
-                <span className="text-[#5e5a72]">{t("dashboard.bestSellingStyles")}</span>
+                <span className="text-muted">{t("dashboard.bestSellingStyles")}</span>
                 <span className="font-semibold text-purple-300 truncate max-w-[140px]" title={activeCat.hotStyle}>
                   {activeCat.hotStyle}
                 </span>
@@ -916,10 +916,10 @@ export default function ProducerDashboardPage() {
 
             {/* Suggested Etsy Tags */}
             <div className="space-y-1.5">
-              <span className="text-[9px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("dashboard.suggestedSeo")}</span>
+              <span className="text-[9px] font-bold text-muted uppercase tracking-wider">{t("dashboard.suggestedSeo")}</span>
               <div className="flex flex-wrap gap-1.5">
                 {activeCat.keywords.map((kw, i) => (
-                  <span key={i} className="text-[10px] bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] px-2 py-0.5 rounded text-[#a09cb0] transition-colors cursor-default">
+                  <span key={i} className="text-[10px] bg-white/[0.03] hover:bg-white/[0.06] border border-border px-2 py-0.5 rounded text-secondary transition-colors cursor-default">
                     {kw}
                   </span>
                 ))}
@@ -929,7 +929,7 @@ export default function ProducerDashboardPage() {
             {/* Start Designing Action Button */}
             <Link
               href={`/product-research?q=${encodeURIComponent(activeCat.name)}`}
-              className="w-full py-2 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(124,106,247,0.25)] transition-all cursor-pointer animate-pulse"
+              className="w-full py-2 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 text-foreground rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(124,106,247,0.25)] transition-all cursor-pointer animate-pulse"
             >
               <span>{t("dashboard.researchProducts").replace("Products", activeCat.name + " Products")}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -941,7 +941,7 @@ export default function ProducerDashboardPage() {
 
       {/* Recent Product Analysis History */}
       <div
-        className="rounded-xl overflow-hidden border border-white/[0.07]"
+        className="rounded-xl overflow-hidden border border-border"
         style={{ background: "var(--bg-card)" }}
       >
         <div
@@ -950,7 +950,7 @@ export default function ProducerDashboardPage() {
         >
           <div className="flex items-center gap-2">
             <Clock size={15} className="text-purple-400" />
-            <span className="text-sm font-bold text-white">
+            <span className="text-sm font-bold text-foreground">
               {t("dashboard.recentHistory")}
             </span>
           </div>
@@ -971,7 +971,7 @@ export default function ProducerDashboardPage() {
                 {[t("dashboard.colProduct"), t("dashboard.colShop"), t("dashboard.colPrice"), t("dashboard.colScore"), t("dashboard.colAction")].map((h) => (
                   <th
                     key={h}
-                    className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-[#5e5a72]"
+                    className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-muted"
                   >
                     {h}
                   </th>
@@ -984,18 +984,18 @@ export default function ProducerDashboardPage() {
                   key={p.id}
                   className="transition-all hover:bg-white/[0.01]"
                 >
-                  <td className="px-5 py-4 font-semibold text-white flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-900 border border-white/10 shrink-0 flex items-center justify-center">
+                  <td className="px-5 py-4 font-semibold text-foreground flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-900 border border-border shrink-0 flex items-center justify-center">
                       <FallbackImage src={p.imageUrl} alt={p.title} />
                     </div>
                     <span className="truncate max-w-[280px]">{p.title}</span>
                   </td>
                   <td className="px-5 py-4">
-                    <span className="px-2.5 py-1 text-xs rounded-lg bg-white/[0.03] border border-white/[0.06] font-semibold text-[#a09cb0]">
+                    <span className="px-2.5 py-1 text-xs rounded-lg bg-white/[0.03] border border-border font-semibold text-secondary">
                       {p.shopName}
                     </span>
                   </td>
-                  <td className="px-5 py-4 font-bold text-white">
+                  <td className="px-5 py-4 font-bold text-foreground">
                     {p.price}
                   </td>
                   <td className="px-5 py-4 font-bold text-purple-300">
@@ -1006,7 +1006,7 @@ export default function ProducerDashboardPage() {
                       href={p.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 w-max rounded-lg text-xs font-bold text-white bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500 hover:text-white transition-all cursor-pointer"
+                      className="flex items-center gap-1.5 px-3.5 py-1.5 w-max rounded-lg text-xs font-bold text-foreground bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500 hover:text-foreground transition-all cursor-pointer"
                     >
                       <ArrowRight size={14} />
                       <span>{t("dashboard.viewEtsy")}</span>
@@ -1015,7 +1015,7 @@ export default function ProducerDashboardPage() {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={5} className="px-5 py-12 text-center text-[#5e5a72] text-xs">
+                  <td colSpan={5} className="px-5 py-12 text-center text-muted text-xs">
                     {t("dashboard.noHistory")}
                   </td>
                 </tr>

@@ -360,14 +360,14 @@ export default function ProductsPage() {
       
       {toast.visible && (
         <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-5 py-3 rounded-xl border backdrop-blur-md animate-fade-in shadow-xl ${
-          toast.type === 'error' ? 'bg-red-500/10 border-red-500/30' : 'bg-[#1e1b2e] border-purple-500/30'
+          toast.type === 'error' ? 'bg-red-500/10 border-red-500/30' : 'bg-surface border-purple-500/30'
         }`}>
           {toast.type === 'error' ? (
             <AlertCircle className="w-5 h-5 text-red-400" />
           ) : (
             <span className="text-green-400 text-lg">✓</span>
           )}
-          <p className={`text-sm font-medium ${toast.type === 'error' ? 'text-red-300' : 'text-white'}`}>{toast.message}</p>
+          <p className={`text-sm font-medium ${toast.type === 'error' ? 'text-red-300' : 'text-foreground'}`}>{toast.message}</p>
         </div>
       )}
 
@@ -377,7 +377,7 @@ export default function ProductsPage() {
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
             {t("products.title")}
           </h1>
-          <p className="text-sm mt-0.5 text-[#a09cb0]">
+          <p className="text-sm mt-0.5 text-secondary">
             {t("products.subtitle")}
           </p>
         </div>
@@ -385,10 +385,10 @@ export default function ProductsPage() {
 
       {/* Stats Summary Panel */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("products.activeProducts")}</span>
-            <span className="text-2xl font-bold text-white mt-1 block">
+            <span className="text-[10px] text-muted block uppercase font-bold tracking-wider">{t("products.activeProducts")}</span>
+            <span className="text-2xl font-bold text-foreground mt-1 block">
               {products.length}
             </span>
           </div>
@@ -397,10 +397,10 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("products.inactiveProducts")}</span>
-            <span className="text-2xl font-bold text-white mt-1 block">
+            <span className="text-[10px] text-muted block uppercase font-bold tracking-wider">{t("products.inactiveProducts")}</span>
+            <span className="text-2xl font-bold text-foreground mt-1 block">
               {printifyDrafts.length}
             </span>
           </div>
@@ -409,9 +409,9 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("products.totalInventoryRevenue")}</span>
+            <span className="text-[10px] text-muted block uppercase font-bold tracking-wider">{t("products.totalInventoryRevenue")}</span>
             <span className="text-2xl font-bold text-emerald-400 mt-1 block">
               ${products.reduce((acc, curr) => acc + curr.revenue, 0).toLocaleString()}
             </span>
@@ -421,9 +421,9 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("products.netInventoryProfit")}</span>
+            <span className="text-[10px] text-muted block uppercase font-bold tracking-wider">{t("products.netInventoryProfit")}</span>
             <span className="text-2xl font-bold text-amber-400 mt-1 block">
               ${products.reduce((acc, curr) => acc + curr.profit, 0).toLocaleString()}
             </span>
@@ -436,7 +436,7 @@ export default function ProductsPage() {
 
       {/* Search and Filters Controller bar */}
       <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between bg-black/10 p-3 rounded-xl border border-white/[0.03]">
-        <div className="flex bg-white/[0.02] p-1 rounded-lg border border-white/[0.05] self-start">
+        <div className="flex bg-white/[0.02] p-1 rounded-lg border border-border self-start">
           {[
             { id: "Active", label: t("products.activeProducts") },
             { id: "Inactive", label: t("products.inactiveProducts") }
@@ -446,8 +446,8 @@ export default function ProductsPage() {
               onClick={() => { setFilterTab(tab.id as "Active" | "Inactive"); setOpenDropdownId(null); }}
               className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
                 filterTab === tab.id
-                  ? "bg-purple-500/20 border border-purple-500/35 text-white"
-                  : "text-[#a09cb0] hover:text-white"
+                  ? "bg-purple-500/20 border border-purple-500/35 text-foreground"
+                  : "text-secondary hover:text-foreground"
               }`}
             >
               {tab.label}
@@ -457,13 +457,13 @@ export default function ProductsPage() {
 
         {/* Search */}
         <div className="relative w-full sm:w-64">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5e5a72]" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <input
             type="text"
             placeholder={t("products.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-1.5 rounded-lg border border-white/[0.08] bg-[#16161e] text-xs text-white placeholder-[#5e5a72] focus:outline-none focus:border-purple-500/50"
+            className="w-full pl-9 pr-4 py-1.5 rounded-lg border border-border bg-card text-xs text-foreground placeholder-[#5e5a72] focus:outline-none focus:border-purple-500/50"
           />
         </div>
       </div>
@@ -473,58 +473,58 @@ export default function ProductsPage() {
         {filterTab === "Active" ? (
           // ETSY ACTIVE PRODUCTS RENDER
           filteredProducts.length === 0 ? (
-            <div className="p-12 text-center border border-white/[0.05] bg-black/5 rounded-xl space-y-2">
-              <EyeOff className="w-8 h-8 text-[#5e5a72] mx-auto" />
-              <p className="text-xs text-[#a09cb0]">{t("products.noProductsFound")}</p>
+            <div className="p-12 text-center border border-border bg-black/5 rounded-xl space-y-2">
+              <EyeOff className="w-8 h-8 text-muted mx-auto" />
+              <p className="text-xs text-secondary">{t("products.noProductsFound")}</p>
             </div>
           ) : (
             filteredProducts.map(p => (
               <div 
                 key={p.id}
-                className="bg-[#16161e] border border-white/[0.05] hover:border-white/10 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all"
+                className="bg-card border border-border hover:border-border rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all"
               >
                 <div className="flex items-center gap-3.5 min-w-0 md:w-1/3">
-                  <div className="w-14 h-14 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-neutral-900 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-lg overflow-hidden border border-border shrink-0 bg-neutral-900 flex items-center justify-center">
                     <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
                   </div>
                   <div className="min-w-0 space-y-1">
-                    <h3 className="text-xs sm:text-sm font-bold text-white leading-normal truncate" title={p.title}>
+                    <h3 className="text-xs sm:text-sm font-bold text-foreground leading-normal truncate" title={p.title}>
                       {p.title}
                     </h3>
-                    <span className="text-[9px] text-[#5e5a72] font-mono block">{p.sku}</span>
+                    <span className="text-[9px] text-muted font-mono block">{p.sku}</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 md:flex md:items-center md:justify-around md:flex-1 text-center md:text-left px-2">
                   <div className="space-y-0.5">
-                    <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">{t("products.sales")}</span>
-                    <span className="text-xs font-bold text-white flex items-center gap-1 justify-center md:justify-start">
+                    <span className="text-[9px] text-muted uppercase font-bold tracking-wider block">{t("products.sales")}</span>
+                    <span className="text-xs font-bold text-foreground flex items-center gap-1 justify-center md:justify-start">
                       <ShoppingBag size={11} className="text-purple-400" />
                       <span>{p.salesCount}</span>
                     </span>
                   </div>
                   <div className="space-y-0.5">
-                    <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">{t("products.cart")}</span>
-                    <span className="text-xs font-bold text-white flex items-center gap-1 justify-center md:justify-start">
+                    <span className="text-[9px] text-muted uppercase font-bold tracking-wider block">{t("products.cart")}</span>
+                    <span className="text-xs font-bold text-foreground flex items-center gap-1 justify-center md:justify-start">
                       <ShoppingCart size={11} className="text-blue-400" />
                       <span>{p.cartCount}</span>
                     </span>
                   </div>
                   <div className="space-y-0.5">
-                    <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">{t("products.favorite")}</span>
-                    <span className="text-xs font-bold text-white flex items-center gap-1 justify-center md:justify-start">
+                    <span className="text-[9px] text-muted uppercase font-bold tracking-wider block">{t("products.favorite")}</span>
+                    <span className="text-xs font-bold text-foreground flex items-center gap-1 justify-center md:justify-start">
                       <Heart size={11} className="text-pink-400" />
                       <span>{p.favoritesCount}</span>
                     </span>
                   </div>
                   <div className="space-y-0.5">
-                    <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">{t("products.revenue")}</span>
+                    <span className="text-[9px] text-muted uppercase font-bold tracking-wider block">{t("products.revenue")}</span>
                     <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5 justify-center md:justify-start">
                       <span>${p.revenue.toLocaleString()}</span>
                     </span>
                   </div>
                   <div className="space-y-0.5">
-                    <span className="text-[9px] text-[#5e5a72] uppercase font-bold tracking-wider block">{t("products.profit")}</span>
+                    <span className="text-[9px] text-muted uppercase font-bold tracking-wider block">{t("products.profit")}</span>
                     <span className="text-xs font-bold text-amber-400 flex items-center gap-0.5 justify-center md:justify-start">
                       <span>${p.profit.toLocaleString()}</span>
                     </span>
@@ -534,23 +534,23 @@ export default function ProductsPage() {
                 <div className="relative self-end md:self-auto shrink-0 z-20">
                   <button
                     onClick={() => setOpenDropdownId(openDropdownId === p.id ? null : p.id)}
-                    className="w-8 h-8 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 flex items-center justify-center text-[#a09cb0] hover:text-white cursor-pointer"
+                    className="w-8 h-8 rounded-lg hover:bg-white/5 border border-transparent hover:border-border flex items-center justify-center text-secondary hover:text-foreground cursor-pointer"
                   >
                     <MoreVertical size={16} />
                   </button>
 
                   {openDropdownId === p.id && (
-                    <div className="absolute right-0 mt-1.5 w-36 rounded-xl bg-[#16161e] border border-white/[0.08] shadow-[0_8px_24px_rgba(0,0,0,0.5)] p-1.5 space-y-1 z-30">
+                    <div className="absolute right-0 mt-1.5 w-36 rounded-xl bg-card border border-border shadow-[0_8px_24px_rgba(0,0,0,0.5)] p-1.5 space-y-1 z-30">
                       <button
                         onClick={() => startEdit(p)}
-                        className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/5 text-[11px] text-white font-semibold cursor-pointer text-left"
+                        className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/5 text-[11px] text-foreground font-semibold cursor-pointer text-left"
                       >
-                        <Edit2 size={12} className="text-[#a09cb0]" />
+                        <Edit2 size={12} className="text-secondary" />
                         <span>{t("products.edit")}</span>
                       </button>
                       <button
                         onClick={() => handleDelete(p.id)}
-                        className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-red-500/10 hover:text-red-400 text-[11px] text-white font-semibold cursor-pointer text-left"
+                        className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-red-500/10 hover:text-red-400 text-[11px] text-foreground font-semibold cursor-pointer text-left"
                       >
                         <Trash2 size={12} className="text-red-400" />
                         <span>{t("products.delete")}</span>
@@ -566,12 +566,12 @@ export default function ProductsPage() {
           loadingDrafts ? (
             <div className="flex flex-col items-center py-20 gap-3">
               <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
-              <p className="text-xs text-[#a09cb0]">Printify taslakları yükleniyor...</p>
+              <p className="text-xs text-secondary">Printify taslakları yükleniyor...</p>
             </div>
           ) : filteredDrafts.length === 0 ? (
-            <div className="p-12 text-center border border-white/[0.05] bg-black/5 rounded-xl space-y-2">
-              <EyeOff className="w-8 h-8 text-[#5e5a72] mx-auto" />
-              <p className="text-xs text-[#a09cb0]">{t("products.noProductsFound")}</p>
+            <div className="p-12 text-center border border-border bg-black/5 rounded-xl space-y-2">
+              <EyeOff className="w-8 h-8 text-muted mx-auto" />
+              <p className="text-xs text-secondary">{t("products.noProductsFound")}</p>
             </div>
           ) : (
             filteredDrafts.map(p => {
@@ -585,14 +585,14 @@ export default function ProductsPage() {
               return (
                 <div 
                   key={p.id}
-                  className={`bg-[#16161e] border border-white/[0.05] hover:border-white/10 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-500 ${isPublishing ? 'opacity-0 translate-x-full scale-95' : 'opacity-100 translate-x-0 scale-100'}`}
+                  className={`bg-card border border-border hover:border-border rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-500 ${isPublishing ? 'opacity-0 translate-x-full scale-95' : 'opacity-100 translate-x-0 scale-100'}`}
                 >
                   <div className="flex items-center gap-3.5 min-w-0 md:w-1/2">
-                    <div className="w-16 h-16 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-neutral-900 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden border border-border shrink-0 bg-neutral-900 flex items-center justify-center">
                       <img src={mainImage} alt={p.title} className="w-full h-full object-cover" />
                     </div>
                     <div className="min-w-0 space-y-1.5">
-                      <h3 className="text-sm font-bold text-white leading-normal line-clamp-2" title={p.title}>
+                      <h3 className="text-sm font-bold text-foreground leading-normal line-clamp-2" title={p.title}>
                         {p.title}
                       </h3>
                       <div className="flex gap-2 items-center">
@@ -605,22 +605,22 @@ export default function ProductsPage() {
 
                   <div className="flex items-center gap-4 shrink-0 px-2 md:px-0">
                     <div className="text-right hidden sm:block">
-                      <span className="text-[10px] text-[#5e5a72] uppercase font-bold tracking-wider block mb-0.5">Satış Fiyatı</span>
+                      <span className="text-[10px] text-muted uppercase font-bold tracking-wider block mb-0.5">Satış Fiyatı</span>
                       <span className="text-sm font-bold text-emerald-400 block">{priceDisplay}</span>
                     </div>
 
                     <div className="flex items-center gap-2 w-full sm:w-auto">
                       <button
                         onClick={() => startEditDraft(p)}
-                        className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/[0.08] text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none cursor-pointer"
+                        className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-border text-foreground rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none cursor-pointer"
                       >
-                        <Edit2 size={12} className="text-[#a09cb0]" />
+                        <Edit2 size={12} className="text-secondary" />
                         Düzenle
                       </button>
                       <button
                         onClick={() => handlePublishDraft(p)}
                         disabled={isPublishing}
-                        className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:brightness-110 border border-emerald-500/50 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none shadow-lg shadow-emerald-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:brightness-110 border border-emerald-500/50 text-foreground rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-none shadow-lg shadow-emerald-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isPublishing ? <Loader2 size={12} className="animate-spin" /> : <UploadCloud size={14} />}
                         {t("products.publishToEtsy")}
@@ -637,17 +637,17 @@ export default function ProductsPage() {
       {/* Edit Product Modal Dialog (Etsy Version) */}
       {editingProduct && filterTab === "Active" && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-center justify-center p-4">
-          <div className="bg-[#16161e] border border-white/[0.08] w-full max-w-xl rounded-2xl p-5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] space-y-4 animate-scale-up max-h-[90vh] overflow-y-auto">
+          <div className="bg-card border border-border w-full max-w-xl rounded-2xl p-5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] space-y-4 animate-scale-up max-h-[90vh] overflow-y-auto">
             
-            <div className="flex justify-between items-center pb-2 border-b border-white/[0.06]">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <div className="flex justify-between items-center pb-2 border-b border-border">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <Edit2 size={14} className="text-purple-400" />
                 <span>{t("products.editProduct")}</span>
               </h3>
               <button 
                 type="button"
                 onClick={handleCloseAttempt}
-                className="w-6 h-6 rounded-lg hover:bg-white/5 flex items-center justify-center text-[#a09cb0] hover:text-white cursor-pointer"
+                className="w-6 h-6 rounded-lg hover:bg-white/5 flex items-center justify-center text-secondary hover:text-foreground cursor-pointer"
               >
                 <X size={14} />
               </button>
@@ -655,10 +655,10 @@ export default function ProductsPage() {
 
             <div className="space-y-4">
               <div className="space-y-2.5">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("products.productImagesDrag")}</label>
-                <div className="relative w-full h-44 rounded-xl overflow-hidden border border-white/[0.06] bg-neutral-950 flex items-center justify-center">
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider block">{t("products.productImagesDrag")}</label>
+                <div className="relative w-full h-44 rounded-xl overflow-hidden border border-border bg-neutral-950 flex items-center justify-center">
                   <img src={largePreviewUrl} alt="Large preview" className="h-full object-contain" />
-                  <div className="absolute bottom-2 left-2 px-2.5 py-1 bg-black/75 rounded-lg text-[9px] text-white/80 font-medium">
+                  <div className="absolute bottom-2 left-2 px-2.5 py-1 bg-black/75 rounded-lg text-[9px] text-foreground/80 font-medium">
                     {t("products.largePreview")}
                   </div>
                 </div>
@@ -671,26 +671,26 @@ export default function ProductsPage() {
                       <div
                         key={img.id}
                         className={`relative group rounded-xl overflow-hidden border transition-all duration-300 aspect-square bg-neutral-900 ${
-                          isSelected ? "border-purple-400 shadow-[0_0_10px_rgba(139,92,246,0.4)]" : img.active ? isPrimary ? "border-purple-500/50" : "border-white/[0.08]" : "border-white/[0.04]"
+                          isSelected ? "border-purple-400 shadow-[0_0_10px_rgba(139,92,246,0.4)]" : img.active ? isPrimary ? "border-purple-500/50" : "border-border" : "border-border"
                         }`}
                       >
                         <button type="button" onClick={() => setLargePreviewUrl(img.url)} className="absolute inset-0 w-full h-full cursor-pointer z-0">
                           <img src={img.url} alt={`Thumbnail ${index}`} className={`w-full h-full object-cover transition-[filter,opacity] duration-300 ease-in-out ${img.active ? "grayscale-0 opacity-100" : "grayscale opacity-30"}`} />
                         </button>
                         <div className="absolute top-1 left-1.5 flex gap-1 z-20 pointer-events-none">
-                          {isPrimary && img.active && <span className="text-[8px] font-bold text-white bg-purple-500 px-1 py-0.5 rounded leading-none">{t("products.primary")}</span>}
-                          {!img.active && <span className="text-[8px] font-bold text-white/80 bg-black/60 px-1 py-0.5 rounded leading-none uppercase">{t("products.passive")}</span>}
-                          {isSelected && <span className="text-[8px] font-bold text-white bg-purple-500/80 px-1 py-0.5 rounded leading-none">●</span>}
+                          {isPrimary && img.active && <span className="text-[8px] font-bold text-foreground bg-purple-500 px-1 py-0.5 rounded leading-none">{t("products.primary")}</span>}
+                          {!img.active && <span className="text-[8px] font-bold text-foreground/80 bg-black/60 px-1 py-0.5 rounded leading-none uppercase">{t("products.passive")}</span>}
+                          {isSelected && <span className="text-[8px] font-bold text-foreground bg-purple-500/80 px-1 py-0.5 rounded leading-none">●</span>}
                         </div>
                         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
                           <div className="absolute inset-0 bg-black/50 pointer-events-none" />
                           <div className="absolute top-1 right-1 flex gap-1 pointer-events-auto">
-                            <button type="button" onClick={(e) => { e.stopPropagation(); handleMoveImageLeft(index); }} disabled={index === 0} className="w-5 h-5 bg-black/60 hover:bg-black/90 rounded flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"><ChevronLeft size={12} /></button>
-                            <button type="button" onClick={(e) => { e.stopPropagation(); handleMoveImageRight(index); }} disabled={index === editImages.length - 1} className="w-5 h-5 bg-black/60 hover:bg-black/90 rounded flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"><ChevronRight size={12} /></button>
+                            <button type="button" onClick={(e) => { e.stopPropagation(); handleMoveImageLeft(index); }} disabled={index === 0} className="w-5 h-5 bg-black/60 hover:bg-black/90 rounded flex items-center justify-center text-foreground disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"><ChevronLeft size={12} /></button>
+                            <button type="button" onClick={(e) => { e.stopPropagation(); handleMoveImageRight(index); }} disabled={index === editImages.length - 1} className="w-5 h-5 bg-black/60 hover:bg-black/90 rounded flex items-center justify-center text-foreground disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"><ChevronRight size={12} /></button>
                           </div>
                           <div className="absolute bottom-1 right-1 flex gap-1 pointer-events-auto">
-                            {img.active && <button type="button" onClick={(e) => { e.stopPropagation(); handleMakePrimary(index); }} className={`w-5 h-5 rounded flex items-center justify-center cursor-pointer transition-colors ${isPrimary ? "bg-purple-500 text-white" : "bg-black/60 hover:bg-purple-500 text-white"}`}><Star size={11} className={isPrimary ? "fill-white" : ""} /></button>}
-                            <button type="button" onClick={(e) => { e.stopPropagation(); handleToggleImageActive(index); }} className={`w-5 h-5 rounded flex items-center justify-center cursor-pointer transition-colors ${img.active ? "bg-black/60 hover:bg-white/20 text-white" : "bg-white/10 hover:bg-emerald-500/60 text-white/60 hover:text-white"}`}>{img.active ? <Eye size={11} /> : <EyeOff size={11} />}</button>
+                            {img.active && <button type="button" onClick={(e) => { e.stopPropagation(); handleMakePrimary(index); }} className={`w-5 h-5 rounded flex items-center justify-center cursor-pointer transition-colors ${isPrimary ? "bg-purple-500 text-foreground" : "bg-black/60 hover:bg-purple-500 text-foreground"}`}><Star size={11} className={isPrimary ? "fill-white" : ""} /></button>}
+                            <button type="button" onClick={(e) => { e.stopPropagation(); handleToggleImageActive(index); }} className={`w-5 h-5 rounded flex items-center justify-center cursor-pointer transition-colors ${img.active ? "bg-black/60 hover:bg-white/20 text-foreground" : "bg-white/10 hover:bg-emerald-500/60 text-foreground/60 hover:text-foreground"}`}>{img.active ? <Eye size={11} /> : <EyeOff size={11} />}</button>
                           </div>
                         </div>
                       </div>
@@ -700,29 +700,29 @@ export default function ProductsPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.productTitle")}</label>
-                <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50" />
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("products.productTitle")}</label>
+                <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50" />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.skuCode")}</label>
-                <input type="text" value={editSku} onChange={(e) => setEditSku(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50" />
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("products.skuCode")}</label>
+                <input type="text" value={editSku} onChange={(e) => setEditSku(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50" />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.productDesc")}</label>
-                <textarea rows={3} value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 resize-none leading-relaxed" />
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("products.productDesc")}</label>
+                <textarea rows={3} value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50 resize-none leading-relaxed" />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.productTags")}</label>
-                <input type="text" placeholder={t("products.tagsPlaceholder")} value={editTags} onChange={(e) => setEditTags(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50" />
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("products.productTags")}</label>
+                <input type="text" placeholder={t("products.tagsPlaceholder")} value={editTags} onChange={(e) => setEditTags(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50" />
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-2 border-t border-white/[0.04]">
-              <button type="button" onClick={handleCloseAttempt} className="px-4 py-2 border border-white/[0.06] hover:bg-white/5 text-[#a09cb0] hover:text-white rounded-lg text-xs font-bold transition-all cursor-pointer">{t("products.cancel")}</button>
-              <button type="button" onClick={saveEditEtsy} className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-white rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-lg shadow-purple-500/10"><CheckCircle size={12} /><span>{t("products.confirm")}</span></button>
+            <div className="flex justify-end gap-3 pt-2 border-t border-border">
+              <button type="button" onClick={handleCloseAttempt} className="px-4 py-2 border border-border hover:bg-white/5 text-secondary hover:text-foreground rounded-lg text-xs font-bold transition-all cursor-pointer">{t("products.cancel")}</button>
+              <button type="button" onClick={saveEditEtsy} className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-foreground rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-lg shadow-purple-500/10"><CheckCircle size={12} /><span>{t("products.confirm")}</span></button>
             </div>
           </div>
         </div>
@@ -731,17 +731,17 @@ export default function ProductsPage() {
       {/* Edit Product Modal Dialog (Printify Draft Version) */}
       {editingDraft && filterTab === "Inactive" && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-center justify-center p-4">
-          <div className="bg-[#16161e] border border-white/[0.08] w-full max-w-xl rounded-2xl p-5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] space-y-4 animate-scale-up max-h-[90vh] overflow-y-auto">
+          <div className="bg-card border border-border w-full max-w-xl rounded-2xl p-5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] space-y-4 animate-scale-up max-h-[90vh] overflow-y-auto">
             
-            <div className="flex justify-between items-center pb-2 border-b border-white/[0.06]">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <div className="flex justify-between items-center pb-2 border-b border-border">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <Edit2 size={14} className="text-purple-400" />
                 <span>Printify Taslağını Düzenle</span>
               </h3>
               <button 
                 type="button"
                 onClick={handleCloseAttempt}
-                className="w-6 h-6 rounded-lg hover:bg-white/5 flex items-center justify-center text-[#a09cb0] hover:text-white cursor-pointer"
+                className="w-6 h-6 rounded-lg hover:bg-white/5 flex items-center justify-center text-secondary hover:text-foreground cursor-pointer"
               >
                 <X size={14} />
               </button>
@@ -749,24 +749,24 @@ export default function ProductsPage() {
 
             <div className="space-y-4 pt-1">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.productTitle")}</label>
-                <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50" />
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("products.productTitle")}</label>
+                <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50" />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.productDesc")}</label>
-                <textarea rows={6} value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 resize-none leading-relaxed" />
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("products.productDesc")}</label>
+                <textarea rows={6} value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50 resize-none leading-relaxed" />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider">{t("products.productTags")} (Virgül ile ayırın)</label>
-                <input type="text" placeholder={t("products.tagsPlaceholder")} value={editTags} onChange={(e) => setEditTags(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50" />
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("products.productTags")} (Virgül ile ayırın)</label>
+                <input type="text" placeholder={t("products.tagsPlaceholder")} value={editTags} onChange={(e) => setEditTags(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50" />
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-white/[0.04]">
-              <button type="button" onClick={handleCloseAttempt} className="px-4 py-2 border border-white/[0.06] hover:bg-white/5 text-[#a09cb0] hover:text-white rounded-lg text-xs font-bold transition-all cursor-pointer">{t("products.cancel")}</button>
-              <button type="button" onClick={saveEditDraft} className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-white rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-lg shadow-purple-500/10"><CheckCircle size={12} /><span>Kaydet ve Kapat</span></button>
+            <div className="flex justify-end gap-3 pt-4 border-t border-border">
+              <button type="button" onClick={handleCloseAttempt} className="px-4 py-2 border border-border hover:bg-white/5 text-secondary hover:text-foreground rounded-lg text-xs font-bold transition-all cursor-pointer">{t("products.cancel")}</button>
+              <button type="button" onClick={saveEditDraft} className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-foreground rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-lg shadow-purple-500/10"><CheckCircle size={12} /><span>Kaydet ve Kapat</span></button>
             </div>
           </div>
         </div>
@@ -775,19 +775,19 @@ export default function ProductsPage() {
       {/* Unsaved Changes Confirmation Dialog Modal */}
       {showExitConfirm && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-[#181822] border border-white/[0.08] w-full max-w-sm rounded-xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-4 text-center animate-scale-up">
+          <div className="bg-surface border border-border w-full max-w-sm rounded-xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-4 text-center animate-scale-up">
             <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 mx-auto">
               <AlertCircle size={22} className="animate-pulse" />
             </div>
             <div className="space-y-1.5">
-              <h4 className="text-sm font-bold text-white">{t("products.unsavedChanges")}</h4>
-              <p className="text-xs text-[#a09cb0] leading-relaxed px-2">
+              <h4 className="text-sm font-bold text-foreground">{t("products.unsavedChanges")}</h4>
+              <p className="text-xs text-secondary leading-relaxed px-2">
                 {t("products.unsavedChangesDesc")}
               </p>
             </div>
             <div className="flex justify-center gap-3 pt-2">
               <button onClick={() => { setShowExitConfirm(false); setEditingProduct(null); setEditingDraft(null); }} className="px-4 py-2 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 rounded-lg text-xs font-bold transition-all cursor-pointer">{t("products.cancelExit")}</button>
-              <button onClick={() => setShowExitConfirm(false)} className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 text-white rounded-lg text-xs font-bold transition-all cursor-pointer">{t("products.continueEdit")}</button>
+              <button onClick={() => setShowExitConfirm(false)} className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 text-foreground rounded-lg text-xs font-bold transition-all cursor-pointer">{t("products.continueEdit")}</button>
             </div>
           </div>
         </div>

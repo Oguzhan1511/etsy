@@ -90,7 +90,7 @@ export default function OrdersPage() {
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
             {t("orders.title")}
           </h1>
-          <p className="text-sm mt-0.5 text-[#a09cb0]">
+          <p className="text-sm mt-0.5 text-secondary">
             {t("orders.subtitle")}
           </p>
         </div>
@@ -98,10 +98,10 @@ export default function OrdersPage() {
 
       {/* Stats row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("orders.activeOrders")}</span>
-            <span className="text-2xl font-bold text-white mt-1 block">
+            <span className="text-[10px] text-muted block uppercase font-bold tracking-wider">{t("orders.activeOrders")}</span>
+            <span className="text-2xl font-bold text-foreground mt-1 block">
               {orders.filter(o => o.status !== "Shipped" && o.status !== "Cancelled").length}
             </span>
           </div>
@@ -110,10 +110,10 @@ export default function OrdersPage() {
           </div>
         </div>
 
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("orders.readyToShip")}</span>
-            <span className="text-2xl font-bold text-white mt-1 block">
+            <span className="text-[10px] text-muted block uppercase font-bold tracking-wider">{t("orders.readyToShip")}</span>
+            <span className="text-2xl font-bold text-foreground mt-1 block">
               {orders.filter(o => o.status === "Ready to Ship").length}
             </span>
           </div>
@@ -122,10 +122,10 @@ export default function OrdersPage() {
           </div>
         </div>
 
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("orders.shipped")}</span>
-            <span className="text-2xl font-bold text-white mt-1 block">
+            <span className="text-[10px] text-muted block uppercase font-bold tracking-wider">{t("orders.shipped")}</span>
+            <span className="text-2xl font-bold text-foreground mt-1 block">
               {orders.filter(o => o.status === "Shipped").length}
             </span>
           </div>
@@ -134,10 +134,10 @@ export default function OrdersPage() {
           </div>
         </div>
 
-        <div className="bg-[#16161e] border border-white/[0.05] rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-[#5e5a72] block uppercase font-bold tracking-wider">{t("orders.avgShippingTime")}</span>
-            <span className="text-2xl font-bold text-white mt-1 block">{t("orders.avgDays")}</span>
+            <span className="text-[10px] text-muted block uppercase font-bold tracking-wider">{t("orders.avgShippingTime")}</span>
+            <span className="text-2xl font-bold text-foreground mt-1 block">{t("orders.avgDays")}</span>
           </div>
           <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400">
             <Clock size={18} />
@@ -147,15 +147,15 @@ export default function OrdersPage() {
 
       {/* Control panel & Filter tabs */}
       <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between bg-black/10 p-3 rounded-xl border border-white/[0.03]">
-        <div className="flex flex-wrap bg-white/[0.02] p-1 rounded-lg border border-white/[0.05] self-start">
+        <div className="flex flex-wrap bg-white/[0.02] p-1 rounded-lg border border-border self-start">
           {["All", "Processing", "Ready to Ship", "Shipped"].map((status) => (
             <button
               key={status}
               onClick={() => setFilter(status)}
               className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
                 filter === status
-                  ? "bg-purple-500/20 border border-purple-500/35 text-white"
-                  : "text-[#a09cb0] hover:text-white"
+                  ? "bg-purple-500/20 border border-purple-500/35 text-foreground"
+                  : "text-secondary hover:text-foreground"
               }`}
             >
               {status === "All" ? t("orders.all") : status === "Processing" ? t("orders.processing") : status === "Ready to Ship" ? t("orders.readyToShip") : t("orders.shipped")}
@@ -165,13 +165,13 @@ export default function OrdersPage() {
 
         {/* Search Input */}
         <div className="relative w-full sm:w-64">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5e5a72]" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <input
             type="text"
             placeholder={t("orders.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-1.5 rounded-lg border border-white/[0.08] bg-[#16161e] text-xs text-white placeholder-[#5e5a72] focus:outline-none focus:border-purple-500/50"
+            className="w-full pl-9 pr-4 py-1.5 rounded-lg border border-border bg-card text-xs text-foreground placeholder-[#5e5a72] focus:outline-none focus:border-purple-500/50"
           />
         </div>
       </div>
@@ -179,27 +179,27 @@ export default function OrdersPage() {
       {/* Orders List / Cards Stack */}
       <div className="space-y-4">
         {filteredOrders.length === 0 ? (
-          <div className="p-12 text-center border border-white/[0.05] bg-black/5 rounded-xl space-y-2">
-            <AlertCircle className="w-8 h-8 text-[#5e5a72] mx-auto" />
-            <p className="text-xs text-[#a09cb0]">{t("orders.noOrders")}</p>
+          <div className="p-12 text-center border border-border bg-black/5 rounded-xl space-y-2">
+            <AlertCircle className="w-8 h-8 text-muted mx-auto" />
+            <p className="text-xs text-secondary">{t("orders.noOrders")}</p>
           </div>
         ) : (
           filteredOrders.map(o => (
             <div
               key={o.id}
-              className="bg-[#16161e] border border-white/[0.05] hover:border-white/10 rounded-xl p-5 space-y-4 transition-all"
+              className="bg-card border border-border hover:border-border rounded-xl p-5 space-y-4 transition-all"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.04] pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 font-mono text-xs font-bold uppercase shrink-0">
                     {o.buyerName.split(" ").map(n => n[0]).join("")}
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                       <span>{o.buyerName}</span>
-                      <span className="text-xs text-[#5e5a72] font-mono">({o.email})</span>
+                      <span className="text-xs text-muted font-mono">({o.email})</span>
                     </h3>
-                    <span className="text-[10px] text-[#a09cb0] mt-0.5 block font-mono">{o.orderId}</span>
+                    <span className="text-[10px] text-secondary mt-0.5 block font-mono">{o.orderId}</span>
                   </div>
                 </div>
 
@@ -217,7 +217,7 @@ export default function OrdersPage() {
                   {o.status === "Ready to Ship" && (
                     <button
                       onClick={() => handleShipOrder(o.id)}
-                      className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-white rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                      className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-foreground rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
                     >
                       <Truck size={12} />
                       <span>{t("orders.shipBtn")}</span>
@@ -229,24 +229,24 @@ export default function OrdersPage() {
               {/* Order item details */}
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-lg bg-neutral-900 border border-white/10 shrink-0 overflow-hidden flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-lg bg-neutral-900 border border-border shrink-0 overflow-hidden flex items-center justify-center">
                     <img src={o.image} alt={o.product} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-white leading-normal max-w-[280px] sm:max-w-md">
+                    <h4 className="text-xs font-bold text-foreground leading-normal max-w-[280px] sm:max-w-md">
                       {o.product}
                     </h4>
-                    <div className="flex items-center gap-3 text-[10px] text-[#5e5a72] mt-1 font-mono">
-                      <span>{t("orders.price")} <strong className="text-white">{o.price}</strong></span>
+                    <div className="flex items-center gap-3 text-[10px] text-muted mt-1 font-mono">
+                      <span>{t("orders.price")} <strong className="text-foreground">{o.price}</strong></span>
                       <span>•</span>
                       <span>{t("orders.shipBy")} <strong className={o.shipBy === "Completed" ? "text-emerald-400 font-bold" : "text-amber-400 font-bold"}>{o.shipBy}</strong></span>
                     </div>
                   </div>
                 </div>
 
-                <div className="text-left md:text-right border-l md:border-l-0 md:border-r border-white/[0.04] pl-3 md:pl-0 md:pr-4 py-0.5 space-y-1">
-                  <span className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("orders.billingAddress")}</span>
-                  <p className="text-xs text-[#a09cb0] max-w-[240px] leading-relaxed truncate md:whitespace-normal" title={o.shippingAddress}>
+                <div className="text-left md:text-right border-l md:border-l-0 md:border-r border-border pl-3 md:pl-0 md:pr-4 py-0.5 space-y-1">
+                  <span className="text-[10px] font-bold text-muted uppercase tracking-wider block">{t("orders.billingAddress")}</span>
+                  <p className="text-xs text-secondary max-w-[240px] leading-relaxed truncate md:whitespace-normal" title={o.shippingAddress}>
                     {o.shippingAddress}
                   </p>
                 </div>

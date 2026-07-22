@@ -73,18 +73,18 @@ function CheckoutContent() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#030014] flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
         <div className="w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center mb-6 animate-pulse">
           <CheckCircle2 size={48} className="text-green-500" />
         </div>
-        <h1 className="text-3xl font-bold text-white mb-2">Ödeme Başarılı!</h1>
-        <p className="text-white/60">Panele yönlendiriliyorsunuz, lütfen bekleyin...</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Ödeme Başarılı!</h1>
+        <p className="text-foreground/60">Panele yönlendiriliyorsunuz, lütfen bekleyin...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#030014] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-violet-600/10 to-transparent pointer-events-none" />
       
       <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
@@ -92,25 +92,25 @@ function CheckoutContent() {
         {/* Order Summary */}
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Ödeme Ekranı</h1>
-            <p className="text-white/60">Güvenli ödeme altyapısıyla aboneliğinizi başlatın.</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Ödeme Ekranı</h1>
+            <p className="text-foreground/60">Güvenli ödeme altyapısıyla aboneliğinizi başlatın.</p>
           </div>
 
-          <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
-            <h2 className="text-lg font-semibold text-white mb-4 border-b border-white/10 pb-4">Sipariş Özeti</h2>
+          <div className="bg-white/[0.02] border border-border rounded-2xl p-6 backdrop-blur-xl">
+            <h2 className="text-lg font-semibold text-foreground mb-4 border-b border-border pb-4">Sipariş Özeti</h2>
             <div className="flex justify-between items-center mb-4">
-              <span className="text-white/80">{selectedPlan.name} (Aylık)</span>
-              <span className="text-white font-bold">{selectedPlan.price}</span>
+              <span className="text-foreground/80">{selectedPlan.name} (Aylık)</span>
+              <span className="text-foreground font-bold">{selectedPlan.price}</span>
             </div>
             <div className="flex justify-between items-center mb-4">
               <span className="text-green-400 text-sm">3 Günlük Ücretsiz Deneme</span>
               <span className="text-green-400 font-bold">-$0.00</span>
             </div>
-            <div className="border-t border-white/10 pt-4 mt-4 flex justify-between items-center">
-              <span className="text-white font-semibold">Toplam Ödenecek (3 Gün Sonra)</span>
-              <span className="text-2xl font-black text-white">{selectedPlan.price}</span>
+            <div className="border-t border-border pt-4 mt-4 flex justify-between items-center">
+              <span className="text-foreground font-semibold">Toplam Ödenecek (3 Gün Sonra)</span>
+              <span className="text-2xl font-black text-foreground">{selectedPlan.price}</span>
             </div>
-            <p className="text-xs text-white/40 mt-6 flex items-start gap-2">
+            <p className="text-xs text-foreground/40 mt-6 flex items-start gap-2">
               <Lock size={14} className="shrink-0" />
               İstediğiniz zaman iptal edebilirsiniz. 3 gün boyunca kartınızdan hiçbir ücret çekilmeyecektir.
             </p>
@@ -118,53 +118,53 @@ function CheckoutContent() {
         </div>
 
         {/* Payment Form (Mock) */}
-        <form onSubmit={handleCheckout} className="bg-[#16161f] border border-white/5 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col justify-center">
+        <form onSubmit={handleCheckout} className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col justify-center">
           <div className="flex items-center gap-2 mb-8">
             <CreditCard className="text-violet-500" />
-            <h2 className="text-xl font-semibold text-white">Kart Bilgileri</h2>
+            <h2 className="text-xl font-semibold text-foreground">Kart Bilgileri</h2>
           </div>
 
           <div className="space-y-5">
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-white/60 uppercase tracking-wider">Kart Üzerindeki İsim</label>
+              <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">Kart Üzerindeki İsim</label>
               <input 
                 required
                 type="text" 
                 defaultValue={user.name}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors"
+                className="w-full bg-white/5 border border-border rounded-xl px-4 py-3 text-foreground placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors"
                 placeholder="Örn: Oğuzhan Özdemir"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-white/60 uppercase tracking-wider">Kart Numarası</label>
+              <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">Kart Numarası</label>
               <input 
                 required
                 type="text" 
                 maxLength={19}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                className="w-full bg-white/5 border border-border rounded-xl px-4 py-3 text-foreground placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors font-mono"
                 placeholder="0000 0000 0000 0000"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-white/60 uppercase tracking-wider">Son Kul. Tarihi</label>
+                <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">Son Kul. Tarihi</label>
                 <input 
                   required
                   type="text" 
                   maxLength={5}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                  className="w-full bg-white/5 border border-border rounded-xl px-4 py-3 text-foreground placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors font-mono"
                   placeholder="AA/YY"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-white/60 uppercase tracking-wider">CVC</label>
+                <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">CVC</label>
                 <input 
                   required
                   type="text" 
                   maxLength={3}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                  className="w-full bg-white/5 border border-border rounded-xl px-4 py-3 text-foreground placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors font-mono"
                   placeholder="123"
                 />
               </div>
@@ -174,7 +174,7 @@ function CheckoutContent() {
           <button 
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold py-4 rounded-xl mt-8 transition-all flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-foreground font-bold py-4 rounded-xl mt-8 transition-all flex items-center justify-center gap-2"
           >
             {loading ? <Loader2 className="animate-spin" /> : <Lock size={18} />}
             <span>{loading ? "İşleniyor..." : "Aboneliği Başlat"}</span>
@@ -188,7 +188,7 @@ function CheckoutContent() {
 
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#030014] flex items-center justify-center"><Loader2 className="animate-spin text-violet-500" size={32} /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="animate-spin text-violet-500" size={32} /></div>}>
       <CheckoutContent />
     </Suspense>
   );

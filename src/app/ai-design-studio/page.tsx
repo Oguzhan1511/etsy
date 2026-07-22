@@ -152,21 +152,21 @@ export default function AIDesignStudioPage() {
             <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
               Creative Engine
             </span>
-            <span className="text-xs text-[#a09cb0]">PrintySell AI</span>
+            <span className="text-xs text-secondary">PrintySell AI</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent flex items-center gap-3">
             <Sparkles className="w-8 h-8 text-purple-400" />
             AI Design Studio
           </h1>
-          <p className="text-sm mt-1 text-[#a09cb0] max-w-xl">
+          <p className="text-sm mt-1 text-secondary max-w-xl">
             {t("aiDesign.desc")}
           </p>
         </div>
         <Link 
           href="/design-library"
-          className="flex items-center gap-2 px-4 py-2 bg-[#16161f] border border-white/[0.08] hover:border-purple-500/50 rounded-lg text-sm text-white transition-all group"
+          className="flex items-center gap-2 px-4 py-2 bg-card border border-border hover:border-purple-500/50 rounded-lg text-sm text-foreground transition-all group"
         >
-          <Library className="w-4 h-4 text-[#a09cb0] group-hover:text-purple-400 transition-colors" />
+          <Library className="w-4 h-4 text-secondary group-hover:text-purple-400 transition-colors" />
           {t("aiDesign.goToLibrary")}
         </Link>
       </div>
@@ -175,17 +175,17 @@ export default function AIDesignStudioPage() {
         
         {/* Left Col: Controls */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-[#16161f] rounded-2xl border border-white/[0.06] p-6 shadow-2xl">
+          <div className="bg-card rounded-2xl border border-border p-6 shadow-2xl">
             <form onSubmit={handleGenerate} className="space-y-6">
               
               {/* Reference Image Upload */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-white flex items-center gap-2">
+                <label className="text-sm font-semibold text-foreground flex items-center gap-2">
                   <UploadCloud className="w-4 h-4 text-purple-400" />
                   {t("aiDesign.uploadRef")}
                 </label>
                 {referenceImage ? (
-                  <div className="relative w-full h-64 bg-black/40 rounded-xl overflow-hidden border border-white/[0.08] group">
+                  <div className="relative w-full h-64 bg-black/40 rounded-xl overflow-hidden border border-border group">
                     <img src={referenceImage} alt="Reference" className="w-full h-full object-contain" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                       <button 
@@ -200,10 +200,10 @@ export default function AIDesignStudioPage() {
                 ) : (
                   <label className="flex flex-col items-center justify-center w-full h-64 bg-black/40 border border-dashed border-white/[0.15] hover:border-purple-500/50 hover:bg-black/60 rounded-xl cursor-pointer transition-all group">
                     <div className="w-10 h-10 rounded-full bg-white/[0.05] flex items-center justify-center mb-3 group-hover:bg-purple-500/20 group-hover:text-purple-400 transition-colors">
-                      <UploadCloud className="w-5 h-5 text-[#a09cb0] group-hover:text-purple-400" />
+                      <UploadCloud className="w-5 h-5 text-secondary group-hover:text-purple-400" />
                     </div>
-                    <span className="text-sm text-white font-medium">{t("aiDesign.clickToUpload")}</span>
-                    <span className="text-[10px] text-[#5e5a72] mt-1">{t("aiDesign.dragDrop")}</span>
+                    <span className="text-sm text-foreground font-medium">{t("aiDesign.clickToUpload")}</span>
+                    <span className="text-[10px] text-muted mt-1">{t("aiDesign.dragDrop")}</span>
                     <input 
                       type="file" 
                       accept="image/*" 
@@ -216,7 +216,7 @@ export default function AIDesignStudioPage() {
 
               {/* Prompt Input */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-white flex items-center gap-2">
+                <label className="text-sm font-semibold text-foreground flex items-center gap-2">
                   <Wand2 className="w-4 h-4 text-purple-400" />
                   {t("aiDesign.promptLabel")}
                 </label>
@@ -224,7 +224,7 @@ export default function AIDesignStudioPage() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder={t("aiDesign.promptPlaceholder")}
-                  className="w-full h-24 bg-black/40 border border-white/[0.08] text-sm text-white rounded-xl p-4 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all resize-none placeholder:text-[#5e5a72]"
+                  className="w-full h-24 bg-black/40 border border-border text-sm text-foreground rounded-xl p-4 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all resize-none placeholder:text-muted"
                   required
                 />
               </div>
@@ -233,7 +233,7 @@ export default function AIDesignStudioPage() {
               <button
                 type="submit"
                 disabled={isGenerating || !prompt.trim()}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden mt-2"
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-foreground transition-all disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden mt-2"
                 style={{
                   background: "linear-gradient(135deg, #7c6af7 0%, #a855f7 100%)",
                   boxShadow: "0 4px 20px rgba(124,106,247,0.3)",
@@ -258,10 +258,10 @@ export default function AIDesignStudioPage() {
 
         {/* Right Col: Preview */}
         <div className="lg:col-span-7">
-          <div className="bg-[#16161f] rounded-2xl border border-white/[0.06] p-6 h-full min-h-[500px] flex flex-col relative overflow-hidden shadow-2xl">
+          <div className="bg-card rounded-2xl border border-border p-6 h-full min-h-[500px] flex flex-col relative overflow-hidden shadow-2xl">
             
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold text-white flex items-center gap-2">
+              <h2 className="font-bold text-foreground flex items-center gap-2">
                 <ImageIcon className="w-5 h-5 text-purple-400" />
                 {t("aiDesign.preview")}
               </h2>
@@ -273,7 +273,7 @@ export default function AIDesignStudioPage() {
                     className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
                       isSaved 
                         ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                        : 'bg-white/5 hover:bg-white/10 text-white border border-white/[0.08]'
+                        : 'bg-white/5 hover:bg-white/10 text-foreground border border-border'
                     }`}
                   >
                     {isSaved ? <CheckCircle2 className="w-4 h-4" /> : <Library className="w-4 h-4" />}
@@ -292,7 +292,7 @@ export default function AIDesignStudioPage() {
               )}
             </div>
 
-            <div className="flex-1 rounded-xl bg-black/40 border border-white/[0.04] relative flex items-center justify-center overflow-hidden">
+            <div className="flex-1 rounded-xl bg-black/40 border border-border relative flex items-center justify-center overflow-hidden">
               {isGenerating ? (
                 <div className="flex flex-col items-center gap-4 text-purple-400">
                   <div className="relative">
@@ -308,8 +308,8 @@ export default function AIDesignStudioPage() {
                   className="w-full h-full object-contain animate-fade-in"
                 />
               ) : (
-                <div className="flex flex-col items-center gap-3 text-[#5e5a72]">
-                  <div className="w-16 h-16 rounded-2xl bg-white/[0.02] flex items-center justify-center border border-white/[0.05]">
+                <div className="flex flex-col items-center gap-3 text-muted">
+                  <div className="w-16 h-16 rounded-2xl bg-white/[0.02] flex items-center justify-center border border-border">
                     <ImageIcon className="w-8 h-8 opacity-50" />
                   </div>
                   <p className="text-sm">{t("aiDesign.emptyState")}</p>

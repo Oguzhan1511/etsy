@@ -206,9 +206,9 @@ export default function MockupPublishPage() {
     <div className="space-y-6 max-w-7xl mx-auto pb-20 animate-fade-in relative">
       {/* Toast Notification */}
       {toast.visible && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-5 py-3 rounded-xl bg-[#1e1b2e] border border-purple-500/30 shadow-[0_0_30px_rgba(139,92,246,0.25)] backdrop-blur-md">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-5 py-3 rounded-xl bg-surface border border-purple-500/30 shadow-[0_0_30px_rgba(139,92,246,0.25)] backdrop-blur-md">
           <span className="text-green-400 text-lg">✓</span>
-          <p className="text-sm text-white font-medium">{toast.message}</p>
+          <p className="text-sm text-foreground font-medium">{toast.message}</p>
         </div>
       )}
 
@@ -218,12 +218,12 @@ export default function MockupPublishPage() {
             <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 animate-pulse">
               {t("mockupPublish.studioMatrixPro")}
             </span>
-            <span className="text-xs text-[#a09cb0]">{t("mockupPublish.printifyCenter")}</span>
+            <span className="text-xs text-secondary">{t("mockupPublish.printifyCenter")}</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
             {t("mockupPublish.catalog")}
           </h1>
-          <p className="text-sm mt-1 text-[#a09cb0]">
+          <p className="text-sm mt-1 text-secondary">
             {t("mockupPublish.desc1")} {" "}
             <span className="text-amber-400 font-medium">{t("mockupPublish.desc2")}</span>
           </p>
@@ -242,19 +242,19 @@ export default function MockupPublishPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Sidebar */}
-        <div className="lg:col-span-3 rounded-xl border border-white/[0.07] p-4 space-y-4 backdrop-blur-md bg-white/[0.01]">
-          <h2 className="text-sm font-bold text-white flex items-center gap-1.5 pb-2 border-b border-white/[0.06]">
+        <div className="lg:col-span-3 rounded-xl border border-border p-4 space-y-4 backdrop-blur-md bg-white/[0.01]">
+          <h2 className="text-sm font-bold text-foreground flex items-center gap-1.5 pb-2 border-b border-border">
             <Package className="w-4 h-4 text-purple-400" />
             <span>{t("mockupPublish.catalogTree")}</span>
           </h2>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#5e5a72]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted" />
             <input
               type="text"
               value={catalogSearch}
               onChange={(e) => { setCatalogSearch(e.target.value); setCurrentPage(1); }}
               placeholder={t("mockupPublish.searchProduct")}
-              className="w-full h-8 pl-9 pr-3 bg-black/30 border border-white/[0.08] focus:border-purple-500/80 rounded-lg text-xs text-white placeholder-white/30 focus:outline-none"
+              className="w-full h-8 pl-9 pr-3 bg-black/30 border border-border focus:border-purple-500/80 rounded-lg text-xs text-foreground placeholder-white/30 focus:outline-none"
             />
           </div>
           <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
@@ -265,16 +265,16 @@ export default function MockupPublishPage() {
                 <div key={rootKey} className="space-y-1">
                   <button
                     onClick={() => toggleRootFolder(rootKey)}
-                    className="w-full py-1.5 flex items-center justify-between text-xs font-bold text-[#f1f0ff] hover:text-white cursor-pointer"
+                    className="w-full py-1.5 flex items-center justify-between text-xs font-bold text-foreground hover:text-foreground cursor-pointer"
                   >
                     <div className="flex items-center gap-1">
                       {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                       <span>{rootKey}</span>
                     </div>
-                    <span className="text-[10px] text-[#5e5a72] font-semibold">({totalRootItems})</span>
+                    <span className="text-[10px] text-muted font-semibold">({totalRootItems})</span>
                   </button>
                   {isExpanded && (
-                    <div className="pl-4 border-l border-white/[0.04] space-y-0.5">
+                    <div className="pl-4 border-l border-border space-y-0.5">
                       {Object.entries(subTree).map(([subKey, itemsList]) => {
                         const isSelected = activeRootCat === rootKey && activeSubCat === subKey;
                         return (
@@ -284,11 +284,11 @@ export default function MockupPublishPage() {
                             className={`w-full text-left py-1 px-2 rounded-md text-[11px] font-medium transition-all flex items-center justify-between cursor-pointer ${
                               isSelected
                                 ? "bg-purple-500/10 text-purple-300 font-bold border border-purple-500/15"
-                                : "text-[#a09cb0] hover:text-white hover:bg-white/[0.02]"
+                                : "text-secondary hover:text-foreground hover:bg-white/[0.02]"
                             }`}
                           >
                             <span>{subKey}</span>
-                            <span className="text-[9px] text-[#5e5a72]">({itemsList.length})</span>
+                            <span className="text-[9px] text-muted">({itemsList.length})</span>
                           </button>
                         );
                       })}
@@ -304,9 +304,9 @@ export default function MockupPublishPage() {
         <div className="lg:col-span-9 space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs">
             <div className="space-y-2">
-              <h3 className="font-bold text-[#f1f0ff] uppercase tracking-wider">
+              <h3 className="font-bold text-foreground uppercase tracking-wider">
                 {activeSubCat} {t("mockupPublish.catalogUpper")} ({filteredModels.length} {t("mockupPublish.products")})
-                {catalogSearch && <span className="text-[#5e5a72] font-medium normal-case ml-2">"{catalogSearch}" için</span>}
+                {catalogSearch && <span className="text-muted font-medium normal-case ml-2">"{catalogSearch}" için</span>}
               </h3>
               {isApparelCategory && (
                 <div className="flex items-center gap-2 flex-wrap">
@@ -317,7 +317,7 @@ export default function MockupPublishPage() {
                       className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide transition-all border ${
                         genderFilter === option
                           ? "bg-purple-500/20 text-purple-300 border-purple-500/40"
-                          : "bg-black/30 text-[#a09cb0] border-white/[0.08] hover:bg-white/[0.05] hover:text-white"
+                          : "bg-black/30 text-secondary border-border hover:bg-white/[0.05] hover:text-foreground"
                       }`}
                     >
                       {t(`mockupPublish.gender_${option}`)}
@@ -338,21 +338,21 @@ export default function MockupPublishPage() {
           {isLoadingCatalog ? (
             <div className="flex flex-col items-center py-20 gap-3">
               <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
-              <p className="text-xs text-[#a09cb0]">Printify Kataloğu Getiriliyor...</p>
+              <p className="text-xs text-secondary">Printify Kataloğu Getiriliyor...</p>
             </div>
           ) : filteredModels.length === 0 ? (
-            <div className="text-center py-16 rounded-xl border border-dashed border-white/10 bg-white/[0.01]">
-              <p className="text-sm font-semibold text-[#a09cb0]">Ürün bulunamadı.</p>
+            <div className="text-center py-16 rounded-xl border border-dashed border-border bg-white/[0.01]">
+              <p className="text-sm font-semibold text-secondary">Ürün bulunamadı.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
               {paginatedModels.map((model) => (
                 <div
                   key={model.id}
-                  className="group relative rounded-xl border border-white/[0.07] bg-[#16161e] p-4 cursor-pointer transition-all duration-300 hover:border-purple-500/30 hover:bg-[#1a1a24] hover:translate-y-[-2px] flex flex-col"
+                  className="group relative rounded-xl border border-border bg-card p-4 cursor-pointer transition-all duration-300 hover:border-purple-500/30 hover:bg-[#1a1a24] hover:translate-y-[-2px] flex flex-col"
                   onClick={() => handleModelSelect(model)}
                 >
-                  <div className="relative aspect-square rounded-lg overflow-hidden mb-3 bg-neutral-900 border border-white/[0.04]">
+                  <div className="relative aspect-square rounded-lg overflow-hidden mb-3 bg-neutral-900 border border-border">
                     <img
                       src={model.images["default"]}
                       alt={model.name}
@@ -363,7 +363,7 @@ export default function MockupPublishPage() {
                       }}
                     />
                     {model.isBestseller && (
-                      <span className="absolute top-2 left-2 z-10 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] text-white text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow">
+                      <span className="absolute top-2 left-2 z-10 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] text-foreground text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow">
                         BEST SELLER
                       </span>
                     )}
@@ -371,10 +371,10 @@ export default function MockupPublishPage() {
                   {model.brand && (
                     <h4 className="text-xs text-purple-400 font-bold uppercase tracking-wider mb-0.5">{model.brand}</h4>
                   )}
-                  <h3 className="text-sm font-bold text-white line-clamp-2 mb-1 group-hover:text-purple-300 transition-colors flex-1">
+                  <h3 className="text-sm font-bold text-foreground line-clamp-2 mb-1 group-hover:text-purple-300 transition-colors flex-1">
                     {model.name}
                   </h3>
-                  <p className="text-[10px] text-[#5e5a72] mb-3">ID #{model.id}</p>
+                  <p className="text-[10px] text-muted mb-3">ID #{model.id}</p>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleModelSelect(model); }}
                     className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-lg text-xs font-bold tracking-wide transition-all shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] flex items-center justify-center gap-2"
@@ -390,10 +390,10 @@ export default function MockupPublishPage() {
           )}
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-6 border-t border-white/[0.05]">
-              <span className="text-xs text-[#a09cb0]">
-                Toplam <strong className="text-white">{filteredModels.length}</strong> üründen{" "}
-                <strong className="text-white">
+            <div className="flex items-center justify-between pt-6 border-t border-border">
+              <span className="text-xs text-secondary">
+                Toplam <strong className="text-foreground">{filteredModels.length}</strong> üründen{" "}
+                <strong className="text-foreground">
                   {(currentPage - 1) * itemsPerPage + 1} – {Math.min(currentPage * itemsPerPage, filteredModels.length)}
                 </strong>{" "}
                 arası
@@ -402,7 +402,7 @@ export default function MockupPublishPage() {
                 <button
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1.5 rounded-lg border border-white/[0.08] text-xs font-bold text-white bg-black/20 hover:bg-white/[0.05] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  className="px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-foreground bg-black/20 hover:bg-white/[0.05] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                 >
                   Önceki
                 </button>
@@ -412,14 +412,14 @@ export default function MockupPublishPage() {
                     .map((p, i, arr) => (
                       <React.Fragment key={p}>
                         {i > 0 && arr[i - 1] !== p - 1 && (
-                          <span className="text-white/30 text-xs px-1">...</span>
+                          <span className="text-foreground/30 text-xs px-1">...</span>
                         )}
                         <button
                           onClick={() => setCurrentPage(p)}
                           className={`w-7 h-7 rounded-md text-xs font-bold transition-all ${
                             currentPage === p
-                              ? "bg-purple-500 text-white border border-purple-400/50 shadow-[0_0_10px_rgba(168,85,247,0.3)]"
-                              : "text-[#a09cb0] hover:bg-white/[0.05] hover:text-white"
+                              ? "bg-purple-500 text-foreground border border-purple-400/50 shadow-[0_0_10px_rgba(168,85,247,0.3)]"
+                              : "text-secondary hover:bg-white/[0.05] hover:text-foreground"
                           }`}
                         >
                           {p}
@@ -430,7 +430,7 @@ export default function MockupPublishPage() {
                 <button
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 rounded-lg border border-white/[0.08] text-xs font-bold text-white bg-black/20 hover:bg-white/[0.05] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  className="px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-foreground bg-black/20 hover:bg-white/[0.05] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                 >
                   Sonraki
                 </button>

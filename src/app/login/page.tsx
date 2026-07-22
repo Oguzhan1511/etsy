@@ -90,14 +90,14 @@ export default function LoginPage() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-[#030014]">
+      <div className="h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#030014] flex items-center justify-center p-4 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden font-sans">
       
       {/* Background Animated Blobs */}
       <div className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-violet-600/10 blur-[120px] mix-blend-screen animate-blob pointer-events-none" />
@@ -109,7 +109,7 @@ export default function LoginPage() {
         {ripples.map(r => (
           <div
             key={r.id}
-            className="absolute border border-white/20 rounded-full animate-ripple"
+            className="absolute border border-border-hover rounded-full animate-ripple"
             style={{
               left: r.x - 50,
               top: r.y - 50,
@@ -123,7 +123,7 @@ export default function LoginPage() {
       {/* Language Toggle */}
       <button
         onClick={toggleLanguage}
-        className="absolute top-6 right-6 flex items-center justify-center w-12 h-10 rounded-xl transition-all duration-300 font-bold text-xs shadow-lg z-50 cursor-pointer border border-white/10 bg-white/5 backdrop-blur-md text-white/70 hover:bg-white/10 hover:text-white"
+        className="absolute top-6 right-6 flex items-center justify-center w-12 h-10 rounded-xl transition-all duration-300 font-bold text-xs shadow-lg z-50 cursor-pointer border border-border bg-white/5 backdrop-blur-md text-foreground/70 hover:bg-white/10 hover:text-foreground"
         title={t("common.language")}
       >
         <Globe size={14} className="mr-1 opacity-70" />
@@ -138,8 +138,8 @@ export default function LoginPage() {
             <img src="/logo.png" alt="PrintySell Logo" className="w-full h-full object-contain z-10" />
           </div>
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-white tracking-tight">PrintySell</h1>
-            <p className="text-sm text-white/50 mt-1">
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">PrintySell</h1>
+            <p className="text-sm text-foreground/50 mt-1">
               {mode === "login" && (t("login.welcome") || "Hoş Geldiniz")}
               {mode === "register" && (t("login.createAccount") || "Yeni Hesap Oluşturun")}
               {(mode === "forgot_password" || mode === "reset_sent") && (t("login.forgotPassword") || "Şifremi Unuttum")}
@@ -148,28 +148,28 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="w-full rounded-[24px] p-8 space-y-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] border border-white/[0.08] bg-white/[0.02] backdrop-blur-2xl relative overflow-hidden no-ripple-zone">
+        <div className="w-full rounded-[24px] p-8 space-y-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] border border-border bg-white/[0.02] backdrop-blur-2xl relative overflow-hidden no-ripple-zone">
           
           {/* Inner subtle glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
 
           {/* Mode Toggle (Hidden in forgot password mode) */}
           {(mode === "login" || mode === "register") && (
-            <div className="relative flex items-center bg-black/40 rounded-xl p-1 border border-white/5">
+            <div className="relative flex items-center bg-black/40 rounded-xl p-1 border border-border">
               <div 
-                className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white/10 rounded-lg shadow-sm transition-all duration-300 ease-out border border-white/10 ${mode === "login" ? "left-1" : "left-[calc(50%+3px)]"}`}
+                className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white/10 rounded-lg shadow-sm transition-all duration-300 ease-out border border-border ${mode === "login" ? "left-1" : "left-[calc(50%+3px)]"}`}
               />
               <button
                 type="button"
                 onClick={() => { setMode("login"); setError(""); }}
-                className={`flex-1 relative z-10 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer ${mode === "login" ? "text-white" : "text-white/40 hover:text-white/70"}`}
+                className={`flex-1 relative z-10 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer ${mode === "login" ? "text-foreground" : "text-foreground/40 hover:text-foreground/70"}`}
               >
                 {t("login.loginTab") || "Giriş Yap"}
               </button>
               <button
                 type="button"
                 onClick={() => { setMode("register"); setError(""); }}
-                className={`flex-1 relative z-10 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer ${mode === "register" ? "text-white" : "text-white/40 hover:text-white/70"}`}
+                className={`flex-1 relative z-10 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer ${mode === "register" ? "text-foreground" : "text-foreground/40 hover:text-foreground/70"}`}
               >
                 {t("login.registerTab") || "Kayıt Ol"}
               </button>
@@ -178,7 +178,7 @@ export default function LoginPage() {
 
           {/* Forgot Password Description */}
           {mode === "forgot_password" && (
-            <p className="text-sm text-center text-white/70 mb-4 px-2">
+            <p className="text-sm text-center text-foreground/70 mb-4 px-2">
               {t("login.forgotPasswordDesc") || "E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim."}
             </p>
           )}
@@ -189,7 +189,7 @@ export default function LoginPage() {
               <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
                 <CheckCircle2 size={32} className="text-green-400" />
               </div>
-              <p className="text-sm text-center text-white/80 leading-relaxed px-4">
+              <p className="text-sm text-center text-foreground/80 leading-relaxed px-4">
                 {t("login.resetSent") || "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi."}
               </p>
               <button
@@ -206,37 +206,37 @@ export default function LoginPage() {
               
               {/* Name (Only for Register) */}
               <div className={`space-y-1.5 transition-all duration-500 ease-in-out overflow-hidden ${mode === "register" ? "max-h-24 opacity-100" : "max-h-0 opacity-0"}`}>
-                <label className="text-[11px] font-semibold text-white/50 uppercase tracking-wider block ml-1">
+                <label className="text-[11px] font-semibold text-foreground/50 uppercase tracking-wider block ml-1">
                   {t("login.name") || "Ad Soyad"}
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-xl blur opacity-0 group-focus-within:opacity-30 transition-opacity duration-300 -z-10" />
-                  <User size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-violet-400 transition-colors duration-300" />
+                  <User size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/40 group-focus-within:text-violet-400 transition-colors duration-300" />
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl text-sm text-white placeholder-white/20 outline-none transition-all duration-300 bg-black/40 border border-white/10 focus:border-violet-500/50 focus:bg-black/60"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl text-sm text-foreground placeholder-white/20 outline-none transition-all duration-300 bg-black/40 border border-border focus:border-violet-500/50 focus:bg-black/60"
                   />
                 </div>
               </div>
 
               {/* Email */}
               <div className="space-y-1.5">
-                <label className="text-[11px] font-semibold text-white/50 uppercase tracking-wider block ml-1">
+                <label className="text-[11px] font-semibold text-foreground/50 uppercase tracking-wider block ml-1">
                   {t("login.email")}
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-xl blur opacity-0 group-focus-within:opacity-30 transition-opacity duration-300 -z-10" />
-                  <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-violet-400 transition-colors duration-300" />
+                  <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/40 group-focus-within:text-violet-400 transition-colors duration-300" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="ornek@email.com"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl text-sm text-white placeholder-white/20 outline-none transition-all duration-300 bg-black/40 border border-white/10 focus:border-violet-500/50 focus:bg-black/60"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl text-sm text-foreground placeholder-white/20 outline-none transition-all duration-300 bg-black/40 border border-border focus:border-violet-500/50 focus:bg-black/60"
                   />
                 </div>
               </div>
@@ -244,7 +244,7 @@ export default function LoginPage() {
               {/* Password (Hidden in forgot_password mode) */}
               <div className={`space-y-1.5 transition-all duration-500 ease-in-out overflow-hidden ${(mode === "login" || mode === "register") ? "max-h-24 opacity-100" : "max-h-0 opacity-0"}`}>
                 <div className="flex justify-between items-center ml-1">
-                  <label className="text-[11px] font-semibold text-white/50 uppercase tracking-wider block">
+                  <label className="text-[11px] font-semibold text-foreground/50 uppercase tracking-wider block">
                     {t("login.password")}
                   </label>
                   {mode === "login" && (
@@ -259,19 +259,19 @@ export default function LoginPage() {
                 </div>
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-xl blur opacity-0 group-focus-within:opacity-30 transition-opacity duration-300 -z-10" />
-                  <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-violet-400 transition-colors duration-300" />
+                  <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/40 group-focus-within:text-violet-400 transition-colors duration-300" />
                   <input
                     type={showPassword ? "text" : "password"}
                     required={mode !== "forgot_password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-11 pr-11 py-3 rounded-xl text-sm text-white placeholder-white/20 outline-none transition-all duration-300 bg-black/40 border border-white/10 focus:border-violet-500/50 focus:bg-black/60"
+                    className="w-full pl-11 pr-11 py-3 rounded-xl text-sm text-foreground placeholder-white/20 outline-none transition-all duration-300 bg-black/40 border border-border focus:border-violet-500/50 focus:bg-black/60"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition-colors cursor-pointer"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/80 transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
@@ -290,7 +290,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full group relative flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-4 overflow-hidden bg-white/5 border border-white/10 hover:border-violet-500/50"
+                className="w-full group relative flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-foreground transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-4 overflow-hidden bg-white/5 border border-border hover:border-violet-500/50"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600 opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-[radial-gradient(circle_at_center,white_0%,transparent_100%)] transition-opacity duration-500" />
@@ -318,7 +318,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => { setMode("login"); setError(""); }}
-                  className="w-full flex items-center justify-center gap-2 py-2 text-sm text-white/50 hover:text-white transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-2 text-sm text-foreground/50 hover:text-foreground transition-colors"
                 >
                   <ArrowLeft size={14} />
                   {t("login.backToLogin") || "Giriş Ekranına Dön"}
@@ -330,7 +330,7 @@ export default function LoginPage() {
           {/* Hint */}
           {(mode === "login" || mode === "register") && (
             <div className="pt-2">
-              <p className="text-center text-[11px] text-white/40 bg-black/20 rounded-lg p-3 border border-white/5">
+              <p className="text-center text-[11px] text-foreground/40 bg-black/20 rounded-lg p-3 border border-border">
                 {t("login.hint")}
               </p>
             </div>
@@ -338,7 +338,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-[10px] text-white/30 mt-8 font-medium tracking-wide uppercase">
+        <p className="text-center text-[10px] text-foreground/30 mt-8 font-medium tracking-wide uppercase">
           © {new Date().getFullYear()} PRINTYSELL — {t("login.rights")}
         </p>
       </div>

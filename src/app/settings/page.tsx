@@ -103,21 +103,21 @@ export default function SettingsPage() {
         <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
           {t("settings.title")}
         </h1>
-        <p className="text-sm mt-0.5 text-[#a09cb0]">
+        <p className="text-sm mt-0.5 text-secondary">
           {t("settings.desc")}
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-1 bg-white/[0.02] p-1 rounded-xl border border-white/[0.05] self-start w-fit">
+      <div className="flex gap-1 bg-white/[0.02] p-1 rounded-xl border border-border self-start w-fit">
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
             className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === id
-                ? "bg-purple-500/20 border border-purple-500/35 text-white"
-                : "text-[#a09cb0] hover:text-white"
+                ? "bg-purple-500/20 border border-purple-500/35 text-foreground"
+                : "text-secondary hover:text-foreground"
             }`}
           >
             <Icon size={13} />
@@ -130,7 +130,7 @@ export default function SettingsPage() {
       {activeTab === "profile" && (
         <div className="space-y-4">
           {/* Avatar Section */}
-          <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 flex items-center gap-5">
+          <div className="bg-card border border-border rounded-2xl p-5 flex items-center gap-5">
             <div className="relative">
               <div
                 className="w-16 h-16 rounded-2xl flex items-center justify-center text-xl font-bold shadow-lg"
@@ -138,13 +138,13 @@ export default function SettingsPage() {
               >
                 {user?.initials}
               </div>
-              <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#1e1e2a] border border-white/10 rounded-full flex items-center justify-center text-[#a09cb0] hover:text-white cursor-pointer transition-colors">
+              <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-surface border border-border rounded-full flex items-center justify-center text-secondary hover:text-foreground cursor-pointer transition-colors">
                 <Camera size={11} />
               </button>
             </div>
             <div>
-              <p className="text-sm font-bold text-white">{user?.name}</p>
-              <p className="text-xs text-[#5e5a72] mt-0.5">{user?.email}</p>
+              <p className="text-sm font-bold text-foreground">{user?.name}</p>
+              <p className="text-xs text-muted mt-0.5">{user?.email}</p>
               <span
                 className="inline-block mt-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-full"
                 style={{
@@ -159,37 +159,37 @@ export default function SettingsPage() {
           </div>
 
           {/* Form Fields */}
-          <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-4">
-            <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider">{t("settings.personalInfo")}</h3>
+          <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
+            <h3 className="text-xs font-bold text-muted uppercase tracking-wider">{t("settings.personalInfo")}</h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.fullName")}</label>
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider block">{t("settings.fullName")}</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors"
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50 transition-colors"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.email")}</label>
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider block">{t("settings.email")}</label>
                 <input
                   type="email"
                   value={email}
                   disabled
-                  className="w-full px-3 py-2 rounded-xl border border-white/[0.05] bg-black/10 text-xs text-[#5e5a72] cursor-not-allowed"
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-black/10 text-xs text-muted cursor-not-allowed"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.bio")}</label>
+              <label className="text-[10px] font-bold text-muted uppercase tracking-wider block">{t("settings.bio")}</label>
               <textarea
                 rows={3}
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors resize-none leading-relaxed"
+                className="w-full px-3 py-2 rounded-xl border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50 transition-colors resize-none leading-relaxed"
               />
             </div>
 
@@ -199,7 +199,7 @@ export default function SettingsPage() {
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   saved
                     ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-400"
-                    : "bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:brightness-110 shadow-lg shadow-purple-500/10"
+                    : "bg-gradient-to-r from-purple-500 to-purple-600 text-foreground hover:brightness-110 shadow-lg shadow-purple-500/10"
                 }`}
               >
                 {saved ? <Check size={12} /> : <Save size={12} />}
@@ -209,41 +209,41 @@ export default function SettingsPage() {
           </div>
 
           {/* Password Change */}
-          <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-4">
-            <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
+          <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
+            <h3 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
               <Lock size={12} /> {t("settings.changePassword")}
             </h3>
             
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.currentPassword")}</label>
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider block">{t("settings.currentPassword")}</label>
                 <input
                   type="password"
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
                   placeholder={t("settings.enterOldPassword")}
-                  className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors"
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50 transition-colors"
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.newPassword")}</label>
+                  <label className="text-[10px] font-bold text-muted uppercase tracking-wider block">{t("settings.newPassword")}</label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder={t("settings.enterNewPassword")}
-                    className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors"
+                    className="w-full px-3 py-2 rounded-xl border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50 transition-colors"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider block">{t("settings.confirmNewPassword")}</label>
+                  <label className="text-[10px] font-bold text-muted uppercase tracking-wider block">{t("settings.confirmNewPassword")}</label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder={t("settings.enterConfirmNewPassword")}
-                    className="w-full px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 transition-colors"
+                    className="w-full px-3 py-2 rounded-xl border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50 transition-colors"
                   />
                 </div>
               </div>
@@ -255,7 +255,7 @@ export default function SettingsPage() {
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   passwordSaved
                     ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-400"
-                    : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+                    : "bg-white/5 border border-border text-foreground hover:bg-white/10"
                 }`}
               >
                 {passwordSaved ? <Check size={12} /> : <Save size={12} />}
@@ -265,12 +265,12 @@ export default function SettingsPage() {
           </div>
 
           {/* Danger Zone */}
-          <div className="bg-[#16161e] border border-red-500/15 rounded-2xl p-5 space-y-3">
+          <div className="bg-card border border-red-500/15 rounded-2xl p-5 space-y-3">
             <h3 className="text-xs font-bold text-red-400/80 uppercase tracking-wider">{t("settings.dangerZone")}</h3>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-white">{t("settings.logOut")}</p>
-                <p className="text-[10px] text-[#5e5a72] mt-0.5">{t("settings.logOutDesc")}</p>
+                <p className="text-xs font-semibold text-foreground">{t("settings.logOut")}</p>
+                <p className="text-[10px] text-muted mt-0.5">{t("settings.logOutDesc")}</p>
               </div>
               <button
                 onClick={logout}
@@ -288,8 +288,8 @@ export default function SettingsPage() {
       {activeTab === "settings" && (
         <div className="space-y-4">
           {/* Notifications */}
-          <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-3">
-            <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
+          <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
+            <h3 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
               <Bell size={12} /> {t("settings.notifications")}
             </h3>
             <SettingRow
@@ -301,8 +301,8 @@ export default function SettingsPage() {
           </div>
 
           {/* Appearance */}
-          <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-3">
-            <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
+          <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
+            <h3 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
               <Moon size={12} /> {t("settings.appearance")}
             </h3>
             <SettingRow
@@ -311,14 +311,14 @@ export default function SettingsPage() {
               checked={darkMode}
               onToggle={() => setDarkMode(!darkMode)}
             />
-            <div className="pt-2 border-t border-white/[0.04] space-y-1.5">
-              <label className="text-[10px] font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
+            <div className="pt-2 border-t border-border space-y-1.5">
+              <label className="text-[10px] font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                 <Globe size={11} /> {t("settings.language")}
               </label>
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-white/[0.08] bg-black/20 text-xs text-white focus:outline-none focus:border-purple-500/50 cursor-pointer"
+                className="px-3 py-2 rounded-xl border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50 cursor-pointer"
               >
                 <option value="Türkçe">Türkçe</option>
                 <option value="English">English</option>
@@ -327,8 +327,8 @@ export default function SettingsPage() {
           </div>
 
           {/* Security */}
-          <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-3">
-            <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
+          <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
+            <h3 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
               <Lock size={12} /> {t("settings.security")}
             </h3>
             <SettingRow
@@ -340,21 +340,21 @@ export default function SettingsPage() {
           </div>
 
           {/* Integrations */}
-          <div className="bg-[#16161e] border border-white/[0.05] rounded-2xl p-5 space-y-4">
-            <h3 className="text-xs font-bold text-[#5e5a72] uppercase tracking-wider flex items-center gap-2">
+          <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
+            <h3 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
               <Globe size={12} /> {t("settings.integrations")}
             </h3>
             
             <div className="space-y-3">
               {/* Etsy Integration */}
-              <div className="flex items-center justify-between p-3 bg-black/20 rounded-xl border border-white/[0.05]">
+              <div className="flex items-center justify-between p-3 bg-black/20 rounded-xl border border-border">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#F56400] flex items-center justify-center font-serif font-bold text-white text-lg">
+                  <div className="w-8 h-8 rounded-full bg-[#F56400] flex items-center justify-center font-serif font-bold text-foreground text-lg">
                     E
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-white">Etsy</h4>
-                    <p className="text-[10px] text-[#a09cb0]">{t("settings.etsyDesc")}</p>
+                    <h4 className="text-sm font-bold text-foreground">Etsy</h4>
+                    <p className="text-[10px] text-secondary">{t("settings.etsyDesc")}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -380,15 +380,15 @@ export default function SettingsPage() {
               </div>
 
               {/* Printify Integration */}
-              <div className="flex flex-col gap-3 p-3 bg-black/20 rounded-xl border border-white/[0.05]">
+              <div className="flex flex-col gap-3 p-3 bg-black/20 rounded-xl border border-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#39b75d] flex items-center justify-center font-sans font-bold text-white text-xl">
+                    <div className="w-8 h-8 rounded-full bg-[#39b75d] flex items-center justify-center font-sans font-bold text-foreground text-xl">
                       P
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white">Printify</h4>
-                      <p className="text-[10px] text-[#a09cb0]">Printify API Anahtarınızı girin</p>
+                      <h4 className="text-sm font-bold text-foreground">Printify</h4>
+                      <p className="text-[10px] text-secondary">Printify API Anahtarınızı girin</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -407,7 +407,7 @@ export default function SettingsPage() {
                           setPrintifyConnected(false);
                         }
                       }}
-                      className="w-48 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-black/40 text-[11px] text-white placeholder-white/20 focus:outline-none focus:border-purple-500/50 transition-colors"
+                      className="w-48 px-3 py-1.5 rounded-lg border border-border bg-black/40 text-[11px] text-foreground placeholder-white/20 focus:outline-none focus:border-purple-500/50 transition-colors"
                     />
                     <button
                       onClick={() => {
@@ -445,17 +445,17 @@ export default function SettingsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-purple-400">{t("settings.currentPlan")}</span>
-                <h2 className="text-xl font-bold text-white mt-1 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-foreground mt-1 flex items-center gap-2">
                   <Zap size={18} className="text-purple-400" />
                   {t("settings.proPlan")}
                 </h2>
-                <p className="text-xs text-[#a09cb0] mt-1">{t("settings.proPlanDesc")}</p>
+                <p className="text-xs text-secondary mt-1">{t("settings.proPlanDesc")}</p>
               </div>
-              <span className="text-2xl font-bold text-white">₺299<span className="text-xs text-[#5e5a72] font-normal">{t("settings.perMonth")}</span></span>
+              <span className="text-2xl font-bold text-foreground">₺299<span className="text-xs text-muted font-normal">{t("settings.perMonth")}</span></span>
             </div>
             <div className="grid grid-cols-2 gap-2 pt-2">
               {[t("settings.featureUnlimited"), "AI Design Studio", t("settings.featureAnalytics"), t("settings.featureSupport")].map((f) => (
-                <div key={f} className="flex items-center gap-1.5 text-[11px] text-[#a09cb0]">
+                <div key={f} className="flex items-center gap-1.5 text-[11px] text-secondary">
                   <Check size={10} className="text-purple-400 shrink-0" />
                   {f}
                 </div>
@@ -472,32 +472,32 @@ export default function SettingsPage() {
             ].map((plan) => (
               <div
                 key={plan.name}
-                className={`bg-[#16161e] border rounded-xl p-4 flex items-center justify-between transition-all ${
-                  plan.current ? "border-purple-500/40" : "border-white/[0.05] hover:border-white/10"
+                className={`bg-card border rounded-xl p-4 flex items-center justify-between transition-all ${
+                  plan.current ? "border-purple-500/40" : "border-border hover:border-border"
                 }`}
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-white">{plan.name}</span>
+                    <span className="text-sm font-bold text-foreground">{plan.name}</span>
                     {plan.current && (
                       <span className="text-[9px] font-bold bg-purple-500/20 border border-purple-500/30 text-purple-400 px-1.5 py-0.5 rounded-full">
                         {t("settings.active")}
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-[#5e5a72]">{plan.desc}</p>
+                  <p className="text-[10px] text-muted">{plan.desc}</p>
                   <div className="flex flex-wrap gap-2 pt-1">
                     {plan.features.map((f) => (
-                      <span key={f} className="text-[9px] text-[#a09cb0] flex items-center gap-1">
+                      <span key={f} className="text-[9px] text-secondary flex items-center gap-1">
                         <Check size={8} className="text-purple-400" />{f}
                       </span>
                     ))}
                   </div>
                 </div>
                 <div className="text-right shrink-0 ml-4">
-                  <p className="text-base font-bold text-white">{plan.price}<span className="text-[10px] text-[#5e5a72] font-normal">{t("settings.perMonth")}</span></p>
+                  <p className="text-base font-bold text-foreground">{plan.price}<span className="text-[10px] text-muted font-normal">{t("settings.perMonth")}</span></p>
                   {!plan.current && (
-                    <button className="mt-2 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-purple-500/20 border border-white/[0.06] hover:border-purple-500/30 text-[10px] font-bold text-[#a09cb0] hover:text-white transition-all cursor-pointer">
+                    <button className="mt-2 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-purple-500/20 border border-border hover:border-purple-500/30 text-[10px] font-bold text-secondary hover:text-foreground transition-all cursor-pointer">
                       {t("settings.upgrade")} <ChevronRight size={10} />
                     </button>
                   )}
@@ -507,7 +507,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Security badge */}
-          <div className="flex items-center gap-2 text-[10px] text-[#5e5a72] justify-center pt-1">
+          <div className="flex items-center gap-2 text-[10px] text-muted justify-center pt-1">
             <Shield size={11} />
             {t("settings.ssl")}
           </div>
@@ -532,8 +532,8 @@ function SettingRow({
   return (
     <div className="flex items-center justify-between gap-4">
       <div>
-        <p className="text-xs font-semibold text-white">{label}</p>
-        <p className="text-[10px] text-[#5e5a72] mt-0.5">{description}</p>
+        <p className="text-xs font-semibold text-foreground">{label}</p>
+        <p className="text-[10px] text-muted mt-0.5">{description}</p>
       </div>
       <button
         type="button"

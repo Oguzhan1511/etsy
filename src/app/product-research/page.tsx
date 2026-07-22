@@ -278,27 +278,27 @@ export default function ProductResearchPage() {
             <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
               AI Tools
             </span>
-            <span className="text-xs text-[#a09cb0]">Premium Suite</span>
+            <span className="text-xs text-secondary">Premium Suite</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
             {t("research.title")}
           </h1>
-          <p className="text-sm mt-1 text-[#a09cb0]">
+          <p className="text-sm mt-1 text-secondary">
             {t("research.subtitle")}
           </p>
         </div>
         
         <div
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.08] backdrop-blur-md bg-white/[0.02]"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border backdrop-blur-md bg-white/[0.02]"
         >
           <div className="w-2 h-2 rounded-full bg-[#7c6af7] shadow-[0_0_8px_#7c6af7]" />
-          <span className="text-xs font-semibold text-[#f1f0ff]">{t("research.premiumSuite")}</span>
+          <span className="text-xs font-semibold text-foreground">{t("research.premiumSuite")}</span>
         </div>
       </div>
 
       {/* Search & Filters Section */}
       <div 
-        className="rounded-2xl p-6 border border-white/[0.07] backdrop-blur-xl relative overflow-hidden"
+        className="rounded-2xl p-6 border border-border backdrop-blur-xl relative overflow-hidden"
         style={{
           background: "linear-gradient(145deg, rgba(22, 22, 30, 0.7) 0%, rgba(13, 13, 18, 0.8) 100%)",
           boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
@@ -315,14 +315,14 @@ export default function ProductResearchPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder={t("research.searchPlaceholder")}
-                className="w-full h-12 pl-11 pr-4 bg-black/30 border border-white/[0.08] focus:border-purple-500/80 rounded-xl text-sm text-[#f1f0ff] placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition-all backdrop-blur-sm"
+                className="w-full h-12 pl-11 pr-4 bg-black/30 border border-border focus:border-purple-500/80 rounded-xl text-sm text-foreground placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition-all backdrop-blur-sm"
               />
             </div>
             
             <button
               type="submit"
               disabled={isLoading}
-              className="h-12 px-6 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-white shrink-0"
+              className="h-12 px-6 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-foreground shrink-0"
               style={{
                 background: "linear-gradient(135deg, #7c6af7 0%, #a855f7 100%)",
                 boxShadow: "0 4px 20px rgba(124,106,247,0.25)"
@@ -352,19 +352,19 @@ export default function ProductResearchPage() {
 
           {/* Badges Container */}
           <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
-            <span className="text-[#5e5a72] font-medium mr-1">{t("research.activeCriteria")}</span>
+            <span className="text-muted font-medium mr-1">{t("research.activeCriteria")}</span>
             
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] text-[#a09cb0]">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-white/[0.02] text-secondary">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-semibold text-white/90">{t("research.etsyOnly")}</span>
+              <span className="font-semibold text-foreground/90">{t("research.etsyOnly")}</span>
             </div>
 
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] text-[#a09cb0]">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-white/[0.02] text-secondary">
               <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
-              <span>{t("research.period")} <span className="font-semibold text-white/90">{t("research.last24h")}</span></span>
+              <span>{t("research.period")} <span className="font-semibold text-foreground/90">{t("research.last24h")}</span></span>
             </div>
 
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] text-[#a09cb0]">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-white/[0.02] text-secondary">
               <span className="text-[10px] uppercase font-bold text-purple-400 px-1 bg-purple-500/10 rounded">{t("research.limit")}</span>
               <span>{t("research.premiumProducts")}</span>
             </div>
@@ -393,7 +393,7 @@ export default function ProductResearchPage() {
           <button
             type="button"
             onClick={() => setError(null)}
-            className="p-1 hover:bg-white/5 rounded-lg text-white/40 hover:text-white/80 transition-colors cursor-pointer border border-transparent hover:border-white/[0.05]"
+            className="p-1 hover:bg-white/5 rounded-lg text-foreground/40 hover:text-foreground/80 transition-colors cursor-pointer border border-transparent hover:border-border"
           >
             <X className="w-4 h-4" />
           </button>
@@ -403,15 +403,15 @@ export default function ProductResearchPage() {
       {/* Grid Results */}
       <div>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+          <h2 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
             <span>{t("research.premiumKeywordResults")}</span>
             {!isLoading && (
-              <span className="text-xs font-normal text-[#a09cb0] bg-white/[0.04] border border-white/[0.06] px-2 py-0.5 rounded-full">
+              <span className="text-xs font-normal text-secondary bg-white/[0.04] border border-border px-2 py-0.5 rounded-full">
                 {products.length} {t("research.items")}
               </span>
             )}
           </h2>
-          <div className="text-xs text-[#5e5a72] flex items-center gap-1">
+          <div className="text-xs text-muted flex items-center gap-1">
             <HelpCircle className="w-3 h-3" />
             <span>{t("research.clickCards")}</span>
           </div>
@@ -429,7 +429,7 @@ export default function ProductResearchPage() {
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-xl border border-white/[0.05] p-4 space-y-4 animate-pulse bg-[#16161e]"
+                  className="rounded-xl border border-border p-4 space-y-4 animate-pulse bg-card"
                 >
                   <div className="aspect-square bg-white/[0.04] rounded-lg w-full" />
                   <div className="space-y-3">
@@ -444,12 +444,12 @@ export default function ProductResearchPage() {
           </div>
         ) : products.length === 0 ? (
           /* Empty Search State */
-          <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-white/[0.08] bg-white/[0.01]">
+          <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-border bg-white/[0.01]">
             <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center mx-auto mb-4 text-purple-400 border border-purple-500/20">
               <Search className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-semibold text-white">{t("research.noProducts")}</h3>
-            <p className="text-sm mt-1 max-w-sm mx-auto text-[#a09cb0]">
+            <h3 className="text-lg font-semibold text-foreground">{t("research.noProducts")}</h3>
+            <p className="text-sm mt-1 max-w-sm mx-auto text-secondary">
               {t("research.noMatches")} &quot;{activeQuery}&quot;. {t("research.tryTyping")}
             </p>
             <button
@@ -472,12 +472,12 @@ export default function ProductResearchPage() {
                   className={`group relative rounded-xl border p-4 cursor-pointer transition-all duration-300 flex flex-col justify-between ${
                     isSelected
                       ? "border-[#7c6af7] bg-[#161625] shadow-[0_0_20px_rgba(124,106,247,0.15)] ring-2 ring-[#7c6af7]/50"
-                      : "border-white/[0.07] bg-[#16161e] hover:border-white/[0.14] hover:bg-[#1a1a24] hover:translate-y-[-2px]"
+                      : "border-border bg-card hover:border-border-hover hover:bg-[#1a1a24] hover:translate-y-[-2px]"
                   }`}
                 >
                   <div>
                     {/* Image Area */}
-                    <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-neutral-900 border border-white/[0.04]">
+                    <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-neutral-900 border border-border">
                       {/* Product Image */}
                       <Image
                         src={product.imageUrl}
@@ -489,13 +489,13 @@ export default function ProductResearchPage() {
                       
                       {/* Bestseller Badge */}
                       {product.isBestseller && (
-                        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] text-white text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md shadow-lg border border-white/10">
+                        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] text-foreground text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md shadow-lg border border-border">
                           Bestseller
                         </div>
                       )}
 
                       {/* Opportunity Score Badge */}
-                      <div className="absolute top-2 right-2 z-10 bg-black/60 backdrop-blur-md border border-white/10 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-md">
+                      <div className="absolute top-2 right-2 z-10 bg-black/60 backdrop-blur-md border border-border text-foreground text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-md">
                         {t("research.opportunity")} <span className="text-purple-400 font-bold">{product.opportunityScore}/100</span>
                       </div>
                     </div>
@@ -522,7 +522,7 @@ export default function ProductResearchPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="text-[#5e5a72] hover:text-purple-400 transition-colors cursor-pointer"
+                          className="text-muted hover:text-purple-400 transition-colors cursor-pointer"
                           title="View on Etsy"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -531,26 +531,26 @@ export default function ProductResearchPage() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-sm font-medium leading-snug line-clamp-2 text-[#f1f0ff] mb-2 min-h-[40px] group-hover:text-purple-300/90 transition-colors">
+                    <h3 className="text-sm font-medium leading-snug line-clamp-2 text-foreground mb-2 min-h-[40px] group-hover:text-purple-300/90 transition-colors">
                       {product.title}
                     </h3>
 
                     {/* Price */}
-                    <div className="text-lg font-bold text-white mb-3">
+                    <div className="text-lg font-bold text-foreground mb-3">
                       ${product.price.toFixed(2)}
                     </div>
                   </div>
 
                   <div>
                     {/* Live Metrics */}
-                    <div className="grid grid-cols-2 gap-2 bg-black/25 border border-white/[0.04] rounded-lg p-2 text-[11px] text-[#a09cb0] mb-4">
+                    <div className="grid grid-cols-2 gap-2 bg-black/25 border border-border rounded-lg p-2 text-[11px] text-secondary mb-4">
                       <div className="flex items-center gap-1">
                         <span aria-hidden="true" className="text-emerald-400">💰</span>
                         <span className="truncate">
                           {t("24h Sales:") || "24h Satış:"} <span className="font-bold text-emerald-400">{product.estimatedSales24h || 0}</span>
                         </span>
                       </div>
-                      <div className="flex items-center gap-1 border-l border-white/[0.06] pl-2">
+                      <div className="flex items-center gap-1 border-l border-border pl-2">
                         <span aria-hidden="true">🔥</span>
                         <span className="truncate">
                           {t("Score:") || "Skor:"} <span className="font-semibold text-purple-400">{product.opportunityScore}</span>
@@ -562,7 +562,7 @@ export default function ProductResearchPage() {
                     <button
                       type="button"
                       onClick={(e) => handleAIAnalyze(product, e)}
-                      className="w-full py-2 px-3 rounded-lg text-xs font-semibold text-white transition-all duration-300 flex items-center justify-center gap-1.5 relative overflow-hidden group-hover:shadow-[0_0_15px_rgba(124,106,247,0.35)] cursor-pointer"
+                      className="w-full py-2 px-3 rounded-lg text-xs font-semibold text-foreground transition-all duration-300 flex items-center justify-center gap-1.5 relative overflow-hidden group-hover:shadow-[0_0_15px_rgba(124,106,247,0.35)] cursor-pointer"
                       style={{
                         background: "linear-gradient(135deg, #7c6af7 0%, #8c7bf7 100%)",
                       }}
@@ -588,13 +588,13 @@ export default function ProductResearchPage() {
       {selectedProduct && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-2xl animate-slide-up">
           <div 
-            className="flex items-center justify-between gap-4 p-3 md:p-4 rounded-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+            className="flex items-center justify-between gap-4 p-3 md:p-4 rounded-2xl border border-border shadow-[0_12px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl"
             style={{
               background: "linear-gradient(145deg, rgba(20, 20, 28, 0.85) 0%, rgba(10, 10, 15, 0.9) 100%)",
             }}
           >
             <div className="flex items-center gap-3 min-w-0">
-              <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/10 bg-black/40">
+              <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-border bg-black/40">
                 <Image
                   src={selectedProduct.imageUrl}
                   alt={selectedProduct.title}
@@ -607,7 +607,7 @@ export default function ProductResearchPage() {
                 <div className="text-[10px] text-purple-400 font-semibold uppercase tracking-wider">
                   {t("research.selectedItem")}
                 </div>
-                <div className="text-xs md:text-sm font-semibold text-white truncate max-w-[180px] sm:max-w-[280px] md:max-w-[340px]">
+                <div className="text-xs md:text-sm font-semibold text-foreground truncate max-w-[180px] sm:max-w-[280px] md:max-w-[340px]">
                   {selectedProduct.title}
                 </div>
               </div>
@@ -618,7 +618,7 @@ export default function ProductResearchPage() {
                 type="button"
                 onClick={() => handleAIAnalyze(selectedProduct)}
                 disabled={analysisLoading}
-                className="bg-gradient-to-r from-[#7c6af7] to-[#a855f7] text-white hover:brightness-110 font-bold text-xs py-2 px-4 rounded-xl transition-all flex items-center gap-1.5 shadow-[0_4px_12px_rgba(124,106,247,0.3)] cursor-pointer"
+                className="bg-gradient-to-r from-[#7c6af7] to-[#a855f7] text-foreground hover:brightness-110 font-bold text-xs py-2 px-4 rounded-xl transition-all flex items-center gap-1.5 shadow-[0_4px_12px_rgba(124,106,247,0.3)] cursor-pointer"
               >
                 {analysisLoading ? (
                   <>
@@ -636,7 +636,7 @@ export default function ProductResearchPage() {
               <button
                 type="button"
                 onClick={() => setSelectedProduct(null)}
-                className="p-1.5 text-white/40 hover:text-white/80 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/[0.05]"
+                className="p-1.5 text-foreground/40 hover:text-foreground/80 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-border"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -649,7 +649,7 @@ export default function ProductResearchPage() {
       {analyzedProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in-fast">
           <div 
-            className="w-full max-w-lg rounded-2xl border border-white/10 p-6 shadow-2xl relative overflow-hidden text-left"
+            className="w-full max-w-lg rounded-2xl border border-border p-6 shadow-2xl relative overflow-hidden text-left"
             style={{
               background: "linear-gradient(145deg, #161622 0%, #0d0d14 100%)",
             }}
@@ -658,13 +658,13 @@ export default function ProductResearchPage() {
             
             <button
               onClick={() => setAnalyzedProduct(null)}
-              className="absolute top-4 right-4 p-1 rounded-lg text-white/40 hover:text-white/80 hover:bg-white/5 transition-colors"
+              className="absolute top-4 right-4 p-1 rounded-lg text-foreground/40 hover:text-foreground/80 hover:bg-white/5 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
 
             <div className="flex gap-4 items-start mb-5">
-              <div className="relative w-16 h-16 shrink-0 rounded-xl border border-white/10 overflow-hidden">
+              <div className="relative w-16 h-16 shrink-0 rounded-xl border border-border overflow-hidden">
                 <Image
                   src={analyzedProduct.imageUrl}
                   alt={analyzedProduct.title}
@@ -675,45 +675,45 @@ export default function ProductResearchPage() {
               </div>
               <div>
                 <span className="text-xs text-purple-400 font-semibold">{analyzedProduct.shopName}</span>
-                <h3 className="text-sm font-bold text-white line-clamp-2 leading-tight">
+                <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-tight">
                   {analyzedProduct.title}
                 </h3>
               </div>
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-xs uppercase font-bold text-[#a09cb0] tracking-wider border-b border-white/[0.06] pb-1.5">
+              <h4 className="text-xs uppercase font-bold text-secondary tracking-wider border-b border-border pb-1.5">
                 {t("research.aiAnalyticsRecommendations")}
               </h4>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="bg-white/[0.02] p-2.5 rounded-lg border border-white/[0.04]">
-                  <p className="text-[#a09cb0] mb-0.5">Opportunity Index</p>
+                <div className="bg-white/[0.02] p-2.5 rounded-lg border border-border">
+                  <p className="text-secondary mb-0.5">Opportunity Index</p>
                   <p className="text-lg font-bold text-emerald-400">{analyzedProduct.opportunityScore}/100</p>
                 </div>
-                <div className="bg-white/[0.02] p-2.5 rounded-lg border border-white/[0.04]">
-                  <p className="text-[#a09cb0] mb-0.5">Est. 24h Sales</p>
+                <div className="bg-white/[0.02] p-2.5 rounded-lg border border-border">
+                  <p className="text-secondary mb-0.5">Est. 24h Sales</p>
                   <p className="text-lg font-bold text-purple-400">{analyzedProduct.estimatedSales24h || 0} sales</p>
                 </div>
               </div>
 
-              <div className="space-y-2 text-xs text-[#a09cb0]">
+              <div className="space-y-2 text-xs text-secondary">
                 <div className="flex items-start gap-2">
                   <span className="text-emerald-400">✓</span>
                   <p>
-                    <strong className="text-white">{t("research.trend")}</strong> {t("research.highConv")} {analyzedProduct.category || "niche"} {t("research.sector")}
+                    <strong className="text-foreground">{t("research.trend")}</strong> {t("research.highConv")} {analyzedProduct.category || "niche"} {t("research.sector")}
                   </p>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-emerald-400">✓</span>
                   <p>
-                    <strong className="text-white">{t("research.designTip")}</strong> {t("research.expandCategory")}
+                    <strong className="text-foreground">{t("research.designTip")}</strong> {t("research.expandCategory")}
                   </p>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-purple-400">✦</span>
                   <p>
-                    <strong className="text-white">{t("research.seoKeywords")}</strong> {t("research.useHighVol")} {analyzedProduct.category || "item"}&quot; {t("research.increaseTraffic")}
+                    <strong className="text-foreground">{t("research.seoKeywords")}</strong> {t("research.useHighVol")} {analyzedProduct.category || "item"}&quot; {t("research.increaseTraffic")}
                   </p>
                 </div>
               </div>
@@ -724,7 +724,7 @@ export default function ProductResearchPage() {
                     href={analyzedProduct.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 py-2.5 border border-white/10 hover:bg-white/5 transition-all text-xs font-semibold text-center rounded-xl flex items-center justify-center gap-1.5 text-white"
+                    className="flex-1 py-2.5 border border-border hover:bg-white/5 transition-all text-xs font-semibold text-center rounded-xl flex items-center justify-center gap-1.5 text-foreground"
                   >
                     <span>{t("research.viewListing")}</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -736,7 +736,7 @@ export default function ProductResearchPage() {
                     const encodedUrl = encodeURIComponent(analyzedProduct.imageUrl);
                     router.push(`/ai-design-studio?image=${encodedUrl}`);
                   }}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 transition-all font-bold text-xs text-white rounded-xl flex items-center justify-center gap-1.5 shadow-[0_4px_15px_rgba(124,106,247,0.3)]"
+                  className="flex-1 py-2.5 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 transition-all font-bold text-xs text-foreground rounded-xl flex items-center justify-center gap-1.5 shadow-[0_4px_15px_rgba(124,106,247,0.3)]"
                 >
                   <span>{t("research.generateDesigns") || "Tasarımlar Oluştur"}</span>
                   <Sparkles className="w-3.5 h-3.5" />

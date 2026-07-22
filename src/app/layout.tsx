@@ -15,19 +15,23 @@ export const metadata = {
   description: "Premium SaaS dashboard for PrintySell",
 };
 
+import { ThemeProvider } from "../components/ThemeProvider";
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="flex h-screen overflow-hidden bg-[#09090b] text-[#f1f0ff] antialiased">
-        <AuthProvider>
-          <LanguageProvider>
-            <ClientShell>{children}</ClientShell>
-          </LanguageProvider>
-        </AuthProvider>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body className="flex h-screen overflow-hidden bg-background text-foreground antialiased transition-colors duration-200">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AuthProvider>
+            <LanguageProvider>
+              <ClientShell>{children}</ClientShell>
+            </LanguageProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
