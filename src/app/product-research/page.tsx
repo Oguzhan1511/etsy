@@ -592,14 +592,21 @@ export default function ProductResearchPage() {
       </div>
 
       {/* History Section */}
-      {historyProducts.length > 0 && (
-        <div className="mt-12 space-y-4">
-          <div className="flex items-center gap-2 border-b border-border pb-3">
-            <RotateCcw className="w-5 h-5 text-purple-400" />
-            <h2 className="text-xl font-bold text-foreground">
-              {t("research.searchHistory") || "Geçmiş Aranan Ürünler"}
-            </h2>
+      <div className="mt-12 space-y-4">
+        <div className="flex items-center gap-2 border-b border-border pb-3">
+          <RotateCcw className="w-5 h-5 text-purple-400" />
+          <h2 className="text-xl font-bold text-foreground">
+            {t("research.searchHistory") || "Geçmiş Aranan Ürünler"}
+          </h2>
+        </div>
+        
+        {historyProducts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-secondary space-y-3 bg-black/10 rounded-2xl border border-border border-dashed">
+            <Search size={24} className="text-muted" />
+            <p className="text-sm font-medium">Henüz incelenmiş bir ürününüz yok.</p>
+            <p className="text-xs text-muted text-center max-w-sm">Yukarıdaki arama sonuçlarından bir ürüne tıkladığınızda buraya otomatik olarak kaydedilir.</p>
           </div>
+        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
             {historyProducts.map((product) => (
               <div 
@@ -657,8 +664,8 @@ export default function ProductResearchPage() {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Floating Action Banner */}
       {selectedProduct && (
