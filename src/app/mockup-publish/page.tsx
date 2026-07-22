@@ -187,12 +187,16 @@ export default function MockupPublishPage() {
   };
 
   const handleModelSelect = async (model: ProductModel) => {
-    try {
-      await navigator.clipboard.writeText(model.name);
-    } catch {}
-    // Open Printify product creation page for this specific blueprint
-    window.open(`https://printify.com/app/products/new?blueprintId=${model.id}`, "_blank");
-    showToast(`"${model.name}" kopyalandı! Printify'da arama kutusuna yapıştırın.`);
+    // Build the correct Printify URL: /app/products/{id}/{brand-slug}/{title-slug}
+    const slugify = (str: string) =>
+      str.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+    const brandSlug = slugify(model.brand || "printify");
+    const titleSlug = slugify(model.name);
+    const url = `https://printify.com/app/products/${model.id}/${brandSlug}/${titleSlug}`;
+
+    window.open(url, "_blank");
+    showToast(`Printify'da açılıyor: ${model.name}`);
   };
 
   const isApparelCategory = activeSubCat === "Shirt" || activeSubCat === "Sweatshirt Hoodie";
