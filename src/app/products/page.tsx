@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Package,
   Search,
@@ -21,7 +22,10 @@ import {
   ChevronLeft,
   ChevronRight,
   UploadCloud,
-  Loader2
+  Loader2,
+  Sparkles,
+  Zap,
+  ArrowRight
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -60,6 +64,7 @@ interface PrintifyProduct {
 
 export default function ProductsPage() {
   const { t } = useLanguage();
+  const router = useRouter();
   const [products, setProducts] = useState<ListingProduct[]>([]);
   const [printifyDrafts, setPrintifyDrafts] = useState<PrintifyProduct[]>([]);
   
