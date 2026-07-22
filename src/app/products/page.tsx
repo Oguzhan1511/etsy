@@ -73,42 +73,52 @@ export default function ProductsPage() {
   };
 
   useEffect(() => {
-    fetch('/api/etsy/listings')
+    const token = localStorage.getItem("printify_api_key") || "";
+    fetch('/api/printify?action=products', {
+      headers: { "x-printify-api-key": token }
+    })
       .then(res => res.json())
       .then(data => {
-        if (!data.error && Array.isArray(data)) {
-          const formatted = data.map((item: Record<string, unknown>) => {
-             const imgs = item.images as Array<Record<string, unknown>>;
-             const images = imgs ? imgs.map((rawImg: unknown, idx: number) => {
-               const img = rawImg as Record<string, unknown>;
-               return {
-                 id: String(img.listing_image_id),
-                 url: String(img.url_570xN || ""),
-                 active: idx === 0
-               };
-             }) : [];
-
+        let allProducts = [];
+        if (Array.isArray(data.data)) {
+           allProducts = data.data;
+        } else if (Array.isArray(data)) {
+           allProducts = data;
+        }
+        
+        if (allProducts) {
+           // Map Printify products to ListingProduct for Active tab (which uses ListingProduct rendering)
+           const formatted = allProducts.filter((p: any) => p.visible).map((item: any) => {
              return {
-                id: String(item.listing_id),
+                id: String(item.id),
                 title: String(item.title),
-                status: (String(item.state) === "active" ? "Active" : "Inactive") as "Active" | "Inactive",
-                sku: "",
-                image: images.length > 0 ? String(images[0].url) : "",
+                status: "Active" as "Active",
+                sku: "PRINTIFY-" + item.id,
+                image: item.images?.[0]?.src || "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80",
                 salesCount: 0,
                 cartCount: 0,
-                favoritesCount: Number(item.num_favorers) || 0,
+                favoritesCount: 0,
                 revenue: 0,
                 profit: 0,
                 description: String(item.description || ""),
                 tags: (item.tags as string[]) || [],
-                images
+                images: item.images?.map((img: any, idx: number) => ({ id: String(idx), url: img.src, active: idx === 0 })) || []
              };
-          });
-          setProducts(formatted.filter((p: ListingProduct) => p.status === "Active"));
+           });
+           setProducts(formatted);
+
+           // Store inactive directly as Printify drafts
+           const drafts = allProducts.filter((p: any) => !p.visible);
+           setPrintifyDrafts(drafts);
+        } else {
+           showToast(t("products.fetchPrintifyDraftsError"), "error");
         }
       })
       .catch(console.error)
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setLoadingDrafts(false);
+      });
   }, []);
 
   const [filterTab, setFilterTab] = useState<"Active" | "Inactive">("Active");
@@ -116,27 +126,7 @@ export default function ProductsPage() {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (filterTab === "Inactive" && printifyDrafts.length === 0 && !loadingDrafts) {
-      setLoadingDrafts(true);
-      const token = localStorage.getItem("printify_api_key") || "";
-      fetch('/api/printify?action=products', {
-        headers: { "x-printify-api-key": token }
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data.data)) {
-             const drafts = data.data.filter((p: any) => !p.visible);
-             setPrintifyDrafts(drafts);
-          } else if (Array.isArray(data)) {
-             const drafts = data.filter((p: any) => !p.visible);
-             setPrintifyDrafts(drafts);
-          } else {
-             showToast(t("products.fetchPrintifyDraftsError"), "error");
-          }
-        })
-        .catch(() => showToast(t("products.fetchPrintifyDraftsError"), "error"))
-        .finally(() => setLoadingDrafts(false));
-    }
+    // Drafts are already fetched on mount, so no need to fetch again here.
   }, [filterTab]);
 
   // Edit Product Modal State (Etsy)
