@@ -118,7 +118,10 @@ export default function ProductsPage() {
   useEffect(() => {
     if (filterTab === "Inactive" && printifyDrafts.length === 0 && !loadingDrafts) {
       setLoadingDrafts(true);
-      fetch('/api/printify?action=products')
+      const token = localStorage.getItem("printify_api_key") || "";
+      fetch('/api/printify?action=products', {
+        headers: { "x-printify-api-key": token }
+      })
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data.data)) {
@@ -189,9 +192,10 @@ export default function ProductsPage() {
     }
     setPublishingId(draft.id);
     try {
+      const token = localStorage.getItem("printify_api_key") || "";
       const res = await fetch("/api/printify?action=publish-product", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-printify-api-key": token },
         body: JSON.stringify({ shopId: draft.shop_id || localStorage.getItem("printify_shop_id"), productId: draft.id })
       });
       if (res.ok) {
@@ -214,9 +218,10 @@ export default function ProductsPage() {
     if (!editTitle.trim() || !editingDraft) return;
 
     try {
+      const token = localStorage.getItem("printify_api_key") || "";
       const res = await fetch("/api/printify?action=update-product", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-printify-api-key": token },
         body: JSON.stringify({
            shopId: editingDraft.shop_id || localStorage.getItem("printify_shop_id"),
            productId: editingDraft.id,
