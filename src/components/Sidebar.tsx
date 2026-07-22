@@ -74,13 +74,8 @@ export default function Sidebar() {
         className="flex items-center gap-2.5 h-14 px-5 border-b"
         style={{ borderColor: "var(--border)" }}
       >
-        <div
-          className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#16161f] border border-purple-500/30 shadow-[0_0_12px_rgba(168,85,247,0.25)] relative overflow-hidden shrink-0"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-purple-400/10" />
-          <span className="font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-purple-200 z-10" style={{ fontSize: '14px', lineHeight: 1 }}>
-            PS
-          </span>
+        <div className="w-8 h-8 flex items-center justify-center relative overflow-visible shrink-0">
+          <img src="/logo.png" alt="PrintySell Logo" className="w-full h-full object-contain" />
         </div>
         <span className="font-semibold text-sm tracking-tight truncate" style={{ color: "var(--text-primary)" }}>
           PrintySell
