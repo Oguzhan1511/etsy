@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import { useLanguage } from "@/context/LanguageContext";
 import { Globe } from "lucide-react";
-import ThemeToggle from "./ThemeToggle";
 
 export default function ClientShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -18,7 +17,6 @@ export default function ClientShell({ children }: { children: React.ReactNode })
         {/* Global Action Buttons for Authenticated Pages */}
         {!isLoginPage && (
           <div className="absolute top-6 right-8 flex items-center gap-3 z-50">
-            <ThemeToggle />
             <button
               onClick={toggleLanguage}
               className="flex items-center justify-center w-12 h-10 rounded-xl transition-all duration-150 font-bold text-xs shadow-lg cursor-pointer bg-surface border border-border text-secondary hover:text-foreground hover:bg-hover"
