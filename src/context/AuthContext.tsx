@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 
 interface User {
+  id: string;
   name: string;
   email: string;
   plan: string;
@@ -16,7 +17,8 @@ interface AuthState {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  registerUser: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -47,63 +49,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading: true,
   });
 
-  // Single dispatch call inside effect — no cascading setState issue
   useEffect(() => {
-    const stored = localStorage.getItem("bot-etsy-user");
+    const stored = localStorage.getItem("printysell-auth-user");
     let parsed: User | null = null;
     if (stored) {
       try {
         parsed = JSON.parse(stored) as User;
       } catch {
-        localStorage.removeItem("bot-etsy-user");
+        localStorage.removeItem("printysell-auth-user");
       }
     }
     dispatch({ type: "INIT", payload: parsed });
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    if (!email.trim() || !password.trim()) return false;
+  const login = async (email: string, password: string) => {
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        localStorage.setItem("printysell-auth-user", JSON.stringify(data.user));
+        dispatch({ type: "LOGIN", payload: data.user });
+        return { success: true };
+      } else {
+        return { success: false, error: data.error || "Giriş başarısız." };
+      }
+    } catch (err) {
+      return { success: false, error: "Sunucu hatası." };
+    }
+  };
 
-    const namePart = email.split("@")[0];
-    const displayName = namePart
-      .split(/[._-]/)
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
-
-    const initials = displayName
-      .split(" ")
-      .slice(0, 2)
-      .map((w) => w[0])
-      .join("")
-      .toUpperCase();
-
-    const newUser: User = {
-      name: displayName,
-      email: email.toLowerCase(),
-      plan: "Pro Plan",
-      initials,
-    };
-
-    localStorage.setItem("bot-etsy-user", JSON.stringify(newUser));
-    dispatch({ type: "LOGIN", payload: newUser });
-    return true;
+  const registerUser = async (name: string, email: string, password: string) => {
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        return { success: true };
+      } else {
+        return { success: false, error: data.error || "Kayıt başarısız." };
+      }
+    } catch (err) {
+      return { success: false, error: "Sunucu hatası." };
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem("bot-etsy-user");
+    localStorage.removeItem("printysell-auth-user");
     dispatch({ type: "LOGOUT" });
-    // Sidebar's useEffect handles redirect to /login
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user: state.user,
-        login,
-        logout,
-        isLoading: state.isLoading,
-      }}
-    >
+    <AuthContext.Provider value={{ user: state.user, login, registerUser, logout, isLoading: state.isLoading }}>
       {children}
     </AuthContext.Provider>
   );

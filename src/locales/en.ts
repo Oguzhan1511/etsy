@@ -422,6 +422,11 @@ export const en = {
   "login.welcome": "Welcome Back",
   "login.createAccount": "Create a New Account",
   "login.errorEmpty": "Email and password cannot be empty.",
+  "login.forgotPassword": "Forgot Password?",
+  "login.resetPassword": "Reset Password",
+  "login.resetSent": "A password reset link has been sent to your email.",
+  "login.backToLogin": "Back to Login",
+  "login.forgotPasswordDesc": "Enter your email address and we will send you a link to reset your password.",
 
   // General
   "common.language": "Language",

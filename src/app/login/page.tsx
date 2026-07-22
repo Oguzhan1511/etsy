@@ -9,7 +9,7 @@ import { useLanguage } from "@/context/LanguageContext";
 type Mode = "login" | "register" | "forgot_password" | "reset_sent";
 
 export default function LoginPage() {
-  const { login, user, isLoading } = useAuth();
+  const { login, registerUser, user, isLoading } = useAuth();
   const { t, language, toggleLanguage } = useLanguage();
   const router = useRouter();
 
@@ -20,6 +20,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
   // If already logged in, redirect to home
   useEffect(() => {
@@ -27,6 +28,30 @@ export default function LoginPage() {
       router.replace("/");
     }
   }, [user, isLoading, router]);
+
+  // Water Ripple Effect
+  useEffect(() => {
+    let lastTime = 0;
+    const handleMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      if (now - lastTime > 150) {
+        const target = e.target as HTMLElement;
+        // Do not spawn ripples if hovering over the main card
+        if (target.closest('.no-ripple-zone')) return;
+
+        lastTime = now;
+        const newRipple = { x: e.clientX, y: e.clientY, id: now };
+        setRipples(prev => [...prev.slice(-12), newRipple]);
+        
+        setTimeout(() => {
+          setRipples(prev => prev.filter(r => r.id !== newRipple.id));
+        }, 2000);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,14 +67,25 @@ export default function LoginPage() {
       return;
     }
 
-    // Using login for both since we don't have a real backend registration yet
-    const ok = await login(email, password);
+    if (mode === "register") {
+      const res = await registerUser(name, email, password);
+      setSubmitting(false);
+      if (res.success) {
+        setError("Kayıt başarılı! Lütfen e-posta kutunuzu kontrol edip hesabınızı onaylayın.");
+        // We can optionally set a success state or just stay on register
+      } else {
+        setError(res.error || "Kayıt başarısız.");
+      }
+      return;
+    }
+
+    const res = await login(email, password);
     setSubmitting(false);
 
-    if (ok) {
+    if (res.success) {
       router.replace("/");
     } else {
-      setError(t("login.errorEmpty") || "E-posta ve şifre boş bırakılamaz.");
+      setError(res.error || t("login.errorEmpty") || "E-posta ve şifre boş bırakılamaz.");
     }
   };
 
@@ -69,6 +105,22 @@ export default function LoginPage() {
       <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-fuchsia-600/10 blur-[120px] mix-blend-screen animate-blob animation-delay-2000 pointer-events-none" />
       <div className="absolute top-[20%] right-[20%] w-[40vw] h-[40vw] rounded-full bg-cyan-500/5 blur-[100px] mix-blend-screen animate-blob animation-delay-4000 pointer-events-none" />
 
+      {/* Water Ripples */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        {ripples.map(r => (
+          <div
+            key={r.id}
+            className="absolute border border-white/20 rounded-full animate-ripple"
+            style={{
+              left: r.x - 50,
+              top: r.y - 50,
+              width: 100,
+              height: 100,
+            }}
+          />
+        ))}
+      </div>
+
       {/* Language Toggle */}
       <button
         onClick={toggleLanguage}
@@ -84,10 +136,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8 gap-4 group">
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-black/40 border border-white/10 shadow-[0_0_30px_rgba(139,92,246,0.2)] relative overflow-hidden shrink-0 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-600/30 via-fuchsia-500/20 to-transparent" />
-            <span className="font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 z-10 text-3xl">
-              PS
-            </span>
+            <img src="/logo.png" alt="PrintySell Logo" className="w-full h-full object-contain z-10" />
             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -translate-x-full group-hover:translate-x-full" />
           </div>
           <div className="text-center">
@@ -101,7 +150,7 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="w-full rounded-[24px] p-8 space-y-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] border border-white/[0.08] bg-white/[0.02] backdrop-blur-2xl relative overflow-hidden">
+        <div className="w-full rounded-[24px] p-8 space-y-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] border border-white/[0.08] bg-white/[0.02] backdrop-blur-2xl relative overflow-hidden no-ripple-zone">
           
           {/* Inner subtle glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
@@ -303,6 +352,10 @@ export default function LoginPage() {
           66% { transform: translate(-20px, 20px) scale(0.9); }
           100% { transform: translate(0px, 0px) scale(1); }
         }
+        @keyframes ripple-effect {
+          0% { transform: scale(0); opacity: 0.6; border-width: 4px; }
+          100% { transform: scale(3); opacity: 0; border-width: 0px; }
+        }
         .animate-blob {
           animation: blob 7s infinite alternate;
         }
@@ -311,6 +364,9 @@ export default function LoginPage() {
         }
         .animation-delay-4000 {
           animation-delay: 4s;
+        }
+        .animate-ripple {
+          animation: ripple-effect 2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
         }
       `}</style>
     </div>

@@ -422,6 +422,11 @@ export const tr = {
   "login.welcome": "Hoş Geldiniz",
   "login.createAccount": "Yeni Hesap Oluşturun",
   "login.errorEmpty": "E-posta ve şifre boş bırakılamaz.",
+  "login.forgotPassword": "Şifremi Unuttum",
+  "login.resetPassword": "Şifreyi Sıfırla",
+  "login.resetSent": "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.",
+  "login.backToLogin": "Giriş Ekranına Dön",
+  "login.forgotPasswordDesc": "E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim.",
 
   // General
   "common.language": "Dil",
