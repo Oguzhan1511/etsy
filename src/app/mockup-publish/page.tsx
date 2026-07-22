@@ -6,15 +6,10 @@ import { Package, Search, ChevronDown, ChevronRight, Loader2, AlertCircle } from
 import { useLanguage } from "@/context/LanguageContext";
 
 interface ProductModel {
-  id: string; // Printify Blueprint ID
+  id: string;
   name: string;
   baseCost: number;
-  defaultPrice: number;
-  colors: string[];
   images: Record<string, string>;
-  description: string;
-  providers: string;
-  shipsFrom: string;
   isBestseller: boolean;
   brand?: string;
   originalIndex: number;
@@ -26,14 +21,20 @@ export default function MockupPublishPage() {
   const [allBlueprints, setAllBlueprints] = useState<ProductModel[]>([]);
   const [isLoadingCatalog, setIsLoadingCatalog] = useState(false);
   const [catalogError, setCatalogError] = useState<string | null>(null);
-  
+
   const [catalogSearch, setCatalogSearch] = useState("");
   const [activeRootCat, setActiveRootCat] = useState<string>("Katalog");
   const [activeSubCat, setActiveSubCat] = useState<string>("Shirt");
   const [expandedRoots, setExpandedRoots] = useState<Record<string, boolean>>({ "Katalog": true });
   const [currentPage, setCurrentPage] = useState(1);
   const [genderFilter, setGenderFilter] = useState<string>("Tümü");
+  const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: "", visible: false });
   const itemsPerPage = 20;
+
+  const showToast = (msg: string) => {
+    setToast({ message: msg, visible: true });
+    setTimeout(() => setToast({ message: "", visible: false }), 4000);
+  };
 
   useEffect(() => {
     const fetchCatalog = async () => {
@@ -45,41 +46,31 @@ export default function MockupPublishPage() {
 
         const response = await fetch("/api/printify?action=blueprints", { headers });
         if (!response.ok) throw new Error("Catalog fetch failed");
-        
+
         const data = await response.json();
         const payload = Array.isArray(data) ? data : (data.data || []);
-        
+
         const mappedModels: ProductModel[] = payload.map((bp: any, index: number) => {
           const modelName = bp.title || bp.name || "Printify Product";
           const brandName = bp.brand || "";
-          
-          // Build correct Printify CDN image URL
+
           const rawImg = bp.images?.[0];
           let imageUrl = "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80";
           if (rawImg) {
-            // If it's already a full URL use it, otherwise build the Printify CDN URL
-            imageUrl = rawImg.startsWith("http") 
-              ? rawImg 
-              : `https://images.printify.com/${rawImg}`;
+            imageUrl = rawImg.startsWith("http") ? rawImg : `https://images.printify.com/${rawImg}`;
           }
 
           return {
             id: String(bp.id),
             name: modelName,
             baseCost: 8.50,
-            defaultPrice: 24.99,
-            colors: ["Black", "White"],
-            images: { "default": imageUrl },
-            description: bp.description || "",
-            providers: "Multiple Providers",
-            shipsFrom: "Global",
+            images: { default: imageUrl },
             isBestseller: bp.is_bestseller || false,
             brand: brandName,
-            originalIndex: index
+            originalIndex: index,
           };
         });
 
-        // Use all models, no more filtering out missing products!
         setAllBlueprints(mappedModels);
         setCatalogError(null);
       } catch (err: any) {
@@ -103,10 +94,10 @@ export default function MockupPublishPage() {
         "Ornaments": [],
         "Pets": [],
         "Candles": [],
-        "Ev & Yaşam": [],   // Pillows, Towels, Blankets, Curtains, Clocks, Bath mats, etc.
-        "Aksesuar": [],     // Journals, Socks, Hats, Underwear, Scarves, etc.
-        "Diğer": []
-      }
+        "Ev & Yaşam": [],
+        "Aksesuar": [],
+        "Diğer": [],
+      },
     };
 
     allBlueprints.forEach((bp) => {
@@ -121,7 +112,7 @@ export default function MockupPublishPage() {
         sub = "Bags";
       } else if (/canvas|tapestry|wall art|metal print|wood print|acrylic print|art board|photo tile|wall decal|photo\.?frame/.test(t)) {
         sub = "Canvas & Poster";
-      } else if (/\bposter\b|framed poster|print on demand poster/.test(t)) {
+      } else if (/\bposter\b|framed poster/.test(t)) {
         sub = "Canvas & Poster";
       } else if (/sticker|decal|magnet|transfer/.test(t)) {
         sub = "Canvas & Poster";
@@ -139,7 +130,7 @@ export default function MockupPublishPage() {
         sub = "Aksesuar";
       } else if (/socks|sock\b|beanie|hat\b|\bcap\b|glove|scarf|belt|wallet|watch|sunglasses|glasses|headband|face mask|underwear|boxer|briefs|bra\b|lingerie|swimsuit|bikini|swimwear|swim/.test(t)) {
         sub = "Aksesuar";
-      } else if (/\bt.?shirt\b|tee\b|tank|polo\b|jersey\b|raglan|singlet|camisole|v.neck|henley|bodysuit|onesie|crop|shorts|legging|skirt|dress|sneaker|shoe|boots|pant\b|pants\b|cardigan|vest\b|sleeve|button.down|henley/.test(t)) {
+      } else if (/\bt.?shirt\b|tee\b|tank|polo\b|jersey\b|raglan|singlet|camisole|v.neck|henley|bodysuit|onesie|crop|shorts|legging|skirt|dress|sneaker|shoe|boots|pant\b|pants\b|cardigan|vest\b|sleeve|button.down/.test(t)) {
         sub = "Shirt";
       } else {
         sub = "Diğer";
@@ -147,6 +138,7 @@ export default function MockupPublishPage() {
 
       tree["Katalog"][sub].push(bp);
     });
+
     return tree;
   };
 
@@ -155,10 +147,9 @@ export default function MockupPublishPage() {
   const getFilteredModelsList = () => {
     let list = taxonomyTree[activeRootCat]?.[activeSubCat] || [];
 
-    // Gender Filtering (only for clothing items that have clear gender)
     if (activeSubCat === "Shirt" || activeSubCat === "Sweatshirt Hoodie") {
       if (genderFilter !== "Tümü") {
-        list = list.filter(m => {
+        list = list.filter((m) => {
           const n = m.name.toLowerCase();
           let gender = "Unisex";
           if (/women|womens|women's|ladies|lady|girls|girl|female/.test(n)) gender = "Kadın";
@@ -170,17 +161,18 @@ export default function MockupPublishPage() {
     }
 
     if (catalogSearch) {
-      list = list.filter(m => 
-        m.name.toLowerCase().includes(catalogSearch.toLowerCase()) || 
-        (m.brand || "").toLowerCase().includes(catalogSearch.toLowerCase())
+      list = list.filter(
+        (m) =>
+          m.name.toLowerCase().includes(catalogSearch.toLowerCase()) ||
+          (m.brand || "").toLowerCase().includes(catalogSearch.toLowerCase())
       );
     }
 
-    // Sort to strictly preserve Printify API order (which is popularity-based)
     return list.sort((a, b) => a.originalIndex - b.originalIndex);
   };
 
   const filteredModels = getFilteredModelsList();
+  const totalPages = Math.ceil(filteredModels.length / itemsPerPage);
   const paginatedModels = filteredModels.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleSubCategorySelect = (root: string, sub: string) => {
@@ -191,27 +183,15 @@ export default function MockupPublishPage() {
   };
 
   const toggleRootFolder = (root: string) => {
-    setExpandedRoots(prev => ({ ...prev, [root]: !prev[root] }));
-  };
-
-  const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: "", visible: false });
-
-  const showToast = (msg: string) => {
-    setToast({ message: msg, visible: true });
-    setTimeout(() => setToast({ message: "", visible: false }), 4000);
+    setExpandedRoots((prev) => ({ ...prev, [root]: !prev[root] }));
   };
 
   const handleModelSelect = async (model: ProductModel) => {
-    // Copy product name to clipboard so user can paste/search in Printify
     try {
       await navigator.clipboard.writeText(model.name);
     } catch {}
-    // Open Printify's catalog (new product page) – Printify routes the catalog as a SPA
-    // The blueprint ID is passed as a search param which Printify uses to pre-select the product
-    window.open(
-      `https://printify.com/app/products/new?blueprintId=${model.id}`,
-      "_blank"
-    );
+    // Open Printify product creation page for this specific blueprint
+    window.open(`https://printify.com/app/products/new?blueprintId=${model.id}`, "_blank");
     showToast(`"${model.name}" kopyalandı! Printify'da arama kutusuna yapıştırın.`);
   };
 
@@ -219,15 +199,15 @@ export default function MockupPublishPage() {
   const genderOptions = ["Tümü", "Unisex", "Erkek", "Kadın", "Çocuk"];
 
   return (
-    <React.Fragment>
+    <div className="space-y-6 max-w-7xl mx-auto pb-20 animate-fade-in relative">
       {/* Toast Notification */}
       {toast.visible && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-5 py-3 rounded-xl bg-[#1e1b2e] border border-purple-500/30 shadow-[0_0_30px_rgba(139,92,246,0.25)] backdrop-blur-md animate-fade-in">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-5 py-3 rounded-xl bg-[#1e1b2e] border border-purple-500/30 shadow-[0_0_30px_rgba(139,92,246,0.25)] backdrop-blur-md">
           <span className="text-green-400 text-lg">✓</span>
           <p className="text-sm text-white font-medium">{toast.message}</p>
         </div>
       )}
-      <div className="space-y-6 max-w-7xl mx-auto pb-20 animate-fade-in relative">
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -240,14 +220,14 @@ export default function MockupPublishPage() {
             Katalog
           </h1>
           <p className="text-sm mt-1 text-[#a09cb0]">
-            Ürüne tıkladığınızda Printify'da mokaplama sayfası açılır.
-            <span className="text-amber-400 font-medium"> ⚠️ Çalışması için Printify hesabınıza giriş yapmış olmanız gerekmektedir.</span>
+            Ürüne tıklayın → Printify'da mokaplama sayfası açılır.{" "}
+            <span className="text-amber-400 font-medium">⚠️ Printify hesabınıza giriş yapmış olmanız gerekir.</span>
           </p>
         </div>
       </div>
 
       {catalogError && (
-        <div className="max-w-7xl mx-auto px-6 py-4 mb-6 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
+        <div className="px-6 py-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
           <AlertCircle className="w-6 h-6 text-red-400 shrink-0" />
           <div className="flex-1">
             <h3 className="text-red-400 font-bold text-sm">Veriler Yüklenirken Hata Oluştu</h3>
@@ -256,7 +236,8 @@ export default function MockupPublishPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-fade-in-fast">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Sidebar */}
         <div className="lg:col-span-3 rounded-xl border border-white/[0.07] p-4 space-y-4 backdrop-blur-md bg-white/[0.01]">
           <h2 className="text-sm font-bold text-white flex items-center gap-1.5 pb-2 border-b border-white/[0.06]">
             <Package className="w-4 h-4 text-purple-400" />
@@ -267,22 +248,21 @@ export default function MockupPublishPage() {
             <input
               type="text"
               value={catalogSearch}
-              onChange={(e) => {
-                setCatalogSearch(e.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder="Katalog ürünlerini ara..."
+              onChange={(e) => { setCatalogSearch(e.target.value); setCurrentPage(1); }}
+              placeholder="Ürün ara..."
               className="w-full h-8 pl-9 pr-3 bg-black/30 border border-white/[0.08] focus:border-purple-500/80 rounded-lg text-xs text-white placeholder-white/30 focus:outline-none"
             />
           </div>
-          <div className="space-y-2 max-h-[360px] overflow-y-auto pr-1">
+          <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
             {Object.entries(taxonomyTree).map(([rootKey, subTree]) => {
               const isExpanded = expandedRoots[rootKey];
               const totalRootItems = Object.values(subTree).reduce((acc, list) => acc + list.length, 0);
-
               return (
                 <div key={rootKey} className="space-y-1">
-                  <button onClick={() => toggleRootFolder(rootKey)} className="w-full py-1.5 flex items-center justify-between text-xs font-bold text-[#f1f0ff] hover:text-white cursor-pointer">
+                  <button
+                    onClick={() => toggleRootFolder(rootKey)}
+                    className="w-full py-1.5 flex items-center justify-between text-xs font-bold text-[#f1f0ff] hover:text-white cursor-pointer"
+                  >
                     <div className="flex items-center gap-1">
                       {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                       <span>{rootKey}</span>
@@ -292,13 +272,15 @@ export default function MockupPublishPage() {
                   {isExpanded && (
                     <div className="pl-4 border-l border-white/[0.04] space-y-0.5">
                       {Object.entries(subTree).map(([subKey, itemsList]) => {
-                        const isLeafSelected = activeRootCat === rootKey && activeSubCat === subKey;
+                        const isSelected = activeRootCat === rootKey && activeSubCat === subKey;
                         return (
                           <button
                             key={subKey}
                             onClick={() => handleSubCategorySelect(rootKey, subKey)}
                             className={`w-full text-left py-1 px-2 rounded-md text-[11px] font-medium transition-all flex items-center justify-between cursor-pointer ${
-                              isLeafSelected ? "bg-purple-500/10 text-purple-300 font-bold border border-purple-500/15" : "text-[#a09cb0] hover:text-white hover:bg-white/[0.02]"
+                              isSelected
+                                ? "bg-purple-500/10 text-purple-300 font-bold border border-purple-500/15"
+                                : "text-[#a09cb0] hover:text-white hover:bg-white/[0.02]"
                             }`}
                           >
                             <span>{subKey}</span>
@@ -314,23 +296,23 @@ export default function MockupPublishPage() {
           </div>
         </div>
 
+        {/* Product Grid */}
         <div className="lg:col-span-9 space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs">
             <div className="space-y-2">
-              <h3 className="font-bold text-[#f1f0ff] uppercase tracking-wider flex items-center gap-1.5">
-                <span>{activeSubCat} Katalog ({filteredModels.length} Ürün)</span>
-                {catalogSearch && <span className="text-[#5e5a72] font-medium lowercase">"{catalogSearch}" için filtrelendi</span>}
+              <h3 className="font-bold text-[#f1f0ff] uppercase tracking-wider">
+                {activeSubCat} Katalog ({filteredModels.length} Ürün)
+                {catalogSearch && <span className="text-[#5e5a72] font-medium normal-case ml-2">"{catalogSearch}" için</span>}
               </h3>
-              
               {isApparelCategory && (
                 <div className="flex items-center gap-2 flex-wrap">
-                  {genderOptions.map(option => (
+                  {genderOptions.map((option) => (
                     <button
                       key={option}
                       onClick={() => { setGenderFilter(option); setCurrentPage(1); }}
                       className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide transition-all border ${
-                        genderFilter === option 
-                          ? "bg-purple-500/20 text-purple-300 border-purple-500/40" 
+                        genderFilter === option
+                          ? "bg-purple-500/20 text-purple-300 border-purple-500/40"
                           : "bg-black/30 text-[#a09cb0] border-white/[0.08] hover:bg-white/[0.05] hover:text-white"
                       }`}
                     >
@@ -340,88 +322,99 @@ export default function MockupPublishPage() {
                 </div>
               )}
             </div>
-
             {isLoadingCatalog ? (
               <span className="text-[11px] text-amber-400 flex items-center gap-1">
                 <Loader2 className="w-3 h-3 animate-spin" /> Yükleniyor...
               </span>
             ) : (
-              <span className="text-[11px] text-green-400 shrink-0">⚡ API Synced</span>
+              <span className="text-[11px] text-green-400 shrink-0">⚡ {allBlueprints.length} Ürün Yüklendi</span>
             )}
           </div>
 
           {isLoadingCatalog ? (
             <div className="flex flex-col items-center py-20 gap-3">
               <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
-              <p className="text-xs text-[#a09cb0]">Printify Modelleri Getiriliyor...</p>
+              <p className="text-xs text-[#a09cb0]">Printify Kataloğu Getiriliyor...</p>
             </div>
           ) : filteredModels.length === 0 ? (
             <div className="text-center py-16 rounded-xl border border-dashed border-white/10 bg-white/[0.01]">
               <p className="text-sm font-semibold text-[#a09cb0]">Ürün bulunamadı.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
               {paginatedModels.map((model) => (
                 <div
                   key={model.id}
+                  className="group relative rounded-xl border border-white/[0.07] bg-[#16161e] p-4 cursor-pointer transition-all duration-300 hover:border-purple-500/30 hover:bg-[#1a1a24] hover:translate-y-[-2px] flex flex-col"
                   onClick={() => handleModelSelect(model)}
-                  className="group relative rounded-xl border border-white/[0.07] bg-[#16161e] p-4 cursor-pointer transition-all duration-300 hover:border-purple-500/30 hover:bg-[#1a1a24] hover:translate-y-[-2px] flex flex-col justify-between"
                 >
-                  <div>
-                    <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-neutral-900 border border-white/[0.04]">
-                      <img 
-                        src={model.images["default"]} 
-                        alt={model.name} 
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80"; }}
-                      />
-                      {model.isBestseller && (
-                        <span className="absolute top-2 left-2 z-10 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] text-white text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow border border-white/10">
-                          BEST SELLER
-                        </span>
-                      )}
-                    </div>
-                    {model.brand && <h4 className="text-xs text-purple-400 font-bold uppercase tracking-wider mb-0.5">{model.brand}</h4>}
-                    <h3 className="text-sm font-bold text-white line-clamp-2 mb-3 group-hover:text-purple-300 transition-colors">{model.name}</h3>
-                    <p className="text-[11px] text-[#5e5a72] mb-3">Blueprint ID: #{model.id}</p>
+                  <div className="relative aspect-square rounded-lg overflow-hidden mb-3 bg-neutral-900 border border-white/[0.04]">
+                    <img
+                      src={model.images["default"]}
+                      alt={model.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80";
+                      }}
+                    />
+                    {model.isBestseller && (
+                      <span className="absolute top-2 left-2 z-10 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] text-white text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow">
+                        BEST SELLER
+                      </span>
+                    )}
                   </div>
+                  {model.brand && (
+                    <h4 className="text-xs text-purple-400 font-bold uppercase tracking-wider mb-0.5">{model.brand}</h4>
+                  )}
+                  <h3 className="text-sm font-bold text-white line-clamp-2 mb-1 group-hover:text-purple-300 transition-colors flex-1">
+                    {model.name}
+                  </h3>
+                  <p className="text-[10px] text-[#5e5a72] mb-3">ID #{model.id}</p>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleModelSelect(model); }}
-                    className="w-full mt-2 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-lg text-xs font-bold tracking-wide transition-all shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] flex items-center justify-center gap-2"
+                    className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-lg text-xs font-bold tracking-wide transition-all shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] flex items-center justify-center gap-2"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    Printify'da Mokap Oluştur
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+                    </svg>
+                    Printify&apos;da Mokap Oluştur
                   </button>
                 </div>
               ))}
             </div>
           )}
 
-          {/* Pagination Controls */}
-          {filteredModels.length > itemsPerPage && (
+          {totalPages > 1 && (
             <div className="flex items-center justify-between pt-6 border-t border-white/[0.05]">
               <span className="text-xs text-[#a09cb0]">
-                Toplam <strong className="text-white">{filteredModels.length}</strong> üründen <strong className="text-white">{(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filteredModels.length)}</strong> arası gösteriliyor
+                Toplam <strong className="text-white">{filteredModels.length}</strong> üründen{" "}
+                <strong className="text-white">
+                  {(currentPage - 1) * itemsPerPage + 1} – {Math.min(currentPage * itemsPerPage, filteredModels.length)}
+                </strong>{" "}
+                arası
               </span>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                   className="px-3 py-1.5 rounded-lg border border-white/[0.08] text-xs font-bold text-white bg-black/20 hover:bg-white/[0.05] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                 >
                   Önceki
                 </button>
                 <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.ceil(filteredModels.length / itemsPerPage) }, (_, i) => i + 1)
-                    .filter(p => p === 1 || p === Math.ceil(filteredModels.length / itemsPerPage) || Math.abs(p - currentPage) <= 1)
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
                     .map((p, i, arr) => (
                       <React.Fragment key={p}>
-                        {i > 0 && arr[i - 1] !== p - 1 && <span className="text-white/30 text-xs px-1">...</span>}
+                        {i > 0 && arr[i - 1] !== p - 1 && (
+                          <span className="text-white/30 text-xs px-1">...</span>
+                        )}
                         <button
                           onClick={() => setCurrentPage(p)}
                           className={`w-7 h-7 rounded-md text-xs font-bold transition-all ${
-                            currentPage === p 
-                              ? "bg-purple-500 text-white border border-purple-400/50 shadow-[0_0_10px_rgba(168,85,247,0.3)]" 
+                            currentPage === p
+                              ? "bg-purple-500 text-white border border-purple-400/50 shadow-[0_0_10px_rgba(168,85,247,0.3)]"
                               : "text-[#a09cb0] hover:bg-white/[0.05] hover:text-white"
                           }`}
                         >
@@ -431,8 +424,8 @@ export default function MockupPublishPage() {
                     ))}
                 </div>
                 <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredModels.length / itemsPerPage)))}
-                  disabled={currentPage === Math.ceil(filteredModels.length / itemsPerPage)}
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
                   className="px-3 py-1.5 rounded-lg border border-white/[0.08] text-xs font-bold text-white bg-black/20 hover:bg-white/[0.05] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                 >
                   Sonraki
@@ -443,6 +436,5 @@ export default function MockupPublishPage() {
         </div>
       </div>
     </div>
-    </React.Fragment>
   );
 }
