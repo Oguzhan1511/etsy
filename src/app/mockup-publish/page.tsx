@@ -194,18 +194,40 @@ export default function MockupPublishPage() {
     setExpandedRoots(prev => ({ ...prev, [root]: !prev[root] }));
   };
 
-  const handleModelSelect = (model: ProductModel) => {
-    // Printify's URL to start creating a product from a specific blueprint
-    // The correct format is: /app/products/new/{blueprintId}
-    // This opens directly in the product editor/mockup page
-    window.open(`https://printify.com/app/products/new/${model.id}`, "_blank");
+  const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: "", visible: false });
+
+  const showToast = (msg: string) => {
+    setToast({ message: msg, visible: true });
+    setTimeout(() => setToast({ message: "", visible: false }), 4000);
+  };
+
+  const handleModelSelect = async (model: ProductModel) => {
+    // Copy product name to clipboard so user can paste/search in Printify
+    try {
+      await navigator.clipboard.writeText(model.name);
+    } catch {}
+    // Open Printify's catalog (new product page) – Printify routes the catalog as a SPA
+    // The blueprint ID is passed as a search param which Printify uses to pre-select the product
+    window.open(
+      `https://printify.com/app/products/new?blueprintId=${model.id}`,
+      "_blank"
+    );
+    showToast(`"${model.name}" kopyalandı! Printify'da arama kutusuna yapıştırın.`);
   };
 
   const isApparelCategory = activeSubCat === "Shirt" || activeSubCat === "Sweatshirt Hoodie";
   const genderOptions = ["Tümü", "Unisex", "Erkek", "Kadın", "Çocuk"];
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-20 animate-fade-in relative">
+    <React.Fragment>
+      {/* Toast Notification */}
+      {toast.visible && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-5 py-3 rounded-xl bg-[#1e1b2e] border border-purple-500/30 shadow-[0_0_30px_rgba(139,92,246,0.25)] backdrop-blur-md animate-fade-in">
+          <span className="text-green-400 text-lg">✓</span>
+          <p className="text-sm text-white font-medium">{toast.message}</p>
+        </div>
+      )}
+      <div className="space-y-6 max-w-7xl mx-auto pb-20 animate-fade-in relative">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -421,5 +443,6 @@ export default function MockupPublishPage() {
         </div>
       </div>
     </div>
+    </React.Fragment>
   );
 }
