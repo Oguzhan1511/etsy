@@ -540,7 +540,7 @@ export default function SellerDashboard() {
                   }`}
                 >
                   <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: l.color }} />
-                  <span>{l.name}</span>
+                  <span>{t(`metric.${l.key}`)}</span>
                 </button>
               );
             })}
