@@ -24,9 +24,14 @@ export function TokenProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await fetch("/api/user/tokens");
       if (res.ok) {
-        const data = await res.json();
-        setAvailableTokens(data.tokens);
-        setPlanType(data.plan as PlanType);
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          setAvailableTokens(data.tokens);
+          setPlanType(data.plan as PlanType);
+        } catch (e) {
+          console.error("Token API returned invalid JSON:", text);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch tokens", error);

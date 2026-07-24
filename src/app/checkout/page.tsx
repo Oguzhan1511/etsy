@@ -44,7 +44,17 @@ function CheckoutContent() {
         body: JSON.stringify({ plan }),
       });
       
-      const data = await res.json();
+      let data;
+      const textData = await res.text();
+      try {
+        data = JSON.parse(textData);
+      } catch (e) {
+        console.error("Non-JSON API Response:", textData);
+        alert("Sunucudan geçersiz bir yanıt geldi (JSON değil).");
+        setLoading(false);
+        return;
+      }
+
       if (res.ok && data.checkoutFormContent) {
         setCheckoutHtml(data.checkoutFormContent);
       } else {
