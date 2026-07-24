@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
+import { SignJWT } from 'jose';
+
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
 
 export async function POST(req: Request) {
   try {
@@ -50,7 +53,22 @@ export async function POST(req: Request) {
       paymentStatus: user.paymentStatus,
     };
 
-    return NextResponse.json({ success: true, user: safeUser });
+    // Generate JWT Token
+    const token = await new SignJWT({ id: user.id, email: user.email })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('7d')
+      .sign(JWT_SECRET);
+
+    const response = NextResponse.json({ success: true, user: safeUser });
+    
+    response.cookies.set('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24 * 7 // 1 week
+    });
+
+    return response;
   } catch (error: any) {
     console.error('Login Error:', error);
     return NextResponse.json({ error: 'Giriş yaparken bir sunucu hatası oluştu.' }, { status: 500 });
