@@ -187,11 +187,17 @@ export default function ProductResearchPage() {
         body: JSON.stringify({ keyword: kw }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to connect to Etsy Research API");
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error("Failed to connect to Etsy Research API (Sunucu yanıt vermedi)");
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || "Sunucudan beklenmeyen bir hata döndü");
+      }
+
       if (data.error) {
         throw new Error(data.error);
       }
