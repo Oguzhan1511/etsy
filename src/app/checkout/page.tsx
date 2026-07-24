@@ -22,52 +22,54 @@ function CheckoutContent() {
 
   const selectedPlan = plans[planId as keyof typeof plans] || plans.pro;
 
-  // Protect route
+  const [checkoutHtml, setCheckoutHtml] = useState("");
+
   useEffect(() => {
     if (!user) {
       router.replace("/login");
     } else if (user.paymentStatus) {
       router.replace("/");
+    } else {
+      // Sadece Pro plan var olarak varsayıyoruz, gerçeğinde plan seçimi dinamikleşebilir.
+      initIyzico("Pro");
     }
   }, [user, router]);
 
-  const handleCheckout = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const initIyzico = async (plan: string) => {
     setLoading(true);
-
     try {
-      // Simulate payment processing time
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      const res = await fetch("/api/auth/update-plan", {
+      const res = await fetch("/api/iyzico/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user?.id, plan: selectedPlan.name }),
+        body: JSON.stringify({ plan }),
       });
-
+      
       const data = await res.json();
-
-      if (res.ok && data.success) {
-        // Update local storage so the UI knows immediately
-        if (user) {
-          const updatedUser = { ...user, plan: selectedPlan.name, paymentStatus: true };
-          localStorage.setItem("printysell-auth-user", JSON.stringify(updatedUser));
-        }
-        
-        setSuccess(true);
-        setTimeout(() => {
-          // Hard reload to refresh layout and context
-          window.location.href = "/";
-        }, 1500);
+      if (res.ok && data.checkoutFormContent) {
+        setCheckoutHtml(data.checkoutFormContent);
       } else {
-        alert("Ödeme alınırken bir hata oluştu: " + data.error);
-        setLoading(false);
+        alert("Ödeme başlatılırken hata oluştu: " + (data.error || "Bilinmeyen Hata"));
       }
     } catch (err) {
+      console.error(err);
       alert("Bağlantı hatası.");
+    } finally {
       setLoading(false);
     }
   };
+
+  // React dangerouslySetInnerHTML scriptleri çalıştırmaz. O yüzden manuel execute ediyoruz.
+  useEffect(() => {
+    if (checkoutHtml) {
+      const scriptContentMatch = checkoutHtml.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+      if (scriptContentMatch && scriptContentMatch[1]) {
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.innerHTML = scriptContentMatch[1];
+        document.body.appendChild(script);
+      }
+    }
+  }, [checkoutHtml]);
 
   if (!user) return null;
 
@@ -100,86 +102,36 @@ function CheckoutContent() {
             <h2 className="text-lg font-semibold text-foreground mb-4 border-b border-border pb-4">Sipariş Özeti</h2>
             <div className="flex justify-between items-center mb-4">
               <span className="text-foreground/80">{selectedPlan.name} (Aylık)</span>
-              <span className="text-foreground font-bold">{selectedPlan.price}</span>
+              <span className="text-foreground font-bold">299.00 TL</span>
             </div>
             <div className="flex justify-between items-center mb-4">
-              <span className="text-green-400 text-sm">3 Günlük Ücretsiz Deneme</span>
-              <span className="text-green-400 font-bold">-$0.00</span>
+              <span className="text-green-400 text-sm">Güvenli Altyapı</span>
+              <span className="text-green-400 font-bold">İyzico</span>
             </div>
             <div className="border-t border-border pt-4 mt-4 flex justify-between items-center">
-              <span className="text-foreground font-semibold">Toplam Ödenecek (3 Gün Sonra)</span>
-              <span className="text-2xl font-black text-foreground">{selectedPlan.price}</span>
+              <span className="text-foreground font-semibold">Toplam Ödenecek</span>
+              <span className="text-2xl font-black text-foreground">299.00 TL</span>
             </div>
             <p className="text-xs text-foreground/40 mt-6 flex items-start gap-2">
               <Lock size={14} className="shrink-0" />
-              İstediğiniz zaman iptal edebilirsiniz. 3 gün boyunca kartınızdan hiçbir ücret çekilmeyecektir.
+              İşlemleriniz İyzico'nun %100 güvenli 3D Secure altyapısı ile korunmaktadır.
             </p>
           </div>
         </div>
 
-        {/* Payment Form (Mock) */}
-        <form onSubmit={handleCheckout} className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-8">
-            <CreditCard className="text-violet-500" />
-            <h2 className="text-xl font-semibold text-foreground">Kart Bilgileri</h2>
-          </div>
-
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">Kart Üzerindeki İsim</label>
-              <input 
-                required
-                type="text" 
-                defaultValue={user.name}
-                className="w-full bg-white/5 border border-border rounded-xl px-4 py-3 text-foreground placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors"
-                placeholder="Örn: Oğuzhan Özdemir"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">Kart Numarası</label>
-              <input 
-                required
-                type="text" 
-                maxLength={19}
-                className="w-full bg-white/5 border border-border rounded-xl px-4 py-3 text-foreground placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors font-mono"
-                placeholder="0000 0000 0000 0000"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">Son Kul. Tarihi</label>
-                <input 
-                  required
-                  type="text" 
-                  maxLength={5}
-                  className="w-full bg-white/5 border border-border rounded-xl px-4 py-3 text-foreground placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors font-mono"
-                  placeholder="AA/YY"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">CVC</label>
-                <input 
-                  required
-                  type="text" 
-                  maxLength={3}
-                  className="w-full bg-white/5 border border-border rounded-xl px-4 py-3 text-foreground placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors font-mono"
-                  placeholder="123"
-                />
-              </div>
-            </div>
-          </div>
-
-          <button 
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-foreground font-bold py-4 rounded-xl mt-8 transition-all flex items-center justify-center gap-2"
-          >
-            {loading ? <Loader2 className="animate-spin" /> : <Lock size={18} />}
-            <span>{loading ? "İşleniyor..." : "Aboneliği Başlat"}</span>
-          </button>
-        </form>
+        {/* Iyzico Payment Form Container */}
+        <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col justify-center min-h-[400px]">
+          {loading ? (
+             <div className="flex flex-col items-center justify-center gap-4 text-violet-500">
+               <Loader2 className="animate-spin" size={48} />
+               <p className="text-sm font-semibold">Güvenli Ödeme Ekranı Yükleniyor...</p>
+             </div>
+          ) : checkoutHtml ? (
+            <div id="iyzi-container" dangerouslySetInnerHTML={{ __html: checkoutHtml }} />
+          ) : (
+            <div className="text-center text-foreground/60">Ödeme formu yüklenemedi.</div>
+          )}
+        </div>
 
       </div>
     </div>
