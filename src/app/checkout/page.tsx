@@ -24,17 +24,6 @@ function CheckoutContent() {
 
   const [checkoutHtml, setCheckoutHtml] = useState("");
 
-  useEffect(() => {
-    if (!user) {
-      router.replace("/login");
-    } else if (user.paymentStatus) {
-      router.replace("/");
-    } else {
-      // Sadece Pro plan var olarak varsayıyoruz, gerçeğinde plan seçimi dinamikleşebilir.
-      initIyzico("Pro");
-    }
-  }, [user, router]);
-
   const initIyzico = async (plan: string) => {
     setLoading(true);
     try {
@@ -67,6 +56,17 @@ function CheckoutContent() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!user) {
+      router.replace("/login");
+    } else if (user.paymentStatus) {
+      router.replace("/");
+    } else {
+      // Sadece Pro plan var olarak varsayıyoruz, gerçeğinde plan seçimi dinamikleşebilir.
+      initIyzico("Pro");
+    }
+  }, [user, router]);
 
   // React dangerouslySetInnerHTML scriptleri çalıştırmaz. O yüzden manuel execute ediyoruz.
   useEffect(() => {

@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         return { success: false, error: data.error || "Giriş başarısız." };
       }
-    } catch (err) {
+    } catch {
       return { success: false, error: "Sunucu hatası." };
     }
   };
@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         return { success: false, error: data.error || "Kayıt başarısız." };
       }
-    } catch (err) {
+    } catch {
       return { success: false, error: "Sunucu hatası." };
     }
   };

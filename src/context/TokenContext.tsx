@@ -39,7 +39,7 @@ export function TokenProvider({ children }: { children: React.ReactNode }) {
           setAvailableTokens(data.tokens);
           setPlanType(data.plan as PlanType);
           setTotalEverGranted(PLAN_LIMITS[data.plan as PlanType] || 30);
-        } catch (e) {
+        } catch {
           console.error("Token API returned invalid JSON:", text);
         }
       }
@@ -51,6 +51,7 @@ export function TokenProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refreshTokens();
   }, [refreshTokens]);
 

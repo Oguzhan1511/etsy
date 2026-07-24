@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import {
@@ -88,7 +89,7 @@ export default function Sidebar() {
         style={{ borderColor: "var(--border)" }}
       >
         <div className="w-8 h-8 flex items-center justify-center relative overflow-visible shrink-0">
-          <img src="/logo.png" alt="PrintySell Logo" className="w-full h-full object-contain" />
+          <Image src="/logo.png" alt="PrintySell Logo" fill className="object-contain" />
         </div>
         <span className="font-bold text-lg tracking-tight truncate" style={{ color: "var(--text-primary)" }}>
           PrintySell

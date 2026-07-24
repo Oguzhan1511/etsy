@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { CheckCircle2, XCircle, Loader2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
@@ -14,6 +14,7 @@ export default function VerifyPage() {
 
   useEffect(() => {
     if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus("error");
       setMessage("Geçersiz link. Doğrulama kodu eksik.");
       return;
@@ -36,7 +37,7 @@ export default function VerifyPage() {
           setStatus("error");
           setMessage(data.error || "Doğrulama başarısız oldu.");
         }
-      } catch (err) {
+      } catch {
         setStatus("error");
         setMessage("Sunucuyla bağlantı kurulamadı.");
       }
