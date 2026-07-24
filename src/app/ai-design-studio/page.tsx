@@ -85,7 +85,7 @@ export default function AIDesignStudioPage() {
 
       if (data.url) {
         // Preload image to avoid showing broken state
-        const img = new Image();
+        const img = new window.Image();
         img.src = data.url;
         img.onload = () => {
           setGeneratedImage(data.url);
