@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
-export async function GET() {
+export async function GET(request: Request) {
   const clientId = process.env.ETSY_API_KEY;
   const redirectUri = process.env.ETSY_REDIRECT_URI;
+  
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get('userId');
 
   if (!clientId || !redirectUri) {
     return NextResponse.json({ error: "Etsy credentials not configured in .env.local" }, { status: 500 });
+  }
+  
+  if (!userId) {
+    return NextResponse.json({ error: "User ID is missing" }, { status: 400 });
   }
 
   // Generate a random string for the code verifier
@@ -18,8 +25,6 @@ export async function GET() {
     .update(codeVerifier)
     .digest('base64url');
 
-  // We need to store the codeVerifier to use it in the callback
-  // In Next.js, we can set it as a secure HTTP-only cookie
   const response = NextResponse.redirect(
     `https://www.etsy.com/oauth/connect?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
       redirectUri
@@ -30,7 +35,14 @@ export async function GET() {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     path: '/',
-    maxAge: 60 * 10, // 10 minutes
+    maxAge: 60 * 10,
+  });
+  
+  response.cookies.set('etsy_oauth_userid', userId, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: 60 * 10,
   });
 
   return response;

@@ -12,7 +12,9 @@ datasource db {
 }
 
 model EtsyToken {
-  id           Int      @id @default(1)
+  id           Int      @id @default(autoincrement())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
   accessToken  String
   refreshToken String
   expiresAt    DateTime
@@ -30,39 +32,41 @@ model User {
   paymentStatus     Boolean  @default(false)
   isVerified        Boolean  @default(false)
   verificationToken String?
+  printifyToken     String? // B2B Multi-tenant Printify Key
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  
-  transactions      Transaction[]
-  tokenUsages       TokenUsage[]
+
+  transactions Transaction[]
+  tokenUsages  TokenUsage[]
+  etsyToken    EtsyToken?
 }
 
 model Transaction {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  amount        Float
-  currency      String   @default("TRY")
-  planName      String
-  iyzicoToken   String?
-  status        String   @default("SUCCESS")
-  createdAt     DateTime @default(now())
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  amount      Float
+  currency    String   @default("TRY")
+  planName    String
+  iyzicoToken String?
+  status      String   @default("SUCCESS")
+  createdAt   DateTime @default(now())
 }
 
 model TokenUsage {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  amount        Int
-  actionType    String   // e.g. "product_analysis", "mockup_generation"
-  createdAt     DateTime @default(now())
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  amount     Int
+  actionType String // e.g. "product_analysis", "mockup_generation"
+  createdAt  DateTime @default(now())
 }
 
 model ErrorLog {
-  id            String   @id @default(uuid())
-  message       String
-  stack         String?
-  source        String   // e.g. "etsy_api", "frontend", "iyzico"
-  resolved      Boolean  @default(false)
-  createdAt     DateTime @default(now())
+  id        String   @id @default(uuid())
+  message   String
+  stack     String?
+  source    String // e.g. "etsy_api", "frontend", "iyzico"
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

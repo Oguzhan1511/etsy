@@ -361,7 +361,11 @@ export default function SettingsPage() {
                   <button
                     onClick={() => {
                       if (!etsyConnected) {
-                        window.location.href = '/api/etsy/auth';
+                        if (user?.id) {
+                          window.location.href = `/api/etsy/auth?userId=${user.id}`;
+                        } else {
+                          alert("Kullanıcı oturumu bulunamadı.");
+                        }
                       } else {
                         // Disconnect logic (for now just toggle UI)
                         setEtsyConnected(false);
@@ -396,30 +400,46 @@ export default function SettingsPage() {
                       type="password"
                       placeholder="API Anahtarını Yapıştırın"
                       value={printifyApiKey}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setPrintifyApiKey(val);
-                        if (val.trim()) {
-                          localStorage.setItem("printify_api_key", val.trim());
-                          setPrintifyConnected(true);
-                        } else {
-                          localStorage.removeItem("printify_api_key");
-                          setPrintifyConnected(false);
-                        }
-                      }}
+                      onChange={(e) => setPrintifyApiKey(e.target.value)}
                       className="w-48 px-3 py-1.5 rounded-lg border border-border bg-black/40 text-[11px] text-foreground placeholder-white/20 focus:outline-none focus:border-purple-500/50 transition-colors"
                     />
                     <button
-                      onClick={() => {
-                        window.open("https://printify.com/app/account/api", "_blank");
+                      onClick={async () => {
+                        if (printifyApiKey.trim() && user?.id) {
+                          try {
+                            const res = await fetch('/api/user/integrations', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ userId: user.id, printifyToken: printifyApiKey.trim() })
+                            });
+                            if (res.ok) {
+                              localStorage.setItem("printify_api_key", printifyApiKey.trim());
+                              setPrintifyConnected(true);
+                              alert("Printify başarıyla bağlandı!");
+                            }
+                          } catch (e) {
+                            alert("Bağlantı hatası.");
+                          }
+                        } else {
+                          setPrintifyApiKey("");
+                          localStorage.removeItem("printify_api_key");
+                          setPrintifyConnected(false);
+                          if (user?.id) {
+                            await fetch('/api/user/integrations', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ userId: user.id, printifyToken: null })
+                            });
+                          }
+                        }
                       }}
                       className={`px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                         printifyConnected
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20"
                           : "bg-purple-500/10 text-purple-400 border border-purple-500/30 hover:bg-purple-500/20"
                       }`}
                     >
-                      {printifyConnected ? "Bağlandı" : t("settings.connect")}
+                      {printifyConnected ? t("settings.saved") || "Bağlandı (Güncelle)" : t("settings.connect")}
                     </button>
                     <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_10px] ${printifyConnected ? 'bg-emerald-400 shadow-emerald-400/80' : 'bg-red-500 shadow-red-500/80'}`} />
                   </div>

@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 
-const PRINTIFY_API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiNzQ0YmQzMDM1ZmUxMWU1YTgwM2FiN2I2YjJjNjY5NylsImpvIasI6ImFmMmMmNhMDM2MTI1ODJkMGE5YmFiOTg1NTQ0YWIwOGEwNTEwOWEwNTEwOWEwNTEwMDZkODZkWQwyZm5E5Yjk2ZTUwYTRjZDVpMjFiNmE1OWQ1MjQwliwiaWFOIjoxNzg0MzcyMzI1LCjwMDcyNiwibWJsbjoxNzg0Mzg5MzMzMSIsInJvM2NteHdwOCwiZHhwIjoxODE5TE5lSjY5NTEwNSwic3Viljoimc5MDg3NzUiLCJzY29yZ29wZXMiOls2hvcHMubWFuyWdIiwic2hvcMucmVhZClsImNhZGFsb2cucmVuZmVhZClsIm9yZGVycy5zWzFkliwib3JkZXJzLndyaXRlliwicHJvZHJ1bHhmdmNzbInByb2R1Y3RzLnRndmRmd2ViaG9va3MvZCIsIndsIndyY2xsawidXbsb2Fkcy5yZWFlMDQyZ23MucmVhZClsIndsYmhiM2tzLndyaXFlliwidXbsb2Fkcy53cml0Z253cml0Z2Z3SlZSlslnByaW50ZXJzLml0I5pbmZvbVllOS19QkF0GO_LLIdZoKDmkEGelmeZYb5vaapn6l6BeYoMDVJDMeF21783rfyfCEHj5jBrHjJjQ1eE34DTWvJsYbOc-qgpzF6yGJe1oYgjwSl8u0EKJon-q0xHynIfhAPxAFvedHconZbRAiudnbuTZMYmes2wGYbwncKW3D8RaPE6zn9mINJuDUdCELvvLj1TvsCswjvc6wZP3fDHcnAR2V47Oqi8DT2bfHRI91-XBOma73pHqwtglNMqnGoNIE1dnkDzDDfDlCU09DvoTmeoxR3qPgFkX3u3uL99w7oAbiiEkm32J3VYo5qz1DcndDOOkqxqS8Z5x6q_vhyQq1_f6br2NRjKozPmBkVvA4uvUVsVuCxhdyj0R1AdYN3DDUliux5UajzOY5_TstrlDREkvx069eT6cQDgZbRGXSuqn7GncNymtmTj5ugOgV2OODQNY18OXbnGYeWe0_fq4scMwMl4VrNrQ0PIDAAlM4_8-JElgQLFd8o5HOGE7m-bJqyBpbsNZwtWaR6Httms4iODoboMHNHcL6lOIde1n5i_tVOQYJ2i8Z4-x8K8-W0ApwUEGsYkmas3pgtFZ7L217_d1UDdp4GqTfcWjXbsjHbLOuREoN3sTjF-1kxC_-XZPyOKwfxZrcKPB9F1jrNFVylTVYT79pgTC6P2RwLzW4t2ogE";
-
 // Global memory cache map
 const memoryCache = new Map<string, { data: unknown; expiry: number }>();
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes cache TTL
@@ -21,9 +19,13 @@ function setCached(key: string, data: unknown) {
 
 export async function GET(req: Request) {
   const userApiKey = req.headers.get("x-printify-api-key");
-  const activeToken = userApiKey || PRINTIFY_API_KEY;
+  
+  if (!userApiKey) {
+    return NextResponse.json({ error: "Unauthorized: Missing Printify API Key" }, { status: 401 });
+  }
+  const activeToken = userApiKey;
 
-  if (isApiOffline && !userApiKey) {
+  if (isApiOffline) {
     return NextResponse.json({ error: "Printify API offline (Unauthorized 401 Cached)" }, { status: 503 });
   }
 
@@ -211,7 +213,11 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const userApiKey = req.headers.get("x-printify-api-key");
-  const activeToken = userApiKey || PRINTIFY_API_KEY;
+  
+  if (!userApiKey) {
+    return NextResponse.json({ error: "Unauthorized: Missing Printify API Key" }, { status: 401 });
+  }
+  const activeToken = userApiKey;
   try {
     const { searchParams } = new URL(req.url);
     const action = searchParams.get("action");
@@ -463,7 +469,11 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   const userApiKey = req.headers.get("x-printify-api-key");
-  const activeToken = userApiKey || PRINTIFY_API_KEY;
+  
+  if (!userApiKey) {
+    return NextResponse.json({ error: "Unauthorized: Missing Printify API Key" }, { status: 401 });
+  }
+  const activeToken = userApiKey;
 
   try {
     const { searchParams } = new URL(req.url);

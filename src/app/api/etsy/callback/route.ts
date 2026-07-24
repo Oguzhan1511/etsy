@@ -51,27 +51,34 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL('/?etsy_error=oauth_failed', request.url));
     }
 
-    // Save tokens to our database using Prisma
-    // We only need one token record since it's a single seller app
-    const expiresAt = new Date(Date.now() + data.expires_in * 1000);
+  // Save tokens to our database using Prisma for the specific user
+  const expiresAt = new Date(Date.now() + data.expires_in * 1000);
 
-    await prisma.etsyToken.upsert({
-      where: { id: 1 },
-      update: {
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-        expiresAt,
-      },
-      create: {
-        id: 1,
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-        expiresAt,
-      },
-    });
+  // Retrieve the user ID that initiated the request
+  const userIdMatch = cookieStore.match(/etsy_oauth_userid=([^;]+)/);
+  const userId = userIdMatch ? userIdMatch[1] : null;
 
-    return NextResponse.redirect(new URL('/?etsy_connected=true', request.url));
-  } catch (err) {
+  if (!userId) {
+    return NextResponse.redirect(new URL('/?etsy_error=missing_user_session', request.url));
+  }
+
+  await prisma.etsyToken.upsert({
+    where: { userId: userId },
+    update: {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      expiresAt,
+    },
+    create: {
+      userId: userId,
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      expiresAt,
+    },
+  });
+
+  return NextResponse.redirect(new URL('/settings?etsy_connected=true', request.url));
+} catch (err) {
     console.error('Error exchanging Etsy token:', err);
     return NextResponse.redirect(new URL('/?etsy_error=internal_error', request.url));
   }
