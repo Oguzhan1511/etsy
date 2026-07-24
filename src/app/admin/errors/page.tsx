@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { AlertTriangle, ServerCrash, Loader2, RefreshCw } from "lucide-react";
+import { AlertTriangle, ServerCrash, Loader2, RefreshCw, CheckCircle2 } from "lucide-react";
 
 interface ErrorLog {
   id: string;
