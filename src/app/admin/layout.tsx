@@ -23,6 +23,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Sistem Hataları", href: "/admin/errors", icon: AlertTriangle },
   ];
 
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
   return (
     <div className="min-h-screen bg-black text-foreground flex font-sans overflow-hidden">
       
