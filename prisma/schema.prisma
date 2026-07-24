@@ -25,6 +25,7 @@ model User {
   email             String   @unique
   password          String
   plan              String   @default("none")
+  tokens            Int      @default(30)
   paymentStatus     Boolean  @default(false)
   isVerified        Boolean  @default(false)
   verificationToken String?

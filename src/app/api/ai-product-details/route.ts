@@ -1,7 +1,34 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { jwtVerify } from 'jose';
+import { cookies } from 'next/headers';
+
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
 
 export async function POST(req: Request) {
   try {
+    // 1. Authenticate user
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth_token')?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: 'Lütfen giriş yapın.' }, { status: 401 });
+    }
+
+    let userId = '';
+    try {
+      const { payload } = await jwtVerify(token, JWT_SECRET);
+      userId = payload.id as string;
+    } catch (e) {
+      return NextResponse.json({ error: 'Oturum süresi doldu.' }, { status: 401 });
+    }
+
+    // 2. Check token balance
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user || user.tokens <= 0) {
+      return NextResponse.json({ error: 'Yetersiz kredi.' }, { status: 403 });
+    }
+
     const { referenceTitle, referenceDescription, referenceCategory, targetProductTitle } = await req.json();
 
     if (!referenceTitle) {
@@ -59,6 +86,13 @@ Please generate the optimized Title, Description, and Tags (as a single comma-se
 
     try {
       const parsedResult = JSON.parse(resultText);
+
+      // 3. Deduct token after successful generation
+      await prisma.user.update({
+        where: { id: userId },
+        data: { tokens: { decrement: 1 } }
+      });
+
       return NextResponse.json({
         title: parsedResult.title || '',
         description: parsedResult.description || '',
