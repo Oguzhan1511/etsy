@@ -202,8 +202,8 @@ export default function ProductResearchPage() {
       setLoadingStatus("");
     } catch (err: unknown) {
       console.error("Search error:", err);
-      const msg = err instanceof Error ? err.message : "Temporary connection issue, please try again";
-      setError(msg.includes("Failed") || msg.includes("Etsy Research") ? "Temporary connection issue, please try again" : msg);
+      const msg = err instanceof Error ? err.message : "Bilinmeyen bir hata oluştu";
+      setError(msg);
       setIsLoading(false);
       setLoadingStatus("");
     }
