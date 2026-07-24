@@ -5,6 +5,8 @@ import { cookies } from 'next/headers';
 // @ts-ignore
 import Iyzipay from 'iyzipay';
 
+export const dynamic = 'force-dynamic';
+
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
 
 const iyzipay = new Iyzipay({

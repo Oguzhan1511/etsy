@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 // @ts-ignore
 import Iyzipay from 'iyzipay';
 
+export const dynamic = 'force-dynamic';
+
 const iyzipay = new Iyzipay({
   apiKey: process.env.IYZICO_API_KEY || 'sandbox-dummy-api-key',
   secretKey: process.env.IYZICO_SECRET_KEY || 'sandbox-dummy-secret-key',
