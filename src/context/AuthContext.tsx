@@ -18,8 +18,8 @@ interface AuthState {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  googleLogin: (credential: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>;
+  googleLogin: (credential: string) => Promise<{ success: boolean; error?: string; user?: User }>;
   registerUser: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
@@ -73,7 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.ok && data.success) {
         localStorage.setItem("printysell-auth-user", JSON.stringify(data.user));
         dispatch({ type: "LOGIN", payload: data.user });
-        return { success: true };
+        return { success: true, user: data.user };
       } else {
         return { success: false, error: data.error || "Giriş başarısız." };
       }
@@ -94,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.ok && data.success) {
         localStorage.setItem("printysell-auth-user", JSON.stringify(data.user));
         dispatch({ type: "LOGIN", payload: data.user });
-        return { success: true };
+        return { success: true, user: data.user };
       } else {
         return { success: false, error: data.error || "Google girişi başarısız." };
       }

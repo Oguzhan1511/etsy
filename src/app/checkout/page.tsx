@@ -24,35 +24,28 @@ function CheckoutContent() {
 
   const [checkoutHtml, setCheckoutHtml] = useState("");
 
-  const initIyzico = async (plan: string) => {
+  const handleMockPayment = async () => {
+    if (!user) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/iyzico/checkout", {
+      const res = await fetch("/api/user/mock-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ userId: user.id, planId }),
       });
-      
-      let data;
-      const textData = await res.text();
-      try {
-        data = JSON.parse(textData);
-      } catch (e) {
-        console.error("Non-JSON API Response:", textData);
-        alert("Sunucudan geçersiz bir yanıt geldi (JSON değil).");
-        setLoading(false);
-        return;
-      }
-
-      if (res.ok && data.checkoutFormContent) {
-        setCheckoutHtml(data.checkoutFormContent);
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSuccess(true);
+        // Force refresh user session by reloading page after a short delay
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 2000);
       } else {
-        alert("Ödeme başlatılırken hata oluştu: " + (data.error || "Bilinmeyen Hata"));
+        alert(data.error || "Ödeme başarısız oldu.");
+        setLoading(false);
       }
     } catch (err) {
-      console.error(err);
-      alert("Bağlantı hatası.");
-    } finally {
+      alert("Sunucuya bağlanılamadı.");
       setLoading(false);
     }
   };
@@ -61,25 +54,9 @@ function CheckoutContent() {
     if (!user) {
       router.replace("/login");
     } else if (user.paymentStatus) {
-      router.replace("/");
-    } else {
-      // Sadece Pro plan var olarak varsayıyoruz, gerçeğinde plan seçimi dinamikleşebilir.
-      initIyzico("Pro");
+      router.replace("/dashboard");
     }
   }, [user, router]);
-
-  // React dangerouslySetInnerHTML scriptleri çalıştırmaz. O yüzden manuel execute ediyoruz.
-  useEffect(() => {
-    if (checkoutHtml) {
-      const scriptContentMatch = checkoutHtml.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
-      if (scriptContentMatch && scriptContentMatch[1]) {
-        const script = document.createElement("script");
-        script.type = "text/javascript";
-        script.innerHTML = scriptContentMatch[1];
-        document.body.appendChild(script);
-      }
-    }
-  }, [checkoutHtml]);
 
   if (!user) return null;
 
@@ -129,17 +106,29 @@ function CheckoutContent() {
           </div>
         </div>
 
-        {/* Iyzico Payment Form Container */}
+        {/* Mock Payment Form Container */}
         <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col justify-center min-h-[400px]">
           {loading ? (
              <div className="flex flex-col items-center justify-center gap-4 text-violet-500">
                <Loader2 className="animate-spin" size={48} />
-               <p className="text-sm font-semibold">Güvenli Ödeme Ekranı Yükleniyor...</p>
+               <p className="text-sm font-semibold">Ödeme İşleniyor...</p>
              </div>
-          ) : checkoutHtml ? (
-            <div id="iyzi-container" dangerouslySetInnerHTML={{ __html: checkoutHtml }} />
           ) : (
-            <div className="text-center text-foreground/60">Ödeme formu yüklenemedi.</div>
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="w-16 h-16 rounded-full bg-violet-500/10 flex items-center justify-center mb-2">
+                <CreditCard size={32} className="text-violet-500" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Sisteme Giriş Yap</h3>
+              <p className="text-foreground/60 text-sm mb-4">
+                Sistem henüz test aşamasında olduğu için ödeme alınmamaktadır. Göstermelik olarak onaylayıp sisteme giriş yapabilirsiniz.
+              </p>
+              <button
+                onClick={handleMockPayment}
+                className="w-full py-4 rounded-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white hover:from-violet-500 hover:to-fuchsia-500 transition-all shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] flex items-center justify-center gap-2"
+              >
+                Göstermelik Ödemeyi Tamamla
+              </button>
+            </div>
           )}
         </div>
 
