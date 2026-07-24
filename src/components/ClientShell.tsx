@@ -7,7 +7,7 @@ import { Globe } from "lucide-react";
 
 export default function ClientShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isStandalonePage = pathname === "/login" || pathname === "/";
+  const isStandalonePage = pathname === "/login" || pathname === "/" || pathname === "/plans" || pathname === "/checkout";
   const isAdminPage = pathname.startsWith("/admin");
   const showGlobalLayout = !isStandalonePage && !isAdminPage;
   const { t, language, toggleLanguage } = useLanguage();
