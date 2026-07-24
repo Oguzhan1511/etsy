@@ -8,14 +8,16 @@ import { Globe } from "lucide-react";
 export default function ClientShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isStandalonePage = pathname === "/login" || pathname === "/";
+  const isAdminPage = pathname.startsWith("/admin");
+  const showGlobalLayout = !isStandalonePage && !isAdminPage;
   const { t, language, toggleLanguage } = useLanguage();
 
   return (
     <>
-      {!isStandalonePage && <Sidebar />}
-      <div className="flex flex-1 flex-col min-w-0 overflow-hidden relative">
+      {showGlobalLayout && <Sidebar />}
+      <div className={`flex flex-1 flex-col min-w-0 overflow-hidden relative ${isAdminPage ? "bg-black" : ""}`}>
         {/* Global Action Buttons for Authenticated Pages */}
-        {!isStandalonePage && (
+        {showGlobalLayout && (
           <div className="absolute top-6 right-8 flex items-center gap-3 z-50">
             <button
               onClick={toggleLanguage}
@@ -28,9 +30,15 @@ export default function ClientShell({ children }: { children: React.ReactNode })
           </div>
         )}
 
-        <main className="flex-1 overflow-y-auto p-6 md:p-8">
-          {children}
-        </main>
+        {isAdminPage ? (
+          <main className="flex-1 w-full h-full">
+            {children}
+          </main>
+        ) : (
+          <main className="flex-1 overflow-y-auto p-6 md:p-8">
+            {children}
+          </main>
+        )}
       </div>
     </>
   );
