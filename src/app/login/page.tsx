@@ -377,7 +377,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <style jsx global>{\`
+      <style jsx global>{`
         @keyframes blob {
           0% { transform: translate(0px, 0px) scale(1); }
           33% { transform: translate(30px, -50px) scale(1.1); }
@@ -400,7 +400,7 @@ export default function LoginPage() {
         .animate-ripple {
           animation: ripple-effect 2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
         }
-      \`}</style>
+      `}</style>
     </div>
     </GoogleOAuthProvider>
   );
