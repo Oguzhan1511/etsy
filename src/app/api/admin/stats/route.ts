@@ -14,43 +14,46 @@ export async function GET(req: NextRequest) {
     const totalUsers = await prisma.user.count();
     const premiumUsers = await prisma.user.count({ where: { paymentStatus: true } });
 
-    // 2. Total revenue from successful transactions
+    // Constants for calculations
+    const IYZICO_RATE = 0.0299;
+    const IYZICO_FIXED = 0.25;
+    const AI_TOKEN_COST_TL = 1.32; // Based on OpenAI DALL-E 3 $0.04 per image * 33 TL
+
+    // 2. Gross Revenue & Iyzico calculations
     const transactions = await prisma.transaction.findMany({
       where: { status: 'SUCCESS' }
     });
-    const totalRevenue = transactions.reduce((acc, t) => acc + t.amount, 0);
+    const grossRevenue = transactions.reduce((acc, t) => acc + t.amount, 0);
+    const iyzicoFees = transactions.reduce((acc, t) => acc + ((t.amount * IYZICO_RATE) + IYZICO_FIXED), 0);
+    const netRevenue = grossRevenue - iyzicoFees;
 
-    // 3. Tokens spent today
+    // 3. Tokens & AI Cost
+    const allTokenUsages = await prisma.tokenUsage.findMany();
+    const totalTokensSpent = allTokenUsages.reduce((acc, t) => acc + t.amount, 0);
+    const aiCost = totalTokensSpent * AI_TOKEN_COST_TL;
+    
+    const netProfit = netRevenue - aiCost;
+
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
-    const tokenUsages = await prisma.tokenUsage.findMany({
-      where: { createdAt: { gte: startOfDay } }
-    });
-    const tokensSpentToday = tokenUsages.reduce((acc, t) => acc + t.amount, 0);
+    const todayUsages = allTokenUsages.filter(t => t.createdAt >= startOfDay);
+    const tokensSpentToday = todayUsages.reduce((acc, t) => acc + t.amount, 0);
 
     // 4. Generate last 30 days revenue and token chart data using REAL database records
     const chartData = [];
     
-    // Fetch all transactions and token usages from the last 30 days to memory for quick grouping
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     thirtyDaysAgo.setHours(0, 0, 0, 0);
 
-    const recentTransactions = await prisma.transaction.findMany({
-      where: { status: 'SUCCESS', createdAt: { gte: thirtyDaysAgo } }
-    });
+    const recentTransactions = transactions.filter(t => t.createdAt >= thirtyDaysAgo);
+    const recentTokenUsages = allTokenUsages.filter(t => t.createdAt >= thirtyDaysAgo);
 
-    const recentTokenUsages = await prisma.tokenUsage.findMany({
-      where: { createdAt: { gte: thirtyDaysAgo } }
-    });
-
-    // Build the chart data day by day
     for (let i = 29; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const dateString = d.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' });
       
-      // Filter records that match this specific day
       const dailyTransactions = recentTransactions.filter(t => 
         t.createdAt.getDate() === d.getDate() && 
         t.createdAt.getMonth() === d.getMonth()
@@ -61,12 +64,20 @@ export async function GET(req: NextRequest) {
         t.createdAt.getMonth() === d.getMonth()
       );
 
-      const dailyRevenue = dailyTransactions.reduce((acc, t) => acc + t.amount, 0);
+      const dailyGross = dailyTransactions.reduce((acc, t) => acc + t.amount, 0);
+      const dailyIyzico = dailyTransactions.reduce((acc, t) => acc + ((t.amount * IYZICO_RATE) + IYZICO_FIXED), 0);
+      const dailyNetRev = dailyGross - dailyIyzico;
+      
       const dailyTokens = dailyTokenUsages.reduce((acc, t) => acc + t.amount, 0);
+      const dailyAiCost = dailyTokens * AI_TOKEN_COST_TL;
+      
+      const dailyNetProfit = dailyNetRev - dailyAiCost;
 
       chartData.push({
         name: dateString,
-        revenue: dailyRevenue,
+        revenue: dailyGross, // For backward compatibility in case frontend uses it
+        netProfit: Number(dailyNetProfit.toFixed(2)),
+        expense: Number((dailyIyzico + dailyAiCost).toFixed(2)),
         tokens: dailyTokens
       });
     }
@@ -76,7 +87,10 @@ export async function GET(req: NextRequest) {
       data: {
         totalUsers,
         premiumUsers,
-        totalRevenue,
+        grossRevenue,
+        iyzicoFees,
+        aiCost,
+        netProfit,
         tokensSpentToday,
         chartData
       }
