@@ -88,18 +88,21 @@ const PLAN_ICONS: Record<PlanType, React.ReactNode> = {
   Standard: <Package size={20} className="text-blue-400" />,
   Pro: <Zap size={20} className="text-violet-400" />,
   Premium: <Crown size={20} className="text-amber-400" />,
+  none: <Sparkles size={20} className="text-gray-400" />,
 };
 
 const PLAN_COLORS: Record<PlanType, string> = {
   Standard: "from-blue-600/20 to-blue-500/10 border-blue-500/30",
   Pro: "from-violet-600/20 to-purple-500/10 border-violet-500/30",
   Premium: "from-amber-600/20 to-yellow-500/10 border-amber-500/30",
+  none: "from-gray-600/20 to-gray-500/10 border-gray-500/30",
 };
 
 const PLAN_BADGE_COLORS: Record<PlanType, string> = {
   Standard: "bg-blue-500/20 text-blue-300 border border-blue-500/30",
   Pro: "bg-violet-500/20 text-violet-300 border border-violet-500/30",
   Premium: "bg-amber-500/20 text-amber-300 border border-amber-500/30",
+  none: "bg-gray-500/20 text-gray-300 border border-gray-500/30",
 };
 
 // ─── Token Package Cards ──────────────────────────────────────────────────────

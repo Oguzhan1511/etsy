@@ -4,9 +4,17 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 
 export type PlanType = "Standard" | "Pro" | "Premium" | "none";
 
+export const PLAN_LIMITS: Record<PlanType, number> = {
+  Standard: 100,
+  Pro: 500,
+  Premium: 2000,
+  none: 30,
+};
+
 interface TokenContextType {
   planType: PlanType;
   availableTokens: number;
+  totalEverGranted: number;
   useToken: () => boolean; // returns false if no tokens left
   addTokens: (amount: number) => void;
   isLoaded: boolean;
@@ -19,6 +27,7 @@ export function TokenProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [planType, setPlanType] = useState<PlanType>("none");
   const [availableTokens, setAvailableTokens] = useState(0);
+  const [totalEverGranted, setTotalEverGranted] = useState(30);
 
   const refreshTokens = useCallback(async () => {
     try {
@@ -64,6 +73,7 @@ export function TokenProvider({ children }: { children: React.ReactNode }) {
       value={{
         planType,
         availableTokens,
+        totalEverGranted,
         useToken,
         addTokens,
         isLoaded,

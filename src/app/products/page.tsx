@@ -167,7 +167,7 @@ export default function ProductsPage() {
         if (data.title) setEditTitle(data.title);
         if (data.description) setEditDescription(data.description);
         if (data.tags) setEditTags(data.tags);
-        setHasUnsavedChanges(true);
+        // setHasUnsavedChanges(true);
         showToast("Yapay Zeka ile içerikler başarıyla oluşturuldu!", "success");
       }
     } catch (err) {
