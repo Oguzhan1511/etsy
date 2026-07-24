@@ -19,6 +19,7 @@ interface AuthState {
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  googleLogin: (credential: string) => Promise<{ success: boolean; error?: string }>;
   registerUser: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
@@ -57,19 +58,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try { parsed = JSON.parse(stored) as User; } catch {}
     }
     
-    // BYPASS: Provide a default guest user if no user is found
-    if (!parsed) {
-      parsed = {
-        id: "guest_123",
-        name: "Guest User",
-        email: "guest@printysell.com",
-        plan: "PRO",
-        paymentStatus: true,
-        initials: "GU"
-      };
-      localStorage.setItem("printysell-auth-user", JSON.stringify(parsed));
-    }
-    
     dispatch({ type: "INIT", payload: parsed });
   }, []);
 
@@ -88,6 +76,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: true };
       } else {
         return { success: false, error: data.error || "Giriş başarısız." };
+      }
+    } catch {
+      return { success: false, error: "Sunucu hatası." };
+    }
+  };
+
+  const googleLogin = async (credential: string) => {
+    try {
+      const res = await fetch("/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential }),
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        localStorage.setItem("printysell-auth-user", JSON.stringify(data.user));
+        dispatch({ type: "LOGIN", payload: data.user });
+        return { success: true };
+      } else {
+        return { success: false, error: data.error || "Google girişi başarısız." };
       }
     } catch {
       return { success: false, error: "Sunucu hatası." };
@@ -114,14 +123,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    // BYPASS: Prevent actual logout to keep guest session
-    // localStorage.removeItem("printysell-auth-user");
-    // dispatch({ type: "LOGOUT" });
-    window.location.href = "/";
+    localStorage.removeItem("printysell-auth-user");
+    dispatch({ type: "LOGOUT" });
+    window.location.href = "/login";
   };
 
   return (
-    <AuthContext.Provider value={{ user: state.user, login, registerUser, logout, isLoading: state.isLoading }}>
+    <AuthContext.Provider value={{ user: state.user, login, googleLogin, registerUser, logout, isLoading: state.isLoading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
+    "@react-oauth/google": "^0.13.5",
     "@supabase/supabase-js": "^2.109.0",
     "bcryptjs": "^3.0.3",
+    "google-auth-library": "^10.9.1",
     "iyzipay": "^2.0.69",
     "jose": "^6.2.4",
     "lucide-react": "^1.25.0",

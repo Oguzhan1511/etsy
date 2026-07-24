@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, Globe, User, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 type Mode = "login" | "register" | "forgot_password" | "reset_sent";
 
 export default function LoginPage() {
-  const { login, registerUser, user, isLoading } = useAuth();
+  const { login, googleLogin, registerUser, user, isLoading } = useAuth();
   const { t, language, toggleLanguage } = useLanguage();
   const router = useRouter();
 
@@ -22,10 +23,19 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
-  // Automatically redirect to bypass login
-  useEffect(() => {
-      router.replace("/products");
-  }, [router]);
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    if (credentialResponse.credential) {
+      setSubmitting(true);
+      setError("");
+      const res = await googleLogin(credentialResponse.credential);
+      if (res.success) {
+        router.replace("/dashboard");
+      } else {
+        setError(res.error || "Google girişi başarısız.");
+        setSubmitting(false);
+      }
+    }
+  };
 
   // Water Ripple Effect
   useEffect(() => {
@@ -96,6 +106,7 @@ export default function LoginPage() {
   }
 
   return (
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden font-sans">
       
       {/* Background Animated Blobs */}
@@ -326,6 +337,30 @@ export default function LoginPage() {
             </form>
           )}
 
+          {/* Google Login Separator */}
+          {(mode === "login" || mode === "register") && (
+            <>
+              <div className="flex items-center gap-3 my-6 opacity-30">
+                <div className="h-[1px] flex-1 bg-border" />
+                <span className="text-xs uppercase tracking-wider font-semibold">VEYA</span>
+                <div className="h-[1px] flex-1 bg-border" />
+              </div>
+              
+              <div className="flex justify-center mb-4">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => {
+                    setError("Google ile giriş yapılamadı.");
+                  }}
+                  theme="filled_black"
+                  shape="pill"
+                  size="large"
+                  text={mode === "register" ? "signup_with" : "signin_with"}
+                />
+              </div>
+            </>
+          )}
+
           {/* Hint */}
           {(mode === "login" || mode === "register") && (
             <div className="pt-2">
@@ -342,7 +377,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <style jsx global>{`
+      <style jsx global>{\`
         @keyframes blob {
           0% { transform: translate(0px, 0px) scale(1); }
           33% { transform: translate(30px, -50px) scale(1.1); }
@@ -365,7 +400,8 @@ export default function LoginPage() {
         .animate-ripple {
           animation: ripple-effect 2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
         }
-      `}</style>
+      \`}</style>
     </div>
+    </GoogleOAuthProvider>
   );
 }
