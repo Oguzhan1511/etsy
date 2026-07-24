@@ -28,18 +28,46 @@ export async function GET(req: NextRequest) {
     });
     const tokensSpentToday = tokenUsages.reduce((acc, t) => acc + t.amount, 0);
 
-    // 4. Generate last 30 days revenue and token chart data
+    // 4. Generate last 30 days revenue and token chart data using REAL database records
     const chartData = [];
+    
+    // Fetch all transactions and token usages from the last 30 days to memory for quick grouping
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    thirtyDaysAgo.setHours(0, 0, 0, 0);
+
+    const recentTransactions = await prisma.transaction.findMany({
+      where: { status: 'SUCCESS', createdAt: { gte: thirtyDaysAgo } }
+    });
+
+    const recentTokenUsages = await prisma.tokenUsage.findMany({
+      where: { createdAt: { gte: thirtyDaysAgo } }
+    });
+
+    // Build the chart data day by day
     for (let i = 29; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const dateString = d.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' });
       
-      // Simulate/calculate data for that day (Mocking for now to show beautiful graphs)
+      // Filter records that match this specific day
+      const dailyTransactions = recentTransactions.filter(t => 
+        t.createdAt.getDate() === d.getDate() && 
+        t.createdAt.getMonth() === d.getMonth()
+      );
+      
+      const dailyTokenUsages = recentTokenUsages.filter(t => 
+        t.createdAt.getDate() === d.getDate() && 
+        t.createdAt.getMonth() === d.getMonth()
+      );
+
+      const dailyRevenue = dailyTransactions.reduce((acc, t) => acc + t.amount, 0);
+      const dailyTokens = dailyTokenUsages.reduce((acc, t) => acc + t.amount, 0);
+
       chartData.push({
         name: dateString,
-        revenue: Math.floor(Math.random() * 5000) + 1000, // Replace with actual aggregation
-        tokens: Math.floor(Math.random() * 500) + 50
+        revenue: dailyRevenue,
+        tokens: dailyTokens
       });
     }
 
