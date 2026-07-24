@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Sparkles, Wand2, Loader2, Download, Library, CheckCircle2, Image as ImageIcon, UploadCloud, X, Zap, Coins } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTokens } from "@/context/TokenContext";
 
@@ -17,8 +17,7 @@ interface DesignItem {
 
 export default function AIDesignStudioPage() {
   const { t } = useLanguage();
-  const router = useRouter();
-  const { availableTokens, useToken } = useTokens();
+  const { availableTokens, useToken: consumeToken } = useTokens();
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -60,7 +59,7 @@ export default function AIDesignStudioPage() {
     }
 
     // Deduct 1 token immediately
-    const tokenConsumed = useToken();
+    const tokenConsumed = consumeToken();
     if (!tokenConsumed) {
       setTokenError(true);
       return;
@@ -233,7 +232,7 @@ export default function AIDesignStudioPage() {
                 </label>
                 {referenceImage ? (
                   <div className="relative w-full h-64 bg-black/40 rounded-xl overflow-hidden border border-border group">
-                    <img src={referenceImage} alt="Reference" className="w-full h-full object-contain" />
+                    <Image src={referenceImage} alt="Reference" fill className="object-contain" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                       <button 
                         type="button"
@@ -349,10 +348,11 @@ export default function AIDesignStudioPage() {
                   <p className="text-sm font-medium animate-pulse">{t("aiDesign.weaving")}</p>
                 </div>
               ) : generatedImage ? (
-                <img 
+                <Image 
                   src={generatedImage} 
                   alt="Generated AI Design" 
-                  className="w-full h-full object-contain animate-fade-in"
+                  fill
+                  className="object-contain animate-fade-in"
                 />
               ) : (
                 <div className="flex flex-col items-center gap-3 text-muted">

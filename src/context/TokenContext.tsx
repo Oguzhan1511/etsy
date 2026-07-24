@@ -38,6 +38,7 @@ export function TokenProvider({ children }: { children: React.ReactNode }) {
           const data = JSON.parse(text);
           setAvailableTokens(data.tokens);
           setPlanType(data.plan as PlanType);
+          setTotalEverGranted(PLAN_LIMITS[data.plan as PlanType] || 30);
         } catch (e) {
           console.error("Token API returned invalid JSON:", text);
         }
