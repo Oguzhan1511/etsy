@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     }
 
     // Retrieve payment result from Iyzico
-    return new Promise((resolve) => {
+    return new Promise<NextResponse>((resolve) => {
       iyzipay.checkoutForm.retrieve({ token, locale: Iyzipay.LOCALE.TR }, async (err: any, result: any) => {
         if (err || result.status === 'failure') {
           console.error("Iyzico Retrieve Error:", err || result.errorMessage);

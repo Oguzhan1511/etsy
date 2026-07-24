@@ -94,7 +94,7 @@ export async function POST(req: Request) {
       ]
     };
 
-    return new Promise((resolve) => {
+    return new Promise<NextResponse>((resolve) => {
       iyzipay.checkoutFormInitialize.create(request, (err: any, result: any) => {
         if (err) {
           console.error("Iyzico Init Error:", err);
