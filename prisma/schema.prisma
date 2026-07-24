@@ -24,6 +24,7 @@ model User {
   name              String
   email             String   @unique
   password          String
+  role              String   @default("USER") // ADMIN or USER
   plan              String   @default("none")
   tokens            Int      @default(30)
   paymentStatus     Boolean  @default(false)
@@ -31,4 +32,37 @@ model User {
   verificationToken String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  
+  transactions      Transaction[]
+  tokenUsages       TokenUsage[]
+}
+
+model Transaction {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  amount        Float
+  currency      String   @default("TRY")
+  planName      String
+  iyzicoToken   String?
+  status        String   @default("SUCCESS")
+  createdAt     DateTime @default(now())
+}
+
+model TokenUsage {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  amount        Int
+  actionType    String   // e.g. "product_analysis", "mockup_generation"
+  createdAt     DateTime @default(now())
+}
+
+model ErrorLog {
+  id            String   @id @default(uuid())
+  message       String
+  stack         String?
+  source        String   // e.g. "etsy_api", "frontend", "iyzico"
+  resolved      Boolean  @default(false)
+  createdAt     DateTime @default(now())
 }
