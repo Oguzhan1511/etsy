@@ -36,6 +36,10 @@ function CheckoutContent() {
       const data = await res.json();
       if (res.ok && data.success) {
         setSuccess(true);
+        // Update local session so AuthContext knows the user has paid
+        if (data.user) {
+          localStorage.setItem("printysell-auth-user", JSON.stringify(data.user));
+        }
         // Force refresh user session by reloading page after a short delay
         setTimeout(() => {
           window.location.href = "/dashboard";
