@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Sparkles, TrendingUp, Zap, Palette, ChevronRight, BarChart3, Box, CheckCircle2 } from "lucide-react";
 
 // Intersection Observer Hook for Scroll Animations
-function useOnScreen(ref: React.RefObject<Element | null>, rootMargin = "0px") {
+function useOnScreen(ref: any, rootMargin = "0px") {
   const [isIntersecting, setIntersecting] = useState(false);
   useEffect(() => {
     const observer = new IntersectionObserver(
