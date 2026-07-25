@@ -98,11 +98,11 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden flex flex-col items-center justify-center text-center px-4">
+      <section className="relative pt-24 pb-20 md:pt-32 md:pb-32 overflow-hidden flex flex-col items-center justify-center text-center px-4 min-h-[80vh]">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] rounded-full bg-violet-600/10 blur-[120px] mix-blend-screen pointer-events-none" />
         <div className="absolute top-0 right-0 w-[40vw] h-[40vw] rounded-full bg-fuchsia-600/5 blur-[100px] pointer-events-none" />
         
-        <div className="max-w-4xl mx-auto text-center relative z-10 pt-20 pb-16 px-4">
+        <div className="max-w-4xl mx-auto text-center relative z-10 px-4">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 font-medium text-sm mb-8 animate-fade-in-up">
             <Sparkles size={16} />
             <span>Yapay Zeka Destekli Yeni Nesil Print on Demand</span>
