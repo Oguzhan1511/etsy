@@ -124,7 +124,7 @@ export default function LandingPage() {
             <div className="bg-gradient-to-r from-violet-600/20 to-fuchsia-600/20 border border-violet-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(139,92,246,0.15)] backdrop-blur-sm inline-block max-w-3xl">
               <h2 className="text-xl md:text-2xl font-bold text-white mb-2">🚀 Şu an Kapalı Beta Aşamasındayız!</h2>
               <p className="text-foreground/80 md:text-lg">
-                Hemen e-posta adresinizle ücretsiz ön kaydınızı oluşturun. Sistem açıldığında size özel tanımlanacak <strong className="text-violet-400">50 Erken Erişim Jetonu (50 Bedava Tasarım)</strong> ile anında tasarıma başlayın!
+                Hemen e-posta adresinizle ücretsiz ön kaydınızı oluşturun. Sistem açıldığında size özel tanımlanacak <strong className="text-violet-400">50 Erken Erişim Jetonu (50 Ücretsiz Tasarım)</strong> ile anında tasarıma başlayın!
               </p>
             </div>
           </div>
