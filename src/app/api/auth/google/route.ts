@@ -65,21 +65,24 @@ export async function POST(req: Request) {
             <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #000000; color: #ffffff; padding: 40px 20px; border-radius: 16px; border: 1px solid #333;">
               <div style="text-align: center; margin-bottom: 30px;">
                 <h1 style="color: #a855f7; font-size: 28px; margin: 0;">PrintySell</h1>
-                <p style="color: #888; font-size: 14px; margin-top: 5px; letter-spacing: 2px; text-transform: uppercase;">Yapay Zeka Destekli B2B SaaS</p>
+                <p style="color: #888; font-size: 14px; margin-top: 5px; letter-spacing: 2px; text-transform: uppercase;">Erken Erişim Bekleme Listesi</p>
               </div>
               
               <div style="background-color: #111; padding: 30px; border-radius: 12px; border: 1px solid #222;">
                 <h2 style="color: #fff; font-size: 22px; margin-top: 0;">Merhaba ${user.name},</h2>
                 <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-                  PrintySell dünyasına adım attığınız için teşekkür ederiz. Hesabınız Google üzerinden başarıyla oluşturuldu.
+                  PrintySell erken erişim bekleme listesine (Google ile) hoş geldiniz! Ön kaydınız başarıyla alındı.
                 </p>
                 <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-                  Hemen panele girerek kendi Printify mağazanızı yönetmeye ve otomatik tasarımlarla satış yapmaya başlayabilirsiniz!
+                  Sistemimiz çok yakında tam sürüm olarak hizmete açılacaktır. Erken erişim fırsatından yararlandığınız için hesabınıza <strong>50 Token (50 Farklı Yapay Zeka Görseli)</strong> üretim hakkı tamamen ücretsiz olarak tanımlanmıştır!
+                </p>
+                <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
+                  Platform kapılarını açtığında size tekrar e-posta ile haber vereceğiz ve hemen tasarımlarınızı üretip Etsy'de satmaya başlayabileceksiniz.
                 </p>
                 <div style="text-align: center; margin: 40px 0;">
-                  <a href="${origin}/dashboard" style="display: inline-block; background: linear-gradient(135deg, #7c6af7 0%, #a855f7 100%); color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 50px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);">
-                    Panele Git
-                  </a>
+                  <div style="display: inline-block; background: linear-gradient(135deg, #7c6af7 0%, #a855f7 100%); color: #ffffff; padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 50px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);">
+                    50 Token Hesabınıza Rezerve Edildi 🎁
+                  </div>
                 </div>
               </div>
               

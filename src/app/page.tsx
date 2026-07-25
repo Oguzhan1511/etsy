@@ -114,32 +114,34 @@ export default function LandingPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] rounded-full bg-violet-600/10 blur-[120px] mix-blend-screen pointer-events-none" />
         <div className="absolute top-0 right-0 w-[40vw] h-[40vw] rounded-full bg-fuchsia-600/5 blur-[100px] pointer-events-none" />
         
-        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest text-violet-400 mb-8 animate-fade-in-up">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
-            </span>
-            Etsy'nin Geleceği Burada
+        <div className="max-w-4xl mx-auto text-center relative z-10 pt-20 pb-16 px-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 font-medium text-sm mb-8 animate-fade-in-up">
+            <Sparkles size={16} />
+            <span>Yapay Zeka Destekli Yeni Nesil Print on Demand</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1] animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-            Etsy Mağazanızı <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-orange-400">
-              Yapay Zeka
-            </span> ile Büyütün
-          </h1>
+          <div className="mb-8 animate-fade-in-up">
+            <div className="bg-gradient-to-r from-violet-600/20 to-fuchsia-600/20 border border-violet-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(139,92,246,0.15)] backdrop-blur-sm inline-block max-w-3xl">
+              <h2 className="text-xl md:text-2xl font-bold text-white mb-2">🚀 Şu an Kapalı Beta Aşamasındayız!</h2>
+              <p className="text-foreground/80 md:text-lg">
+                Hemen e-posta adresinizle ücretsiz ön kaydınızı oluşturun. Sistem açıldığında size özel tanımlanacak <strong className="text-violet-400">50 Erken Erişim Jetonu (50 Bedava Tasarım)</strong> ile anında tasarıma başlayın!
+              </p>
+            </div>
+          </div>
 
-          <p className="text-lg md:text-xl text-foreground/60 max-w-2xl mb-12 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            Ürün araştırmasından tasarım üretimine, sipariş yönetiminden Printify entegrasyonuna kadar her şeyi tek bir panelden yönetin.
+          <h1 className="text-5xl md:text-7xl font-extrabold text-foreground mb-6 tracking-tight animate-fade-in-up">
+            Etsy Mağazanı <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-fuchsia-500">Yapay Zeka</span> ile Yönet
+          </h1>
+          <p className="text-xl text-foreground/60 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+            Trendleri bul, tek tıkla yapay zekaya tasarım yaptır ve Printify üzerinden Etsy mağazana saniyeler içinde yükle.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
             <Link
               href="/login"
               className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold text-lg shadow-[0_0_40px_rgba(139,92,246,0.3)] hover:shadow-[0_0_60px_rgba(139,92,246,0.5)] transition-all flex items-center justify-center gap-2 group"
             >
-              Ücretsiz Denemeye Başla
+              Hemen Ön Kayıt Ol
               <ArrowRight className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -270,14 +272,14 @@ export default function LandingPage() {
       <section className="py-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-violet-900/20" />
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <h2 className="text-4xl md:text-6xl font-extrabold mb-8">Etsy Mağazanızı Şaha Kaldırmaya Hazır Mısınız?</h2>
-          <p className="text-xl text-foreground/60 mb-10">Hemen ücretsiz hesabınızı oluşturun ve yapay zekanın gücünü arkanıza alın.</p>
+          <h2 className="text-4xl md:text-6xl font-extrabold mb-8">PrintySell Bekleme Listesine Katıl!</h2>
+          <p className="text-xl text-foreground/60 mb-10">Sistem açıldığında ilk senin haberin olsun ve anında 50 adet ücretsiz yapay zeka tasarım hakkı kazan.</p>
           <Link
             href="/login"
             className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-2xl bg-foreground text-background font-bold text-xl hover:scale-105 transition-transform"
           >
-            Hemen Ücretsiz Başla
-            <ChevronRight />
+            Ön Kayıt Ol (Bekleme Listesi)
+            <ArrowRight size={24} />
           </Link>
         </div>
       </section>
