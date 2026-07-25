@@ -86,26 +86,14 @@ export default function LandingPage() {
           scrolled ? "bg-background/80 backdrop-blur-md border-b border-border py-4" : "bg-transparent py-6"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="PrintySell" className="w-10 h-10 object-contain drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]" />
-            <span className="text-xl font-black tracking-tight">PrintySell</span>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4 relative z-20">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+              <span className="text-white font-black text-xl">P</span>
+            </div>
+            <span className="text-xl font-black tracking-tight text-foreground">PrintySell</span>
           </div>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/login"
-              className="hidden md:flex items-center justify-center px-5 py-2.5 text-sm font-bold text-foreground/80 hover:text-foreground transition-colors"
-            >
-              Giriş Yap
-            </Link>
-            <Link
-              href="/login"
-              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-bold hover:scale-105 transition-transform"
-            >
-              Hemen Başla
-              <ArrowRight size={16} />
-            </Link>
-          </div>
+          {/* Header buttons removed for waitlist phase */}
         </div>
       </nav>
 
@@ -138,7 +126,7 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
             <Link
-              href="/login"
+              href="/waitlist"
               className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold text-lg shadow-[0_0_40px_rgba(139,92,246,0.3)] hover:shadow-[0_0_60px_rgba(139,92,246,0.5)] transition-all flex items-center justify-center gap-2 group"
             >
               Hemen Ön Kayıt Ol
@@ -275,7 +263,7 @@ export default function LandingPage() {
           <h2 className="text-4xl md:text-6xl font-extrabold mb-8">PrintySell Bekleme Listesine Katıl!</h2>
           <p className="text-xl text-foreground/60 mb-10">Sistem açıldığında ilk senin haberin olsun ve anında 50 adet ücretsiz yapay zeka tasarım hakkı kazan.</p>
           <Link
-            href="/login"
+            href="/waitlist"
             className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-2xl bg-foreground text-background font-bold text-xl hover:scale-105 transition-transform"
           >
             Ön Kayıt Ol (Bekleme Listesi)
