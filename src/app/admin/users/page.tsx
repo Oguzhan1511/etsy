@@ -115,9 +115,9 @@ export default function AdminUsersPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent flex items-center gap-3">
             <Users className="w-8 h-8 text-blue-400" />
-            Kullanıcı Yönetimi
+            Ön Kayıt Yapanlar (Waitlist)
           </h1>
-          <p className="text-white/50 mt-1">Sistemdeki tüm üyeleri görüntüleyin, paket ve token atamaları yapın.</p>
+          <p className="text-white/50 mt-1">Erken erişim için bekleme listesine katılan kullanıcılarınızı yönetin.</p>
         </div>
         
         {/* Search */}
@@ -140,7 +140,7 @@ export default function AdminUsersPage() {
             <thead className="text-xs uppercase bg-white/5 border-b border-white/10">
               <tr>
                 <th className="px-6 py-4 font-semibold">Kullanıcı</th>
-                <th className="px-6 py-4 font-semibold">Durum</th>
+                <th className="px-6 py-4 font-semibold">Aşama</th>
                 <th className="px-6 py-4 font-semibold">Paket</th>
                 <th className="px-6 py-4 font-semibold">Bakiye (Token)</th>
                 <th className="px-6 py-4 font-semibold">Kayıt Tarihi</th>
@@ -165,21 +165,14 @@ export default function AdminUsersPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    {user.isVerified ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        Onaylı
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                        <XCircle className="w-3.5 h-3.5" />
-                        Bekliyor
-                      </span>
-                    )}
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20">
+                      <Zap className="w-3.5 h-3.5" />
+                      Bekleme Listesinde
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     {user.plan === 'none' ? (
-                      <span className="text-white/40">Ücretsiz</span>
+                      <span className="text-white/40">Erken Erişim Jetonu</span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 text-purple-400 font-semibold bg-purple-500/10 px-2.5 py-1 rounded-lg border border-purple-500/20">
                         <Crown className="w-3.5 h-3.5" />
