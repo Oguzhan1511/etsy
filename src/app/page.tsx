@@ -183,7 +183,7 @@ export default function LandingPage() {
               
               <div className="rounded-2xl border border-white/10 bg-[#09090b] shadow-[0_0_80px_rgba(139,92,246,0.15)]">
                 <Image 
-                  src="/screenshots/hero_diagram.png" 
+                  src="/screenshots/hero_diagram_v2.jpg" 
                   alt="PrintySell Otomasyon Akışı" 
                   width={1600} 
                   height={800} 
