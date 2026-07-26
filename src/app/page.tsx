@@ -188,15 +188,31 @@ export default function LandingPage() {
                 </ul>
               </FadeInContent>
             </div>
-            <div className="flex-1 relative w-full">
+            <div className="flex-1 relative w-full group">
               <FadeInContent delay={200}>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-violet-500/10 blur-[80px] rounded-full -z-10" />
+                
+                {/* Base AI Studio Image */}
                 <Image 
-                  src="/screenshots/screenshot3.jpg" 
+                  src="/screenshots/step2_base.png" 
                   alt="Yapay Zeka Tasarım Stüdyosu" 
                   width={800} height={600} 
-                  className="rounded-2xl border border-white/10 shadow-2xl w-full h-auto"
+                  className="rounded-2xl border border-white/10 shadow-2xl w-full h-auto relative z-10"
                 />
+
+                {/* Overlapping Floral Output Image */}
+                <div className="absolute right-[-10px] sm:right-[-20px] top-[20%] w-[45%] md:w-[50%] rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/20 z-20 transform transition-all duration-700 group-hover:scale-105 group-hover:-rotate-3 group-hover:-translate-y-3 group-hover:shadow-[0_30px_60px_rgba(139,92,246,0.3)]">
+                  <Image 
+                    src="/screenshots/step2_overlay.jpg" 
+                    alt="AI Üretimi Çıktı" 
+                    width={400} height={400} 
+                    className="w-full h-auto object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <span className="text-white text-sm font-bold flex items-center gap-1"><Sparkles size={14} className="text-violet-400"/> Üretilen Çıktı</span>
+                  </div>
+                </div>
+
               </FadeInContent>
             </div>
           </div>
