@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Sparkles, Search, Palette, Globe, CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowRight, Sparkles, Search, Palette, Globe, CheckCircle2, Loader2, TrendingUp } from "lucide-react";
 
 // Intersection Observer Hook for Scroll Animations
 function useOnScreen(ref: any, rootMargin = "0px") {
@@ -135,15 +135,11 @@ export default function LandingPage() {
             <Image src="/logo.png" alt="PrintySell Logo" width={36} height={36} className="object-contain" />
             <span className="text-xl font-bold tracking-tight text-white">PrintySell</span>
           </div>
-          <div className="flex items-center gap-6">
-            <Link href="/login" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
-              Giriş Yap
-            </Link>
             <Link
               href="/waitlist"
-              className="text-sm font-bold bg-white text-black px-6 py-2.5 rounded-full hover:bg-zinc-200 transition-transform hover:scale-105"
+              className="text-sm font-bold bg-white text-black px-6 py-2.5 rounded-full hover:bg-zinc-200 transition-transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
             >
-              Hemen Başla
+              Ön Kayıt Ol
             </Link>
           </div>
         </div>
@@ -167,14 +163,18 @@ export default function LandingPage() {
               Trendleri keşfet, yapay zeka ile saniyeler içinde benzersiz tasarımlar üret ve Printify üzerinden tek tıkla satışa başla. Tasarım yeteneğine ihtiyacın yok.
             </p>
 
-            <div className="flex justify-center mb-16">
+            <div className="flex flex-col items-center justify-center mb-16 gap-4">
               <Link
                 href="/waitlist"
                 className="px-8 py-4 rounded-full bg-white hover:bg-zinc-200 text-black font-bold text-lg transition-transform hover:scale-105 flex items-center gap-2 shadow-[0_0_40px_rgba(255,255,255,0.2)]"
               >
-                Ücretsiz 50 Jeton ile Başla
+                Ön Kayıt Ol
                 <ArrowRight size={20} />
               </Link>
+              <div className="flex items-center gap-2 text-sm text-zinc-400 bg-zinc-900/50 border border-white/5 px-4 py-1.5 rounded-full">
+                <Sparkles size={14} className="text-amber-400" />
+                <span>Ön kayıt yapan kullanıcılara <strong className="text-white">50 token hediye!</strong></span>
+              </div>
             </div>
           </FadeInContent>
 
@@ -294,22 +294,58 @@ export default function LandingPage() {
               </FadeInContent>
             </div>
           </div>
+          {/* STEP 4 */}
+          <div className="flex flex-col md:flex-row-reverse items-center gap-16 mt-32">
+            <div className="flex-1 space-y-6">
+              <FadeInContent>
+                <div className="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mb-6">
+                  <TrendingUp className="text-pink-400" size={24} />
+                </div>
+                <h3 className="text-xs font-bold tracking-widest text-pink-400 uppercase mb-2">Adım 4: Etsy Mağaza Analizi</h3>
+                <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight">Mağazanızı ve Satışlarınızı Büyütün</h2>
+                <p className="text-lg text-zinc-400 leading-relaxed">
+                  İleri düzey analitik paneli sayesinde mağaza performansınızı, siparişleri, gelirlerinizi ve karlılığınızı tek bir noktadan anlık olarak takip edin. Büyüme trendlerinizi öngörerek işinize yön verin.
+                </p>
+                <ul className="space-y-3 mt-6">
+                  <li className="flex items-center gap-3 text-zinc-300"><CheckCircle2 className="text-pink-400" size={18}/> Detaylı ciro ve kar marjı hesaplamaları</li>
+                  <li className="flex items-center gap-3 text-zinc-300"><CheckCircle2 className="text-pink-400" size={18}/> Etsy'e bağlı gerçek zamanlı analizler</li>
+                </ul>
+              </FadeInContent>
+            </div>
+            <div className="flex-1 relative w-full">
+              <FadeInContent delay={200}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-pink-500/10 blur-[80px] rounded-full -z-10" />
+                <Image 
+                  src="/screenshots/step4_analysis.png" 
+                  alt="Etsy Mağaza Analizi" 
+                  width={800} height={600} 
+                  className="rounded-2xl border border-white/10 shadow-2xl w-full h-auto"
+                  unoptimized
+                />
+              </FadeInContent>
+            </div>
+          </div>
         </section>
 
         {/* FINAL CTA */}
         <section className="max-w-4xl mx-auto px-6 py-32 text-center mt-20">
           <FadeInContent>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Satış Yapmaya Bugünden Başlayın</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Sistem Ön Kayıta Açık!</h2>
             <p className="text-xl text-zinc-400 mb-10 max-w-2xl mx-auto">
-              Zamanınızı tasarımla değil, işinizi büyütmekle harcayın. PrintySell ile otomasyonun gücünü keşfedin.
+              Kontenjan dolmadan yerinizi ayırtın, sistem herkese açıldığında herkesten bir adım önde başlayın.
             </p>
-            <Link
-              href="/waitlist"
-              className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-full bg-white hover:bg-zinc-200 text-black font-bold text-xl transition-transform hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.2)]"
-            >
-              Hemen Ön Kayıt Ol
-              <ArrowRight size={20} />
-            </Link>
+            <div className="flex flex-col items-center gap-4">
+              <Link
+                href="/waitlist"
+                className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-full bg-white hover:bg-zinc-200 text-black font-bold text-xl transition-transform hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+              >
+                Hemen Ön Kayıt Ol
+                <ArrowRight size={20} />
+              </Link>
+              <span className="text-sm font-medium text-amber-400 bg-amber-500/10 px-4 py-2 rounded-full border border-amber-500/20">
+                🎁 Ön kayıt yapan kullanıcılara 50 token hediye!
+              </span>
+            </div>
           </FadeInContent>
         </section>
       </main>
