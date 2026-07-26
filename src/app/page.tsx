@@ -73,6 +73,7 @@ const InteractiveStep2 = () => {
           alt="Yapay Zeka Tasarım Stüdyosu" 
           width={800} height={600} 
           className="rounded-2xl border border-white/10 shadow-2xl w-full h-auto relative z-10 transition-transform duration-500 group-hover:scale-[1.02]"
+          unoptimized
         />
 
         {/* Dynamic Overlay Box */}
@@ -94,6 +95,7 @@ const InteractiveStep2 = () => {
               alt="AI Üretimi Çıktı" 
               fill
               className="object-cover"
+              unoptimized
             />
             {/* Success Badge */}
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-1.5 shadow-lg">
@@ -189,6 +191,7 @@ export default function LandingPage() {
                   height={800} 
                   className="rounded-2xl w-full h-auto object-cover"
                   priority
+                  unoptimized
                 />
               </div>
             </div>
@@ -233,6 +236,7 @@ export default function LandingPage() {
                   alt="Trend Analizi Ekranı" 
                   width={800} height={600} 
                   className="rounded-2xl border border-white/10 shadow-2xl w-full h-auto"
+                  unoptimized
                 />
               </FadeInContent>
             </div>
@@ -285,6 +289,7 @@ export default function LandingPage() {
                   alt="Üretici Dashboard" 
                   width={800} height={600} 
                   className="rounded-2xl border border-white/10 shadow-2xl w-full h-auto"
+                  unoptimized
                 />
               </FadeInContent>
             </div>
