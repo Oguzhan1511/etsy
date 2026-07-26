@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles, TrendingUp, Zap, Palette, ChevronRight, BarChart3, Box, CheckCircle2 } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, Sparkles, TrendingUp, Zap, Palette, BarChart3, Box, CheckCircle2, ChevronRight, Layers } from "lucide-react";
 
 // Intersection Observer Hook for Scroll Animations
 function useOnScreen(ref: any, rootMargin = "0px") {
@@ -12,7 +13,7 @@ function useOnScreen(ref: any, rootMargin = "0px") {
       ([entry]) => {
         if (entry.isIntersecting) setIntersecting(true);
       },
-      { rootMargin }
+      { rootMargin, threshold: 0.1 }
     );
     if (ref.current) {
       observer.observe(ref.current);
@@ -24,51 +25,10 @@ function useOnScreen(ref: any, rootMargin = "0px") {
   return isIntersecting;
 }
 
-const JourneyStep = ({ index, title, description, icon: Icon, children, reversed = false }: any) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const isVisible = useOnScreen(ref, "-100px");
-
-  return (
-    <div ref={ref} className={`flex flex-col ${reversed ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 md:gap-24 py-20 relative opacity-0 transition-all duration-1000 transform ${isVisible ? 'opacity-100 translate-y-0' : 'translate-y-24'}`}>
-      
-      {/* Connecting Line (Desktop) */}
-      <div className={`hidden md:block absolute top-1/2 ${reversed ? 'right-1/2' : 'left-1/2'} w-24 h-0.5 bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 -z-10`} />
-
-      {/* Text Side */}
-      <div className="flex-1 space-y-6 w-full">
-        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-white/5 border border-white/10">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-violet-500/30">
-            {index}
-          </div>
-          <span className="text-sm font-bold tracking-widest uppercase text-foreground/80">Adım {index}</span>
-        </div>
-        <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">{title}</h2>
-        <p className="text-lg text-foreground/60 leading-relaxed max-w-lg">{description}</p>
-      </div>
-
-      {/* UI Mockup Side */}
-      <div className="flex-1 w-full relative">
-        <div className="absolute inset-0 bg-gradient-to-tr from-violet-600/10 to-fuchsia-600/10 blur-[80px] -z-10 rounded-full" />
-        <div className="rounded-[32px] border border-border bg-card shadow-2xl overflow-hidden group hover:border-violet-500/30 transition-colors">
-          <div className="h-12 border-b border-border bg-surface/50 flex items-center px-4 gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-500/50" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-            <div className="w-3 h-3 rounded-full bg-green-500/50" />
-            <div className="flex-1 flex justify-center">
-              <div className="w-32 h-4 rounded-full bg-white/5" />
-            </div>
-          </div>
-          <div className="p-6 bg-background relative overflow-hidden h-[320px]">
-            {children}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const isHeroVisible = useOnScreen(heroRef);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,230 +39,187 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-violet-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-[#09090b] text-zinc-100 font-sans selection:bg-violet-500/30 overflow-x-hidden">
+      {/* Background Gradients */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-violet-600/10 blur-[120px] mix-blend-screen" />
+        <div className="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-fuchsia-600/10 blur-[100px] mix-blend-screen" />
+        <div className="absolute bottom-[-10%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-blue-600/5 blur-[120px] mix-blend-screen" />
+      </div>
+
       {/* Navbar */}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "bg-background/80 backdrop-blur-md border-b border-border py-4" : "bg-transparent py-6"
+          scrolled ? "bg-[#09090b]/80 backdrop-blur-md border-b border-white/10 py-4 shadow-lg shadow-black/50" : "bg-transparent py-6"
         }`}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4 relative z-20">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-              <span className="text-white font-black text-xl">P</span>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 relative z-20">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 relative flex items-center justify-center">
+              <Image src="/logo.png" alt="PrintySell Logo" width={40} height={40} className="object-contain drop-shadow-[0_0_8px_rgba(139,92,246,0.5)]" />
             </div>
-            <span className="text-xl font-black tracking-tight text-foreground">PrintySell</span>
+            <span className="text-xl font-black tracking-tight text-white drop-shadow-md">PrintySell</span>
           </div>
-          {/* Header buttons removed for waitlist phase */}
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-20 md:pt-32 md:pb-32 overflow-hidden flex flex-col items-center justify-center text-center px-4 min-h-[80vh]">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] rounded-full bg-violet-600/10 blur-[120px] mix-blend-screen pointer-events-none" />
-        <div className="absolute top-0 right-0 w-[40vw] h-[40vw] rounded-full bg-fuchsia-600/5 blur-[100px] pointer-events-none" />
-        
-        <div className="max-w-4xl mx-auto text-center relative z-10 px-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 font-medium text-sm mb-8 animate-fade-in-up">
-            <Sparkles size={16} />
-            <span>Yapay Zeka Destekli Yeni Nesil Print on Demand</span>
-          </div>
-
-          <div className="mb-8 animate-fade-in-up">
-            <div className="bg-gradient-to-r from-violet-600/20 to-fuchsia-600/20 border border-violet-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(139,92,246,0.15)] backdrop-blur-sm inline-block max-w-3xl">
-              <h2 className="text-xl md:text-2xl font-bold text-white mb-2">🚀 Şu an Kapalı Beta Aşamasındayız!</h2>
-              <p className="text-foreground/80 md:text-lg">
-                Hemen e-posta adresinizle ücretsiz ön kaydınızı oluşturun. Sistem açıldığında size özel tanımlanacak <strong className="text-violet-400">50 Erken Erişim Jetonu (50 Ücretsiz Tasarım)</strong> ile anında tasarıma başlayın!
-              </p>
-            </div>
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-extrabold text-foreground mb-6 tracking-tight animate-fade-in-up">
-            Etsy Mağazanı <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-fuchsia-500">Yapay Zeka</span> ile Yönet
-          </h1>
-          <p className="text-xl text-foreground/60 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            Trendleri bul, tek tıkla yapay zekaya tasarım yaptır ve Printify üzerinden Etsy mağazana saniyeler içinde yükle.
-          </p>
-
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+              Giriş Yap
+            </Link>
             <Link
               href="/waitlist"
-              className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold text-lg shadow-[0_0_40px_rgba(139,92,246,0.3)] hover:shadow-[0_0_60px_rgba(139,92,246,0.5)] transition-all flex items-center justify-center gap-2 group"
+              className="text-sm font-bold bg-white text-black px-5 py-2.5 rounded-full hover:bg-zinc-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.2)]"
             >
-              Hemen Ön Kayıt Ol
-              <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+              Kayıt Ol
             </Link>
           </div>
         </div>
-      </section>
+      </nav>
 
-      {/* Seller's Journey Section */}
-      <section className="py-24 relative">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-[20%] left-[10%] w-[40vw] h-[40vw] bg-blue-500/5 rounded-full blur-[120px]" />
-          <div className="absolute top-[60%] right-[10%] w-[40vw] h-[40vw] bg-orange-500/5 rounded-full blur-[120px]" />
-        </div>
+      <main className="relative z-10 pt-32 pb-24">
+        {/* Hero Section */}
+        <section ref={heroRef} className="max-w-7xl mx-auto px-6 text-center pt-10 pb-20">
+          <div className={`transition-all duration-1000 transform ${isHeroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 font-medium text-sm mb-8 backdrop-blur-sm shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+              <Sparkles size={16} className="text-violet-400 animate-pulse" />
+              <span>Yeni Nesil AI Print on Demand</span>
+            </div>
 
-        <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-          <div className="text-center mb-24">
-            <h2 className="text-4xl md:text-6xl font-extrabold mb-6">Başarıya Giden Yolculuk</h2>
-            <p className="text-xl text-foreground/60 max-w-2xl mx-auto">Sıfırdan zirveye giden Etsy satıcısının yol haritası. İhtiyacınız olan her şey PrintySell'de adım adım kurgulandı.</p>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-6 tracking-tight leading-[1.1]">
+              Etsy Mağazanı <br className="hidden md:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400">Yapay Zeka</span> ile Büyüt.
+            </h1>
+            
+            <p className="text-xl text-zinc-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+              Trendleri analiz et, tek tıkla muazzam tasarımlar üret ve Printify entegrasyonuyla anında Etsy'de satışa başla. İşin tüm zorluğunu yapay zekaya bırak.
+            </p>
+
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-20">
+              <Link
+                href="/waitlist"
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold text-lg shadow-[0_0_40px_rgba(139,92,246,0.4)] hover:shadow-[0_0_60px_rgba(139,92,246,0.6)] transition-all flex items-center justify-center gap-2 group"
+              >
+                Hemen Ücretsiz Başla
+                <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
+            {/* Floating Hero Screenshot */}
+            <div className="relative max-w-5xl mx-auto">
+              {/* Outer Glow */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-[2.5rem] blur-2xl opacity-30 animate-pulse" />
+              <div className="relative rounded-[2rem] p-2 bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden">
+                <div className="rounded-[1.75rem] overflow-hidden bg-[#18181b] border border-white/5 flex items-center justify-center min-h-[400px]">
+                  <Image 
+                    src="/screenshots/screenshot1.png" 
+                    alt="PrintySell Dashboard" 
+                    width={1200} 
+                    height={800} 
+                    className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
+                    priority
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Bento Grid Features Section */}
+        <section className="max-w-7xl mx-auto px-6 py-32">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">Her Şey Tek Platformda</h2>
+            <p className="text-lg text-zinc-400 max-w-2xl mx-auto">Tasarım stüdyosundan trend analizine, sipariş yönetiminden akıllı yayınlamaya kadar ihtiyacınız olan tüm araçlar tek bir modern arayüzde.</p>
           </div>
 
-          <div className="space-y-12">
-            {/* Step 1 */}
-            <JourneyStep 
-              index="1" 
-              title="Pazarı Analiz Edin" 
-              description="Hangi nişlerin kârlı olduğunu ve neyin sattığını verilerle görün. Akıllı Fırsat Puanı (Opportunity Score) sayesinde sadece kazanacak ürünlere odaklanın."
-            >
-              <div className="h-full flex flex-col justify-center space-y-4">
-                <div className="flex items-end gap-4 h-32 w-full px-4 border-b border-border pb-4">
-                  {[40, 70, 45, 90, 65, 100, 80].map((h, i) => (
-                    <div key={i} className="flex-1 bg-gradient-to-t from-violet-600/50 to-fuchsia-400/50 rounded-t-sm transition-all duration-1000 animate-pulse" style={{ height: `${h}%`, animationDelay: `${i * 0.1}s` }} />
-                  ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+            {/* Feature 1 (Large) */}
+            <div className="md:col-span-2 rounded-[2rem] bg-zinc-900/50 border border-white/10 p-8 flex flex-col justify-between overflow-hidden relative group hover:border-violet-500/50 transition-colors">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-violet-500/20 flex items-center justify-center mb-4 border border-violet-500/30">
+                  <Palette className="text-violet-400" />
                 </div>
-                <div className="flex justify-between items-center px-4">
-                  <div className="space-y-2">
-                    <div className="h-4 w-24 bg-white/10 rounded-md" />
-                    <div className="h-3 w-16 bg-white/5 rounded-md" />
-                  </div>
-                  <div className="px-4 py-2 bg-emerald-500/20 text-emerald-400 font-bold rounded-xl text-sm border border-emerald-500/30 flex items-center gap-2">
-                    <TrendingUp size={16} />
-                    Fırsat Skoru: 95/100
-                  </div>
-                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">AI Tasarım Stüdyosu</h3>
+                <p className="text-zinc-400">gpt-image-1 ve DALL-E 3 entegrasyonları ile saniyeler içinde benzersiz tasarımlar üretin. Arka planı otomatik kaldırın.</p>
               </div>
-            </JourneyStep>
+              <div className="relative mt-8 -mx-8 -mb-8 h-48 overflow-hidden rounded-t-[2rem]">
+                 <Image src="/screenshots/screenshot2.png" alt="AI Design Studio" width={800} height={400} className="w-full h-full object-cover object-top opacity-70 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent" />
+              </div>
+            </div>
 
-            {/* Step 2 */}
-            <JourneyStep 
-              index="2" 
-              title="Yapay Zeka ile Tasarlayın" 
-              description="Fikrinizi saniyeler içinde gerçeğe dönüştürün. Sadece hayal edin ve yazın, yapay zeka sizin için en çok satan tasarımları çizsin."
-              reversed
-            >
-              <div className="h-full relative flex items-center justify-center group">
-                <div className="absolute inset-4 rounded-2xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-4 bg-white/[0.02]">
-                  <Palette size={48} className="text-fuchsia-400 opacity-50 group-hover:scale-110 transition-transform duration-500" />
-                  <div className="h-10 w-3/4 bg-white/5 rounded-full border border-white/10 overflow-hidden relative">
-                    <div className="absolute top-0 left-0 h-full w-2/3 bg-gradient-to-r from-violet-600/50 to-fuchsia-600/50 animate-pulse" />
-                  </div>
-                  <span className="text-xs text-foreground/40 font-mono">/imagine vintage sunset retro car design</span>
+            {/* Feature 2 (Small) */}
+            <div className="rounded-[2rem] bg-zinc-900/50 border border-white/10 p-8 flex flex-col justify-between relative group hover:border-fuchsia-500/50 transition-colors">
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-fuchsia-500/20 flex items-center justify-center mb-4 border border-fuchsia-500/30">
+                  <TrendingUp className="text-fuchsia-400" />
                 </div>
-                {/* Generated Image Illusion */}
-                <div className="absolute inset-8 rounded-xl bg-gradient-to-br from-orange-400/20 to-fuchsia-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-2xl">
-                   <Sparkles className="text-white w-12 h-12 animate-spin-slow" />
-                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Trend Analizi</h3>
+                <p className="text-zinc-400 text-sm">Etsy'de en çok satan ürünleri keşfedin ve popüler temaları kopyalayın.</p>
               </div>
-            </JourneyStep>
+            </div>
 
-            {/* Step 3 */}
-            <JourneyStep 
-              index="3" 
-              title="Otomatik Yayınlayın" 
-              description="Tasarımınızı tek tıkla tişörtlere ve kupalara giydirin. Printify entegrasyonu ile anında Etsy mağazanızda satışa sunun."
-            >
-              <div className="h-full flex items-center justify-center gap-6">
-                <div className="w-32 h-40 rounded-xl bg-white/5 border border-border flex items-center justify-center relative overflow-hidden">
-                   <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80')] bg-cover bg-center opacity-30 grayscale" />
-                   <Box size={32} className="text-white/50 relative z-10" />
+            {/* Feature 3 (Small) */}
+            <div className="rounded-[2rem] bg-zinc-900/50 border border-white/10 p-8 flex flex-col justify-between relative group hover:border-blue-500/50 transition-colors">
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-4 border border-blue-500/30">
+                  <Zap className="text-blue-400" />
                 </div>
-                <div className="flex flex-col items-center gap-2">
-                   <div className="w-2 h-2 rounded-full bg-violet-500 animate-ping" />
-                   <div className="w-16 h-[1px] bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-                </div>
-                <div className="w-32 h-40 rounded-xl bg-gradient-to-br from-violet-600/20 to-fuchsia-600/20 border border-violet-500/30 flex flex-col items-center justify-center gap-3 shadow-[0_0_30px_rgba(139,92,246,0.2)]">
-                   <CheckCircle2 size={32} className="text-fuchsia-400" />
-                   <span className="text-xs font-bold text-fuchsia-300 uppercase tracking-widest">Etsy'de Yayında</span>
-                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Tek Tıkla Yayınla</h3>
+                <p className="text-zinc-400 text-sm">Beğendiğiniz tasarımları doğrudan Printify'a gönderin ve mockup'larla Etsy'de yayınlayın.</p>
               </div>
-            </JourneyStep>
+            </div>
 
-            {/* Step 4 */}
-            <JourneyStep 
-              index="4" 
-              title="Yönetin ve Büyüyün" 
-              description="Arkanıza yaslanın. Siparişlerinizi takip edin, gelirlerinizi analiz edin ve mağazanızı tek bir kokpitten yönetin."
-              reversed
-            >
-              <div className="h-full flex flex-col p-6 gap-4">
-                 <div className="flex justify-between items-end mb-2">
-                    <div className="space-y-1">
-                      <p className="text-xs text-foreground/50 uppercase tracking-wider">Aylık Ciro</p>
-                      <h4 className="text-3xl font-black text-white">$12,450.00</h4>
-                    </div>
-                    <BarChart3 size={32} className="text-violet-400" />
-                 </div>
-                 <div className="space-y-3 flex-1 overflow-hidden">
-                    {[1,2,3].map(i => (
-                      <div key={i} className="bg-white/5 border border-white/5 rounded-xl p-3 flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                           <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                             <TrendingUp size={14} className="text-green-400" />
-                           </div>
-                           <div className="space-y-1">
-                             <div className="h-3 w-20 bg-white/20 rounded-md" />
-                             <div className="h-2 w-12 bg-white/10 rounded-md" />
-                           </div>
-                        </div>
-                        <div className="text-sm font-bold text-white">+$24.99</div>
-                      </div>
-                    ))}
-                 </div>
+            {/* Feature 4 (Large) */}
+            <div className="md:col-span-2 rounded-[2rem] bg-zinc-900/50 border border-white/10 p-8 flex flex-col justify-between overflow-hidden relative group hover:border-emerald-500/50 transition-colors">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-4 border border-emerald-500/30">
+                  <Layers className="text-emerald-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Tasarım Kütüphanesi</h3>
+                <p className="text-zinc-400">Ürettiğiniz tüm başarılı tasarımları tek bir yerde güvenle saklayın. İsterseniz daha sonra farklı ürünlere uygulayın.</p>
               </div>
-            </JourneyStep>
+              <div className="relative mt-8 -mx-8 -mb-8 h-48 overflow-hidden rounded-t-[2rem]">
+                 {/* Fallback to third screenshot or use a placeholder */}
+                 <Image src="/screenshots/screenshot3.jpg" alt="Design Library" width={800} height={400} className="w-full h-full object-cover object-top opacity-70 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent" />
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-violet-900/20" />
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <h2 className="text-4xl md:text-6xl font-extrabold mb-8">PrintySell Bekleme Listesine Katıl!</h2>
-          <p className="text-xl text-foreground/60 mb-10">Sistem açıldığında ilk senin haberin olsun ve anında 50 adet ücretsiz yapay zeka tasarım hakkı kazan.</p>
-          <Link
-            href="/waitlist"
-            className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-2xl bg-foreground text-background font-bold text-xl hover:scale-105 transition-transform"
-          >
-            Ön Kayıt Ol (Bekleme Listesi)
-            <ArrowRight size={24} />
-          </Link>
-        </div>
-      </section>
+        {/* Final CTA Section */}
+        <section className="py-32 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgba(139,92,246,0.15),transparent)] pointer-events-none" />
+          <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+            <h2 className="text-4xl md:text-6xl font-extrabold mb-8 text-white">Yolculuğa Başlamaya Hazır mısın?</h2>
+            <p className="text-xl text-zinc-400 mb-10 max-w-2xl mx-auto">
+              Hemen kaydolun ve PrintySell'in yapay zeka gücüyle Etsy mağazanızı satışa doyurun.
+            </p>
+            <Link
+              href="/waitlist"
+              className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-full bg-white text-black font-bold text-xl shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:shadow-[0_0_50px_rgba(255,255,255,0.5)] hover:scale-105 transition-all"
+            >
+              Hemen Başla
+              <ArrowRight size={24} />
+            </Link>
+          </div>
+        </section>
+      </main>
 
       {/* Footer */}
-      <footer className="border-t border-border py-12 bg-background">
+      <footer className="border-t border-white/10 py-12 bg-black relative z-10">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="PrintySell" className="w-6 h-6 object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
-            <span className="font-bold opacity-50">PrintySell</span>
+            <Image src="/logo.png" alt="PrintySell Logo" width={24} height={24} className="opacity-50 hover:opacity-100 transition-opacity" />
+            <span className="font-bold text-zinc-500">PrintySell</span>
           </div>
-          <p className="text-foreground/40 text-sm">© {new Date().getFullYear()} PrintySell Inc. Tüm hakları saklıdır.</p>
-          <div className="flex gap-4">
-            <Link href="#" className="text-foreground/40 hover:text-foreground text-sm">Kullanım Şartları</Link>
-            <Link href="#" className="text-foreground/40 hover:text-foreground text-sm">Gizlilik</Link>
+          <p className="text-zinc-600 text-sm">© {new Date().getFullYear()} PrintySell Inc. Tüm hakları saklıdır.</p>
+          <div className="flex gap-6">
+            <Link href="#" className="text-zinc-600 hover:text-zinc-300 text-sm transition-colors">Kullanım Şartları</Link>
+            <Link href="#" className="text-zinc-600 hover:text-zinc-300 text-sm transition-colors">Gizlilik</Link>
           </div>
         </div>
       </footer>
-
-      <style jsx global>{`
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up {
-          opacity: 0;
-          animation: fadeInUp 0.8s ease-out forwards;
-        }
-        .animate-spin-slow {
-          animation: spin 3s linear infinite;
-        }
-      `}</style>
     </div>
   );
 }
