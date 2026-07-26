@@ -201,7 +201,7 @@ export default function LandingPage() {
                 />
 
                 {/* Overlapping Floral Output Image perfectly inside the preview box */}
-                <div className="absolute top-[27%] right-[3.5%] w-[44.5%] h-[68%] rounded-[10px] overflow-hidden z-20 border border-white/5 shadow-inner">
+                <div className="absolute top-[30%] right-[7%] w-[40%] h-[60%] rounded-[10px] overflow-hidden z-20 border border-white/5 shadow-inner">
                   <Image 
                     src="/screenshots/step2_overlay.jpg" 
                     alt="AI Üretimi Çıktı" 
