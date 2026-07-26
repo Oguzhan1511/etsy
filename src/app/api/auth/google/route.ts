@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { OAuth2Client } from 'google-auth-library';
 import { Resend } from 'resend';
+import { sendTelegramMessage } from '@/lib/telegram';
 
 const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -53,6 +54,11 @@ export async function POST(req: Request) {
           isVerified: true, // Google accounts are already verified
         },
       });
+
+      // Send Telegram Notification
+      await sendTelegramMessage(
+        `🎉 <b>YENİ ÖN KAYIT (GOOGLE İLE)</b>\n\n👤 <b>İsim:</b> ${user.name}\n📧 <b>E-posta:</b> ${user.email}\n\n<i>Sistemde başarıyla rezerve edildi!</i>`
+      );
 
       // Send Welcome Email
       try {

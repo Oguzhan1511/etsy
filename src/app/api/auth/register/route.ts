@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { Resend } from 'resend';
 import crypto from 'crypto';
+import { sendTelegramMessage } from '@/lib/telegram';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -38,6 +39,11 @@ export async function POST(req: Request) {
         verificationToken,
       },
     });
+
+    // Send Telegram Notification
+    await sendTelegramMessage(
+      `🎉 <b>YENİ ÖN KAYIT (WAITLIST)</b>\n\n👤 <b>İsim:</b> ${user.name}\n📧 <b>E-posta:</b> ${user.email}\n\n<i>Sistemde başarıyla rezerve edildi!</i>`
+    );
 
     // Send the verification email using Resend
     // We construct the verification link based on the request origin (works for both local and prod)
