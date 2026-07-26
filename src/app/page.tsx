@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Sparkles, Search, Palette, Globe, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Sparkles, Search, Palette, Globe, CheckCircle2, Loader2 } from "lucide-react";
 
 // Intersection Observer Hook for Scroll Animations
 function useOnScreen(ref: any, rootMargin = "0px") {
@@ -36,6 +36,74 @@ const FadeInContent = ({ children, delay = 0 }: { children: React.ReactNode, del
       style={{ transitionDelay: `${delay}ms` }}
     >
       {children}
+    </div>
+  );
+};
+
+const InteractiveStep2 = () => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isGenerated, setIsGenerated] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    timerRef.current = setTimeout(() => {
+      setIsGenerated(true);
+    }, 1500); // 1.5 saniye sonra resmi göster
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setIsGenerated(false);
+    if (timerRef.current) clearTimeout(timerRef.current);
+  };
+
+  return (
+    <div 
+      className="flex-1 relative w-full group cursor-pointer"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <FadeInContent delay={200}>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-violet-500/10 blur-[80px] rounded-full -z-10 transition-all duration-700 group-hover:bg-violet-500/20" />
+        
+        {/* Base AI Studio Image */}
+        <Image 
+          src="/screenshots/step2_base.png" 
+          alt="Yapay Zeka Tasarım Stüdyosu" 
+          width={800} height={600} 
+          className="rounded-2xl border border-white/10 shadow-2xl w-full h-auto relative z-10 transition-transform duration-500 group-hover:scale-[1.02]"
+        />
+
+        {/* Dynamic Overlay Box */}
+        <div className="absolute top-[30%] right-[7%] w-[40%] h-[60%] rounded-[10px] overflow-hidden z-20 shadow-inner flex items-center justify-center transition-all duration-300">
+          
+          {/* Default Empty State (Transparent) */}
+          <div className={`absolute inset-0 bg-transparent transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`} />
+
+          {/* Loading State */}
+          <div className={`absolute inset-0 bg-[#0c0c0c]/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3 transition-opacity duration-300 ${isHovered && !isGenerated ? 'opacity-100' : 'opacity-0'}`}>
+            <Loader2 size={32} className="text-violet-500 animate-spin" />
+            <span className="text-violet-400 font-bold text-sm tracking-widest uppercase animate-pulse">Üretiliyor...</span>
+          </div>
+
+          {/* Generated Result State */}
+          <div className={`absolute inset-0 transition-opacity duration-700 ${isGenerated ? 'opacity-100' : 'opacity-0'}`}>
+            <Image 
+              src="/screenshots/step2_overlay.jpg" 
+              alt="AI Üretimi Çıktı" 
+              fill
+              className="object-cover"
+            />
+            {/* Success Badge */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-1.5 shadow-lg">
+              <Sparkles size={12} className="text-emerald-400" />
+              <span className="text-white text-[10px] font-bold">Tasarım Hazır</span>
+            </div>
+          </div>
+          
+        </div>
+      </FadeInContent>
     </div>
   );
 };
@@ -188,30 +256,7 @@ export default function LandingPage() {
                 </ul>
               </FadeInContent>
             </div>
-            <div className="flex-1 relative w-full group">
-              <FadeInContent delay={200}>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-violet-500/10 blur-[80px] rounded-full -z-10" />
-                
-                {/* Base AI Studio Image */}
-                <Image 
-                  src="/screenshots/step2_base.png" 
-                  alt="Yapay Zeka Tasarım Stüdyosu" 
-                  width={800} height={600} 
-                  className="rounded-2xl border border-white/10 shadow-2xl w-full h-auto relative z-10"
-                />
-
-                {/* Overlapping Floral Output Image perfectly inside the preview box */}
-                <div className="absolute top-[30%] right-[7%] w-[40%] h-[60%] rounded-[10px] overflow-hidden z-20 border border-white/5 shadow-inner">
-                  <Image 
-                    src="/screenshots/step2_overlay.jpg" 
-                    alt="AI Üretimi Çıktı" 
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-
-              </FadeInContent>
-            </div>
+              <InteractiveStep2 />
           </div>
 
           {/* STEP 3 */}
