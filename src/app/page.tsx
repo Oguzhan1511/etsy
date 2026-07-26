@@ -177,17 +177,17 @@ export default function LandingPage() {
           </FadeInContent>
 
           <FadeInContent delay={200}>
-            <div className="relative max-w-6xl mx-auto mt-8">
+            <div className="relative max-w-7xl mx-auto mt-8">
               {/* Background Glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-violet-600/20 blur-[120px] rounded-full -z-10" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[80%] bg-violet-600/20 blur-[120px] rounded-full -z-10" />
               
-              <div className="rounded-2xl border border-white/10 bg-[#18181b] p-2 shadow-2xl shadow-black">
+              <div className="rounded-2xl border border-white/10 bg-[#09090b] shadow-[0_0_80px_rgba(139,92,246,0.15)]">
                 <Image 
-                  src="/screenshots/screenshot1.png" 
-                  alt="PrintySell Ana Ekranı" 
-                  width={1400} 
-                  height={900} 
-                  className="rounded-xl w-full h-auto object-cover border border-white/5"
+                  src="/screenshots/hero_diagram.png" 
+                  alt="PrintySell Otomasyon Akışı" 
+                  width={1600} 
+                  height={800} 
+                  className="rounded-2xl w-full h-auto object-cover"
                   priority
                 />
               </div>
