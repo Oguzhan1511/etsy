@@ -161,7 +161,7 @@ export default function LandingPage() {
               <FadeInContent delay={200}>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-blue-500/10 blur-[80px] rounded-full -z-10" />
                 <Image 
-                  src="/screenshots/screenshot2.png" 
+                  src="/screenshots/screenshot2_v2.png" 
                   alt="Trend Analizi Ekranı" 
                   width={800} height={600} 
                   className="rounded-2xl border border-white/10 shadow-2xl w-full h-auto"
