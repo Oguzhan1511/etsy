@@ -135,6 +135,7 @@ export default function LandingPage() {
             <Image src="/logo.png" alt="PrintySell Logo" width={36} height={36} className="object-contain" />
             <span className="text-xl font-bold tracking-tight text-white">PrintySell</span>
           </div>
+          <div className="flex items-center gap-6">
             <Link
               href="/waitlist"
               className="text-sm font-bold bg-white text-black px-6 py-2.5 rounded-full hover:bg-zinc-200 transition-transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
