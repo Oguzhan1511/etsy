@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useSearchParams } from "next/navigation";
 import {
   User,
   Settings,
@@ -22,7 +23,7 @@ import { useLanguage } from "@/context/LanguageContext";
 
 type Tab = "profile" | "settings" | "plan";
 
-export default function SettingsPage() {
+function SettingsContent() {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
@@ -45,29 +46,32 @@ export default function SettingsPage() {
   const [language, setLanguage] = useState("Türkçe");
   const [twoFactor, setTwoFactor] = useState(false);
   const [etsyConnected, setEtsyConnected] = useState(false);
+  const [etsyShopName, setEtsyShopName] = useState<string | null>(null);
   const [printifyConnected, setPrintifyConnected] = useState(false);
   const [printifyApiKey, setPrintifyApiKey] = useState("");
+  const searchParams = useSearchParams();
 
-  React.useEffect(() => {
-    // Check Etsy connection
-    fetch('/api/etsy/shop')
-      .then(res => {
-        if (res.ok) {
-          setEtsyConnected(true);
-        }
-      })
-      .catch(console.error);
+  useEffect(() => {
+    const etsyOk = searchParams.get('etsy_connected');
+    const etsyErr = searchParams.get('etsy_error');
+    if (etsyOk === 'true') setEtsyConnected(true);
+    else if (etsyErr) setEtsyConnected(false);
+
+    if (user?.id) {
+      fetch('/api/etsy/shop', { headers: { 'x-user-id': user.id } })
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) { setEtsyConnected(true); setEtsyShopName(String(data.shop_name)); }
+          else setEtsyConnected(false);
+        })
+        .catch(() => setEtsyConnected(false));
+    }
 
     if (typeof window !== "undefined") {
       const savedToken = localStorage.getItem("printify_api_token");
-      if (savedToken) {
-        setTimeout(() => {
-          setPrintifyApiKey(savedToken);
-          setPrintifyConnected(true);
-        }, 0);
-      }
+      if (savedToken) { setTimeout(() => { setPrintifyApiKey(savedToken); setPrintifyConnected(true); }, 0); }
     }
-  }, []);
+  }, [user?.id, searchParams]);
 
   const handleSaveProfile = () => {
     setSaved(true);
@@ -349,36 +353,24 @@ export default function SettingsPage() {
               {/* Etsy Integration */}
               <div className="flex items-center justify-between p-3 bg-black/20 rounded-xl border border-border">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#F56400] flex items-center justify-center font-serif font-bold text-foreground text-lg">
-                    E
-                  </div>
+                  <div className="w-8 h-8 rounded-full bg-[#F56400] flex items-center justify-center font-serif font-bold text-foreground text-lg">E</div>
                   <div>
                     <h4 className="text-sm font-bold text-foreground">Etsy</h4>
-                    <p className="text-[10px] text-secondary">{t("settings.etsyDesc")}</p>
+                    <p className="text-[10px] text-secondary">
+                      {etsyConnected && etsyShopName ? `Bağlı: ${etsyShopName}` : t("settings.etsyDesc")}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => {
-                      if (!etsyConnected) {
-                        if (user?.id) {
-                          window.location.href = `/api/etsy/auth?userId=${user.id}`;
-                        } else {
-                          alert("Kullanıcı oturumu bulunamadı.");
-                        }
-                      } else {
-                        // Disconnect logic (for now just toggle UI)
-                        setEtsyConnected(false);
-                      }
-                    }}
-                    className={`px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                      etsyConnected 
-                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30" 
-                        : "bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20"
-                    }`}
-                  >
-                    {etsyConnected ? t("settings.disconnect") : t("settings.connect")}
-                  </button>
+                  {etsyConnected ? (
+                    <button onClick={() => setEtsyConnected(false)} className="px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30">
+                      {t("settings.disconnect")}
+                    </button>
+                  ) : (
+                    <a href={user?.id ? `/api/etsy/auth?userId=${user.id}` : '#'} className="px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer bg-orange-500/10 text-orange-400 border border-orange-500/30 hover:bg-orange-500/20">
+                      {t("settings.connect")}
+                    </a>
+                  )}
                   <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_10px] ${etsyConnected ? 'bg-emerald-400 shadow-emerald-400/80' : 'bg-red-500 shadow-red-500/80'}`} />
                 </div>
               </div>
@@ -569,5 +561,13 @@ function SettingRow({
         />
       </button>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <React.Suspense fallback={<div className="p-8 text-secondary text-sm">Yükleniyor...</div>}>
+      <SettingsContent />
+    </React.Suspense>
   );
 }

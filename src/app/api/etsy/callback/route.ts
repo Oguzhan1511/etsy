@@ -5,10 +5,9 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
-  const state = searchParams.get('state');
 
   if (error) {
-    return NextResponse.redirect(new URL(`/?etsy_error=${error}`, request.url));
+    return NextResponse.redirect(new URL(`/settings?etsy_error=${error}`, request.url));
   }
 
   if (!code) {
@@ -16,42 +15,26 @@ export async function GET(request: Request) {
   }
 
   const clientId = process.env.ETSY_API_KEY;
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  const host = request.headers.get('host');
-  const dynamicRedirectUri = `${protocol}://${host}/api/etsy/callback`;
-  const redirectUri = process.env.ETSY_REDIRECT_URI && process.env.ETSY_REDIRECT_URI.includes('localhost') && process.env.NODE_ENV === 'production' 
-    ? dynamicRedirectUri 
-    : (process.env.ETSY_REDIRECT_URI || dynamicRedirectUri);
-  
-  // Try to get cookie from request directly
-  const cookieStore = request.headers.get('cookie') || '';
-  let codeVerifier = '';
-  const verifierMatch = cookieStore.match(/etsy_code_verifier=([^;]+)/);
-  if (verifierMatch) {
-    codeVerifier = verifierMatch[1];
-  }
+  const redirectUri = process.env.ETSY_REDIRECT_URI;
 
-  let cookieState = '';
-  const stateMatch = cookieStore.match(/etsy_oauth_state=([^;]+)/);
-  if (stateMatch) {
-    cookieState = stateMatch[1];
-  }
+  const cookieHeader = request.headers.get('cookie') || '';
+  const getcookie = (name: string) => {
+    const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
+    return match ? decodeURIComponent(match[1]) : null;
+  };
 
-  if (state !== cookieState) {
-    console.error("Etsy OAuth State Mismatch", { state, cookieState });
-    return NextResponse.redirect(new URL('/?etsy_error=state_mismatch', request.url));
-  }
+  const codeVerifier = getcookie('etsy_code_verifier');
+  const userId = getcookie('etsy_pending_user_id');
 
-  if (!clientId || !redirectUri || !codeVerifier) {
-    return NextResponse.json({ error: "Missing configuration or code_verifier session" }, { status: 500 });
+  if (!clientId || !redirectUri || !codeVerifier || !userId) {
+    console.error("Missing config:", { clientId: !!clientId, redirectUri: !!redirectUri, codeVerifier: !!codeVerifier, userId: !!userId });
+    return NextResponse.redirect(new URL('/settings?etsy_error=missing_config', request.url));
   }
 
   try {
     const tokenResponse = await fetch('https://api.etsy.com/v3/public/oauth/token', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: clientId,
@@ -65,38 +48,33 @@ export async function GET(request: Request) {
 
     if (!tokenResponse.ok) {
       console.error("Etsy OAuth Error:", data);
-      return NextResponse.redirect(new URL('/?etsy_error=oauth_failed', request.url));
+      return NextResponse.redirect(new URL('/settings?etsy_error=oauth_failed', request.url));
     }
 
-  // Save tokens to our database using Prisma for the specific user
-  const expiresAt = new Date(Date.now() + data.expires_in * 1000);
+    const expiresAt = new Date(Date.now() + data.expires_in * 1000);
 
-  // Retrieve the user ID that initiated the request
-  const userIdMatch = cookieStore.match(/etsy_oauth_userid=([^;]+)/);
-  const userId = userIdMatch ? userIdMatch[1] : null;
+    await prisma.etsyToken.upsert({
+      where: { userId },
+      update: {
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+        expiresAt,
+      },
+      create: {
+        userId,
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+        expiresAt,
+      },
+    });
 
-  if (!userId) {
-    return NextResponse.redirect(new URL('/?etsy_error=missing_user_session', request.url));
-  }
+    const response = NextResponse.redirect(new URL('/settings?etsy_connected=true', request.url));
+    response.cookies.set('etsy_code_verifier', '', { maxAge: 0, path: '/' });
+    response.cookies.set('etsy_pending_user_id', '', { maxAge: 0, path: '/' });
+    return response;
 
-  await prisma.etsyToken.upsert({
-    where: { userId: userId },
-    update: {
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-      expiresAt,
-    },
-    create: {
-      userId: userId,
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-      expiresAt,
-    },
-  });
-
-  return NextResponse.redirect(new URL('/settings?etsy_connected=true', request.url));
-} catch (err) {
+  } catch (err) {
     console.error('Error exchanging Etsy token:', err);
-    return NextResponse.redirect(new URL('/?etsy_error=internal_error', request.url));
+    return NextResponse.redirect(new URL('/settings?etsy_error=internal_error', request.url));
   }
 }

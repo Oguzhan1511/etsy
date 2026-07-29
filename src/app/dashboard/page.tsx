@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   Package,
   CheckCircle,
@@ -18,7 +19,6 @@ import {
   ArrowRight
 } from "lucide-react";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
 import {
   AreaChart,
   Area,
@@ -253,6 +253,17 @@ export default function SellerDashboard() {
   const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly" | "allTime">("weekly");
   const [selectedMetric, setSelectedMetric] = useState<string>("Sales");
   const [shopData, setShopData] = useState<ShopData | null>(null);
+  const [etsyLoading, setEtsyLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    setEtsyLoading(true);
+    fetch('/api/etsy/shop', { headers: { 'x-user-id': user.id } })
+      .then(res => res.json())
+      .then(data => { if (!data.error) setShopData(data); })
+      .catch(console.error)
+      .finally(() => setEtsyLoading(false));
+  }, [user?.id]);
   
   // Real Data States
   const [realOrders, setRealOrders] = useState<ActiveOrder[]>(activeOrders);
@@ -262,14 +273,6 @@ export default function SellerDashboard() {
   const [realRevenue, setRealRevenue] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch Shop Data
-    fetch('/api/etsy/shop')
-      .then(res => res.json())
-      .then(data => {
-        if (!data.error) setShopData(data);
-      })
-      .catch(console.error);
-
     // Fetch Orders Data
     fetch('/api/etsy/orders')
       .then(res => res.json())
@@ -394,18 +397,23 @@ export default function SellerDashboard() {
 
           {/* Sync Connection state */}
           <div className="flex items-center gap-2">
-            {!shopData ? (
-              <a href={`/api/etsy/auth?userId=${user?.id}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs transition-colors shadow-lg">
+            {!etsyLoading && !shopData && user?.id && (
+              <a
+                href={`/api/etsy/auth?userId=${user.id}`}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs transition-colors shadow-lg"
+              >
                 {t("sellerDashboard.connectEtsyStore")}
               </a>
-            ) : null}
+            )}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-border text-xs">
               <div className={`w-2 h-2 rounded-full ${shopData ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-            <span className="text-secondary">{t("sellerDashboard.etsySync")}</span>
-            <span className="text-foreground font-bold">StarSeller_Store_1</span>
+              <span className="text-secondary">{t("sellerDashboard.etsySync")}</span>
+              <span className="text-foreground font-bold">
+                {shopData ? String(shopData.shop_name) : (etsyLoading ? '...' : 'Not Connected')}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
       </div>
 
       {/* Aktif Siparişler (Active Orders Grid) */}

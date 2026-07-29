@@ -5,7 +5,6 @@ import { Resend } from 'resend';
 import { sendTelegramMessage } from '@/lib/telegram';
 
 const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
@@ -63,6 +62,7 @@ export async function POST(req: Request) {
       // Send Welcome Email
       try {
         const origin = new URL(req.url).origin;
+        const resend = new Resend(process.env.RESEND_API_KEY);
         await resend.emails.send({
           from: 'PrintySell <destek@printysell.com>',
           to: [user.email],

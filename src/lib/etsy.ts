@@ -1,15 +1,20 @@
 import { prisma } from './prisma';
 
+/**
+ * Returns a valid Etsy access token for the given user.
+ * Automatically refreshes the token if it's about to expire.
+ */
 export async function getValidEtsyToken(userId: string): Promise<string | null> {
+  if (!userId) return null;
+
   const tokenRecord = await prisma.etsyToken.findUnique({ where: { userId } });
-  
+
   if (!tokenRecord) {
     return null;
   }
 
   // Check if token is expired or expires within 5 minutes
   if (tokenRecord.expiresAt.getTime() - Date.now() < 5 * 60 * 1000) {
-    // Refresh the token
     const clientId = process.env.ETSY_API_KEY;
     if (!clientId) return null;
 
@@ -25,8 +30,8 @@ export async function getValidEtsyToken(userId: string): Promise<string | null> 
       });
 
       if (!response.ok) {
-        console.error("Failed to refresh Etsy token");
-        return null; // Force re-auth
+        console.error("Failed to refresh Etsy token for user:", userId);
+        return null;
       }
 
       const data = await response.json();
@@ -43,10 +48,17 @@ export async function getValidEtsyToken(userId: string): Promise<string | null> 
 
       return data.access_token;
     } catch (err) {
-      console.error("Error refreshing token:", err);
+      console.error("Error refreshing Etsy token:", err);
       return null;
     }
   }
 
   return tokenRecord.accessToken;
+}
+
+/**
+ * Extracts userId from the x-user-id header of a request.
+ */
+export function getUserIdFromRequest(request: Request): string | null {
+  return request.headers.get('x-user-id') || null;
 }

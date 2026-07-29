@@ -10,6 +10,7 @@ import {
   Search
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface Order {
   id: string;
@@ -27,44 +28,45 @@ interface Order {
 
 export default function OrdersPage() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [filter, setFilter] = useState<string>("All");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [etsyConnected, setEtsyConnected] = useState<boolean | null>(null);
 
   useEffect(() => {
-    fetch('/api/etsy/orders')
+    if (!user?.id) { setLoading(false); return; }
+    fetch('/api/etsy/orders', { headers: { 'x-user-id': user.id } })
       .then(res => res.json())
       .then(data => {
-        if (!data.error && Array.isArray(data)) {
-          const formatted = data.map((rawItem: unknown) => {
-            const item = rawItem as Record<string, unknown>;
-            const txs = item.transactions as Array<Record<string, unknown>>;
-            const transaction = txs && txs[0] ? txs[0] : null;
-            const status = item.is_shipped ? "Shipped" : "Processing";
-            const createdTimestamp = item.created_timestamp as number;
-            const orderedTime = new Date(createdTimestamp * 1000).toLocaleString();
-            
-            return {
-              id: String(item.receipt_id),
-              orderId: `#ET-${item.receipt_id}`,
-              buyerName: String(item.name || "Unknown"),
-              email: item.buyer_email ? String(item.buyer_email) : "N/A",
-              product: transaction ? String(transaction.title) : "Unknown Product",
-              image: "", // Orders endpoint does not easily include images without a lot of extra calls, leaving blank or placeholder for now
-              price: `$${(Number((item.grandtotal as Record<string, number>)?.amount) / Number((item.grandtotal as Record<string, number>)?.divisor)).toFixed(2)}`,
-              orderedTime,
-              shipBy: "Pending",
-              status: status as Order["status"],
-              shippingAddress: String(item.formatted_address),
-            };
-          });
-          setOrders(formatted);
-        }
+        if (data.error) { setEtsyConnected(false); return; }
+        const results = Array.isArray(data.results) ? data.results : (Array.isArray(data) ? data : []);
+        setEtsyConnected(true);
+        const formatted = results.map((rawItem: unknown) => {
+          const item = rawItem as Record<string, unknown>;
+          const txs = item.transactions as Array<Record<string, unknown>>;
+          const transaction = txs && txs[0] ? txs[0] : null;
+          const createdTimestamp = item.created_timestamp as number;
+          return {
+            id: String(item.receipt_id),
+            orderId: `#ET-${item.receipt_id}`,
+            buyerName: String(item.name || "Unknown"),
+            email: item.buyer_email ? String(item.buyer_email) : "N/A",
+            product: transaction ? String(transaction.title) : "Unknown Product",
+            image: "",
+            price: `$${(Number((item.grandtotal as Record<string, number>)?.amount) / Number((item.grandtotal as Record<string, number>)?.divisor)).toFixed(2)}`,
+            orderedTime: new Date(createdTimestamp * 1000).toLocaleString(),
+            shipBy: "Pending",
+            status: (item.is_shipped ? "Shipped" : "Processing") as Order["status"],
+            shippingAddress: String(item.formatted_address || ""),
+          };
+        });
+        setOrders(formatted);
       })
-      .catch(console.error)
+      .catch(() => setEtsyConnected(false))
       .finally(() => setLoading(false));
-  }, []);
+  }, [user?.id]);
 
   const handleShipOrder = (id: string) => {
     setOrders(prev =>
@@ -95,6 +97,22 @@ export default function OrdersPage() {
           </p>
         </div>
       </div>
+
+      {/* Etsy Not Connected Banner */}
+      {etsyConnected === false && user?.id && (
+        <div className="bg-orange-500/10 border border-orange-500/30 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center font-bold text-orange-400 text-lg">E</div>
+            <div>
+              <p className="text-sm font-bold text-foreground">Etsy Mağazanız Bağlı Değil</p>
+              <p className="text-xs text-orange-300/80 mt-0.5">Siparişlerinizi görmek için Etsy mağazanızı bağlayın.</p>
+            </div>
+          </div>
+          <a href={`/api/etsy/auth?userId=${user.id}`} className="shrink-0 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-colors shadow-lg">
+            Etsy Mağazanı Bağla
+          </a>
+        </div>
+      )}
 
       {/* Stats row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

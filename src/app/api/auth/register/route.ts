@@ -5,7 +5,7 @@ import { Resend } from 'resend';
 import crypto from 'crypto';
 import { sendTelegramMessage } from '@/lib/telegram';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 export async function POST(req: Request) {
   try {
@@ -51,6 +51,7 @@ export async function POST(req: Request) {
     const origin = `${url.protocol}//${url.host}`;
     const verifyLink = `${origin}/verify?token=${verificationToken}`;
 
+    const resend = new Resend(process.env.RESEND_API_KEY);
     const { error: emailError } = await resend.emails.send({
       from: 'PrintySell <destek@printysell.com>',
       to: [user.email],

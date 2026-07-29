@@ -2,63 +2,55 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
 export async function GET(request: Request) {
-  const clientId = process.env.ETSY_API_KEY;
-  
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  const host = request.headers.get('host');
-  const dynamicRedirectUri = `${protocol}://${host}/api/etsy/callback`;
-  const redirectUri = process.env.ETSY_REDIRECT_URI && process.env.ETSY_REDIRECT_URI.includes('localhost') && process.env.NODE_ENV === 'production' 
-    ? dynamicRedirectUri 
-    : (process.env.ETSY_REDIRECT_URI || dynamicRedirectUri);
-  
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get('userId');
 
+  const clientId = process.env.ETSY_API_KEY;
+  const redirectUri = process.env.ETSY_REDIRECT_URI;
+
   if (!clientId || !redirectUri) {
-    return NextResponse.json({ error: "Etsy credentials not configured" }, { status: 500 });
+    return NextResponse.json({ error: "Etsy credentials not configured in .env.local" }, { status: 500 });
   }
-  
+
   if (!userId) {
-    return NextResponse.json({ error: "User ID is missing" }, { status: 400 });
+    return NextResponse.json({ error: "userId is required" }, { status: 400 });
   }
 
   const codeVerifier = crypto.randomBytes(32).toString('base64url');
-  
-  // Generate a random state string to prevent CSRF (Required by Etsy)
-  const state = crypto.randomBytes(16).toString('hex');
-
-  // Create the code challenge using SHA-256
   const codeChallenge = crypto
     .createHash('sha256')
     .update(codeVerifier)
     .digest('base64url');
 
-  const response = NextResponse.redirect(
-    `https://www.etsy.com/oauth/connect?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
-      redirectUri
-    )}&scope=email_r%20listings_r%20listings_w%20transactions_r%20transactions_w%20profile_r%20profile_w%20shops_r%20shops_w&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`
-  );
+  const scopes = [
+    'email_r',
+    'listings_r',
+    'listings_w',
+    'listings_d',
+    'orders_r',
+    'orders_w',
+    'profile_r',
+    'profile_w',
+    'shops_r',
+    'shops_w',
+    'transactions_r',
+    'billing_r',
+    'feedback_r',
+  ].join('%20');
 
-  response.cookies.set('etsy_oauth_state', state, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: 60 * 10,
-  });
+  const authUrl = `https://www.etsy.com/oauth/connect?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scopes}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
 
-  response.cookies.set('etsy_code_verifier', codeVerifier, {
+  const response = NextResponse.redirect(authUrl);
+
+  const cookieOpts = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     path: '/',
     maxAge: 60 * 10,
-  });
-  
-  response.cookies.set('etsy_oauth_userid', userId, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: 60 * 10,
-  });
+  };
+
+  response.cookies.set('etsy_code_verifier', codeVerifier, cookieOpts);
+  response.cookies.set('etsy_pending_user_id', userId, cookieOpts);
 
   return response;
 }

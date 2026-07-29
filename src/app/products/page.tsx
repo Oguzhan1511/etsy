@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import {
   Package,
   Search,
@@ -64,9 +65,11 @@ interface PrintifyProduct {
 
 export default function ProductsPage() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const router = useRouter();
   const [products, setProducts] = useState<ListingProduct[]>([]);
   const [printifyDrafts, setPrintifyDrafts] = useState<PrintifyProduct[]>([]);
+  const [etsyConnected, setEtsyConnected] = useState<boolean | null>(null);
   
   const [loading, setLoading] = useState(true);
   const [loadingDrafts, setLoadingDrafts] = useState(false);
@@ -77,57 +80,57 @@ export default function ProductsPage() {
     setTimeout(() => setToast({ message: "", visible: false }), 4000);
   };
 
+  // Fetch Printify products
   useEffect(() => {
     const token = localStorage.getItem("printify_api_key") || "";
-    fetch('/api/printify?action=products', {
-      headers: { "x-printify-api-key": token }
-    })
+    fetch('/api/printify?action=products', { headers: { "x-printify-api-key": token } })
       .then(res => res.json())
       .then(data => {
         let allProducts = [];
-        if (Array.isArray(data.data)) {
-           allProducts = data.data;
-        } else if (Array.isArray(data)) {
-           allProducts = data;
-        }
-        
-        if (allProducts) {
-           // Published products have an external.id. Unpublished (drafts) have external.id == '' or null.
-           const isPublished = (p: any) => p.external && p.external.id && p.external.id !== "";
-           
-           // Map Printify products to ListingProduct for Active tab (which uses ListingProduct rendering)
-           const formatted = allProducts.filter(isPublished).map((item: any) => {
-             return {
-                id: String(item.id),
-                title: String(item.title),
-                status: "Active" as "Active",
-                sku: "PRINTIFY-" + item.id,
-                image: item.images?.[0]?.src || "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80",
-                salesCount: 0,
-                cartCount: 0,
-                favoritesCount: 0,
-                revenue: 0,
-                profit: 0,
-                description: String(item.description || ""),
-                tags: (item.tags as string[]) || [],
-                images: item.images?.map((img: any, idx: number) => ({ id: String(idx), url: img.src, active: idx === 0 })) || []
-             };
-           });
-           setProducts(formatted);
-
-           // Store inactive directly as Printify drafts
-           const drafts = allProducts.filter((p: any) => !isPublished(p));
-           setPrintifyDrafts(drafts);
-        } else {
-           showToast(t("products.fetchPrintifyDraftsError"), "error");
-        }
+        if (Array.isArray(data.data)) allProducts = data.data;
+        else if (Array.isArray(data)) allProducts = data;
+        if (allProducts.length > 0) {
+          const isPublished = (p: any) => p.external && p.external.id && p.external.id !== "";
+          const formatted = allProducts.filter(isPublished).map((item: any) => ({
+            id: String(item.id), title: String(item.title), status: "Active" as "Active",
+            sku: "PRINTIFY-" + item.id, image: item.images?.[0]?.src || "",
+            salesCount: 0, cartCount: 0, favoritesCount: 0, revenue: 0, profit: 0,
+            description: String(item.description || ""), tags: (item.tags as string[]) || [],
+            images: item.images?.map((img: any, idx: number) => ({ id: String(idx), url: img.src, active: idx === 0 })) || []
+          }));
+          setProducts(prev => { const ids = new Set(prev.map(p => p.id)); return [...prev, ...formatted.filter((p: any) => !ids.has(p.id))]; });
+          setPrintifyDrafts(allProducts.filter((p: any) => !isPublished(p)));
+        } else { showToast(t("products.fetchPrintifyDraftsError"), "error"); }
       })
       .catch(console.error)
-      .finally(() => {
-        setLoading(false);
-        setLoadingDrafts(false);
-      });
+      .finally(() => { setLoading(false); setLoadingDrafts(false); });
   }, []);
+
+  // Fetch Etsy listings
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch('/api/etsy/listings', { headers: { 'x-user-id': user.id } })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) { setEtsyConnected(false); return; }
+        setEtsyConnected(true);
+        const results = Array.isArray(data.results) ? data.results : [];
+        if (results.length > 0) {
+          const etsyFormatted: ListingProduct[] = results.map((item: any) => ({
+            id: `etsy-${item.listing_id}`, title: String(item.title || ""),
+            status: item.state === "active" ? "Active" as "Active" : "Inactive" as "Inactive",
+            sku: `ETSY-${item.listing_id}`,
+            image: item.images?.[0]?.url_fullxfull || item.images?.[0]?.url_570xN || "",
+            salesCount: item.stats?.total_sales || 0, cartCount: item.stats?.total_views || 0,
+            favoritesCount: item.num_favorers || 0, revenue: 0, profit: 0,
+            description: String(item.description || ""), tags: (item.tags as string[]) || [],
+            images: item.images?.map((img: any, idx: number) => ({ id: String(idx), url: img.url_fullxfull || img.url_570xN || "", active: idx === 0 })) || [],
+          }));
+          setProducts(prev => { const ids = new Set(prev.map(p => p.id)); return [...etsyFormatted.filter(p => !ids.has(p.id)), ...prev]; });
+        }
+      })
+      .catch(() => setEtsyConnected(false));
+  }, [user?.id]);
 
   const [filterTab, setFilterTab] = useState<"Active" | "Inactive">("Active");
   const [searchTerm, setSearchTerm] = useState<string>("");
