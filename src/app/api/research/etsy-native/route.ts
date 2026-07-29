@@ -179,8 +179,11 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
     }
   });
 
-  const results = await Promise.all(fetchPromises);
-  return results.filter(Boolean);
+  let results = await Promise.all(fetchPromises);
+  results = results.filter(Boolean);
+
+  // Sadece Fırsat Skoru 90 ve üzeri olanları getir
+  return results.filter(p => p && p.opportunityScore >= 90);
 }
 
 // ----------------------------
