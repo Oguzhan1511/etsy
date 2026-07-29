@@ -1,7 +1,7 @@
 import { prisma } from './prisma';
 
-export async function getValidEtsyToken(): Promise<string | null> {
-  const tokenRecord = await prisma.etsyToken.findUnique({ where: { id: 1 } });
+export async function getValidEtsyToken(userId: string): Promise<string | null> {
+  const tokenRecord = await prisma.etsyToken.findUnique({ where: { userId } });
   
   if (!tokenRecord) {
     return null;
@@ -33,7 +33,7 @@ export async function getValidEtsyToken(): Promise<string | null> {
       const expiresAt = new Date(Date.now() + data.expires_in * 1000);
 
       await prisma.etsyToken.update({
-        where: { id: 1 },
+        where: { userId },
         data: {
           accessToken: data.access_token,
           refreshToken: data.refresh_token,

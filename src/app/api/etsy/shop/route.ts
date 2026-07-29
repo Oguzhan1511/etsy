@@ -1,15 +1,32 @@
 import { NextResponse } from 'next/server';
 import { getValidEtsyToken } from '@/lib/etsy';
+import { jwtVerify } from 'jose';
 
-export async function GET() {
-  const token = await getValidEtsyToken();
-  const clientId = process.env.ETSY_API_KEY;
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
 
-  if (!token || !clientId) {
-    return NextResponse.json({ error: "Not authenticated with Etsy" }, { status: 401 });
-  }
-
+export async function GET(request: Request) {
   try {
+    const cookieStore = request.headers.get('cookie') || '';
+    let authToken = '';
+    const match = cookieStore.match(/auth_token=([^;]+)/);
+    if (match) {
+      authToken = match[1];
+    }
+
+    if (!authToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { payload } = await jwtVerify(authToken, JWT_SECRET);
+    const userId = payload.id as string;
+
+    const token = await getValidEtsyToken(userId);
+    const clientId = process.env.ETSY_API_KEY;
+
+    if (!token || !clientId) {
+      return NextResponse.json({ error: "Not authenticated with Etsy" }, { status: 401 });
+    }
+
     // 1. Get the current user
     const meRes = await fetch('https://api.etsy.com/v3/application/users/me', {
       headers: {
