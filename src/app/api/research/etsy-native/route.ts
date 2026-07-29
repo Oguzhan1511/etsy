@@ -72,10 +72,12 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
     
     const viewVelocity = views / daysAlive;
     const favVelocity = favs / daysAlive;
-    const estimatedSales24h = (viewVelocity * 0.03) + (favVelocity * 0.25);
 
-    // Koşul: 24 saatte satış almış olma potansiyeli veya 20'den fazla görüntülenme
-    return views > 20 || estimatedSales24h >= 0.5;
+    // Etsy "Bestseller" veya "Popular Now" kartı alma potansiyeli olan ürünler:
+    // Günde en az 3 görüntülenme veya günde en az 0.5 favori veya 500+ toplam görüntülenme
+    const hasEtsyBadgePotential = viewVelocity >= 3 || favVelocity >= 0.5 || views > 500;
+    
+    return hasEtsyBadgePotential;
   });
 
   rawListings.sort((a, b) => {
@@ -157,7 +159,7 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
 
       let score = Math.min(99, Math.floor(finalScore));
 
-      const isBestseller = estimatedSales24h >= 2 || viewVelocity > 7 || score >= 90;
+      const isBestseller = estimatedSales24h >= 1 || viewVelocity >= 3 || favVelocity >= 0.5 || score >= 85 || views > 500;
       if (isBestseller) score = Math.min(99, score + Math.floor(Math.random() * 2 + 1));
 
       return {
