@@ -191,43 +191,7 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
   return results;
 }
 
-// ----------------------------
-// SIMULATION MODE: Used when user has no Etsy token
-// ----------------------------
-function generateSimulatedProducts(keyword: string) {
-  const lowerKw = keyword.trim().toLowerCase();
-  const hash = lowerKw.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-
-  const adjectives = ['Premium', 'Custom', 'Personalized', 'Vintage', 'Aesthetic', 'Minimalist', 'Handmade'];
-  const shopNames = ['StudioCrafts', 'DesignLab', 'CreativeVibes', 'ArtisanGoods', 'PrintysellShop'];
-
-  return Array.from({ length: 12 }, (_, index) => {
-    const pHash = hash + index;
-    const isBestseller = pHash % 3 === 0;
-    const views = 500 + (pHash % 5000);
-    const favs = Math.floor(views * (0.05 + (pHash % 10) / 100));
-    const price = 15 + (pHash % 40) + (pHash % 100) / 100;
-    const estimatedSales = isBestseller ? 5 + (pHash % 15) : pHash % 5;
-    const score = Math.min(99, Math.max(50, 60 + (pHash % 40) + (isBestseller ? 10 : 0)));
-    const imageUrl = `https://loremflickr.com/600/600/${encodeURIComponent(lowerKw)}?lock=${pHash}`;
-
-    return {
-      id: `sim_${pHash}`,
-      title: `${adjectives[pHash % adjectives.length]} ${keyword.charAt(0).toUpperCase() + keyword.slice(1)} - Unique E-commerce Design`,
-      category: 'simulated',
-      price: parseFloat(price.toFixed(2)),
-      views,
-      favs,
-      estimatedSales24h: estimatedSales,
-      opportunityScore: score,
-      isBestseller,
-      shopName: shopNames[pHash % shopNames.length] + Math.floor(Math.random() * 99),
-      imageUrl,
-      url: '#',
-      isReal: false,
-    };
-  }).sort((a, b) => b.opportunityScore - a.opportunityScore);
-}
+// Simulation mode has been strictly disabled as per user request to never show mock data.
 
 // ----------------------------
 // MAIN ROUTE HANDLER
@@ -239,38 +203,39 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Keyword is required' }, { status: 400 });
     }
 
-    // Try to get the logged-in user's Etsy OAuth token
     let accessToken: string | null = null;
+    const cookieStore = req.headers.get('cookie') || '';
+    const match = cookieStore.match(/auth_token=([^;]+)/);
+    
+    if (!match) {
+      return NextResponse.json({ error: 'Oturum bulunamadı. Lütfen giriş yapın.' }, { status: 401 });
+    }
+
     try {
-      const cookieStore = req.headers.get('cookie') || '';
-      const match = cookieStore.match(/auth_token=([^;]+)/);
-      if (match) {
-        const { payload } = await jwtVerify(match[1], JWT_SECRET);
-        const userId = payload.id as string;
-        // Check if user has a connected Etsy account
-        const tokenRecord = await prisma.etsyToken.findUnique({ where: { userId } });
-        if (tokenRecord) {
-          accessToken = await getValidEtsyToken(userId);
-        }
+      const { payload } = await jwtVerify(match[1], JWT_SECRET);
+      const userId = payload.id as string;
+      const tokenRecord = await prisma.etsyToken.findUnique({ where: { userId } });
+      
+      if (!tokenRecord) {
+        return NextResponse.json({ error: 'Gerçek zamanlı Etsy verisi çekebilmek için lütfen Ayarlar sayfasından Etsy mağazanızı bağlayın.' }, { status: 403 });
       }
+      
+      accessToken = await getValidEtsyToken(userId);
     } catch {
-      // No valid session - will use simulation
+      return NextResponse.json({ error: 'Kimlik doğrulama hatası. Lütfen tekrar giriş yapın.' }, { status: 401 });
     }
 
-    if (accessToken) {
-      // User has connected Etsy → use real API with their OAuth token
-      try {
-        const products = await fetchRealEtsyProducts(keyword, accessToken);
-        return NextResponse.json({ products, mode: 'real' });
-      } catch (err) {
-        // Real API failed - fall back to simulation
-        console.error('Real Etsy search failed, falling back to simulation:', err);
-      }
+    if (!accessToken) {
+      return NextResponse.json({ error: 'Etsy erişim izni alınamadı. Lütfen mağaza bağlantınızı yenileyin.' }, { status: 403 });
     }
 
-    // No Etsy connection or real API failed → use simulation
-    const products = generateSimulatedProducts(keyword);
-    return NextResponse.json({ products, mode: 'simulation' });
+    try {
+      const products = await fetchRealEtsyProducts(keyword, accessToken);
+      return NextResponse.json({ products, mode: 'real' });
+    } catch (err: unknown) {
+      console.error('Real Etsy search failed:', err);
+      return NextResponse.json({ error: `Etsy API Hatası: ${(err as Error).message}` }, { status: 502 });
+    }
 
   } catch (err: unknown) {
     console.error('Native Etsy research error:', err);
