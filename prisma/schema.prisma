@@ -72,3 +72,18 @@ model ErrorLog {
   resolved  Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model EtsyDailyStat {
+  id               String   @id @default(uuid())
+  userId           String
+  date             DateTime // Midnight UTC of the target date
+  views            Int      @default(0)
+  favorites        Int      @default(0)
+  salesCount       Int      @default(0)
+  activeListings   Int      @default(0)
+  revenue          Float    @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([userId, date])
+}

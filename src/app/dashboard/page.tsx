@@ -250,7 +250,7 @@ interface ShopData {
 export default function SellerDashboard() {
   const { t } = useLanguage();
   const { user } = useAuth();
-  const [timeframe, setTimeframe] = useState<"allTime">("allTime");
+  const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly" | "allTime">("allTime");
   const [selectedMetric, setSelectedMetric] = useState<string>("Sales");
   const [shopData, setShopData] = useState<ShopData | null>(null);
   const [etsyLoading, setEtsyLoading] = useState(true);
@@ -296,8 +296,34 @@ export default function SellerDashboard() {
   const [realMostFavorited, setRealMostFavorited] = useState<PerformanceItem[]>(mostFavoritedList);
   const [realSalesCount, setRealSalesCount] = useState<number | null>(null);
   const [realRevenue, setRealRevenue] = useState<string | null>(null);
+  const [realRevenueRaw, setRealRevenueRaw] = useState<number | null>(null);
   const [realViews, setRealViews] = useState<number | null>(null);
   const [realFavorites, setRealFavorites] = useState<number | null>(null);
+  const [historicalStats, setHistoricalStats] = useState<any>(null);
+
+  // Send snapshot and get history whenever all real data is loaded
+  useEffect(() => {
+    if (!user?.id || !shopData || realSalesCount === null || realRevenueRaw === null || realViews === null || realFavorites === null) return;
+    
+    fetch('/api/etsy/stats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-user-id': user.id },
+      body: JSON.stringify({
+        views: realViews,
+        favorites: realFavorites,
+        salesCount: shopData.transaction_sold_count || 0,
+        activeListings: shopData.listing_active_count || 0,
+        revenue: realRevenueRaw
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        setHistoricalStats(data.history);
+      }
+    })
+    .catch(console.error);
+  }, [user?.id, shopData, realSalesCount, realRevenueRaw, realViews, realFavorites]);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -339,6 +365,7 @@ export default function SellerDashboard() {
              style: 'currency',
              currency: currency
           });
+          setRealRevenueRaw(rev);
           setRealRevenue(formatter.format(rev));
         }
       })
@@ -383,6 +410,44 @@ export default function SellerDashboard() {
       })
       .catch(console.error);
   }, [user?.id]);
+
+  // Compute Active Data based on Timeframe
+  const computeActiveData = () => {
+    const base = {
+      activeListings: shopData?.listing_active_count || 0,
+      draftListings: 0,
+      sales: shopData?.transaction_sold_count || 0,
+      views: realViews || 0,
+      favorites: realFavorites || 0,
+      revenue: realRevenueRaw || 0,
+      profit: "$0.00"
+    };
+
+    if (timeframe === "allTime" || !historicalStats) return base;
+
+    let past = null;
+    if (timeframe === "daily") past = historicalStats.yesterday;
+    if (timeframe === "weekly") past = historicalStats.lastWeek;
+    if (timeframe === "monthly") past = historicalStats.lastMonth;
+
+    if (!past) return { ...base, sales: 0, views: 0, favorites: 0, revenue: 0 }; // If no history, diff is 0
+
+    return {
+      activeListings: base.activeListings,
+      draftListings: base.draftListings,
+      sales: Math.max(0, base.sales - past.salesCount),
+      views: Math.max(0, base.views - past.views),
+      favorites: Math.max(0, base.favorites - past.favorites),
+      revenue: Math.max(0, base.revenue - past.revenue),
+      profit: "$0.00"
+    };
+  };
+
+  const currentData = computeActiveData();
+  const formatRev = (val: number) => {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val); 
+    // Fallback format, will be overridden by realRevenue string for allTime
+  };
 
   const activeData = statsData[timeframe];
   const activeChartMetric = chartLines.find(l => l.key === selectedMetric) || chartLines[0];
@@ -539,12 +604,27 @@ export default function SellerDashboard() {
       {/* Unified Analytics Panel */}
       <div className="bg-card border border-border rounded-xl p-5 space-y-5 shadow-[0_4px_24px_rgba(0,0,0,0.15)]">
         
-        {/* Timeframe Header */}
+        {/* Timeframe Selector Navigation Tabs */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
           <div className="flex bg-white/[0.02] p-1 rounded-lg border border-border self-start">
-            <div className="px-3.5 py-1.5 rounded-md text-xs font-extrabold bg-purple-500/20 border border-purple-500/35 text-foreground shadow-md">
-              {t("sellerDashboard.allTime")} (Etsy API)
-            </div>
+            {[
+              { id: "daily", label: t("sellerDashboard.daily") },
+              { id: "weekly", label: t("sellerDashboard.weekly") },
+              { id: "monthly", label: t("sellerDashboard.monthly") },
+              { id: "allTime", label: t("sellerDashboard.allTime") }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setTimeframe(tab.id as "daily" | "weekly" | "monthly" | "allTime")}
+                className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                  timeframe === tab.id
+                    ? "bg-purple-500/20 border border-purple-500/35 text-foreground shadow-md font-extrabold"
+                    : "text-secondary hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
           <span className="text-[10px] font-bold text-muted uppercase tracking-wider px-2 sm:text-right">{t("sellerDashboard.storeAnalytics")}</span>
         </div>
@@ -583,7 +663,7 @@ export default function SellerDashboard() {
               <span>{t("sellerDashboard.sales")}</span>
             </span>
             <div>
-              <div className="text-2xl font-extrabold text-foreground leading-none">{shopData ? shopData.transaction_sold_count : activeData.orders.split(" ")[0]}</div>
+              <div className="text-2xl font-extrabold text-foreground leading-none">{shopData ? (timeframe === 'allTime' ? shopData.transaction_sold_count : currentData.sales) : activeData.orders.split(" ")[0]}</div>
               <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.totalOrders")}</span>
             </div>
           </div>
@@ -595,7 +675,7 @@ export default function SellerDashboard() {
               <span>{t("sellerDashboard.views")}</span>
             </span>
             <div>
-              <div className="text-2xl font-extrabold text-foreground leading-none">{realViews !== null ? realViews : activeData.views.split(" ")[0]}</div>
+              <div className="text-2xl font-extrabold text-foreground leading-none">{realViews !== null ? (timeframe === 'allTime' ? realViews : currentData.views) : activeData.views.split(" ")[0]}</div>
               <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.storeVisits")}</span>
             </div>
           </div>
@@ -607,7 +687,7 @@ export default function SellerDashboard() {
               <span>Visits</span>
             </span>
             <div>
-              <div className="text-2xl font-extrabold text-foreground leading-none">{realFavorites !== null ? realFavorites : activeData.favorites.split(" ")[0]}</div>
+              <div className="text-2xl font-extrabold text-foreground leading-none">{realFavorites !== null ? (timeframe === 'allTime' ? realFavorites : currentData.favorites) : activeData.favorites.split(" ")[0]}</div>
               <span className="text-[9px] text-muted block mt-1">Total Store Visits</span>
             </div>
           </div>
@@ -619,7 +699,7 @@ export default function SellerDashboard() {
               <span>{t("sellerDashboard.revenue")}</span>
             </span>
             <div>
-              <div className="text-2xl font-extrabold text-emerald-400 leading-none">{realRevenue !== null ? realRevenue : activeData.revenue}</div>
+              <div className="text-2xl font-extrabold text-emerald-400 leading-none">{realRevenue !== null ? (timeframe === 'allTime' ? realRevenue : formatRev(currentData.revenue)) : activeData.revenue}</div>
               <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.grossSales")}</span>
             </div>
           </div>
