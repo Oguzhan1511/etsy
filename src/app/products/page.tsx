@@ -264,6 +264,7 @@ export default function ProductsPage() {
   const saveEditDraft = async () => {
     if (!editTitle.trim() || !editingDraft) return;
 
+    // Trigger force Vercel redeploy
     try {
       const token = localStorage.getItem("printify_api_key") || "";
       const res = await fetch("/api/printify?action=update-product", {
