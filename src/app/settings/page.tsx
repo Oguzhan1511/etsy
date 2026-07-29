@@ -373,15 +373,16 @@ function SettingsContent() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  {etsyConnected ? (
-                    <button onClick={handleDisconnectEtsy} className="px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30">
+                  <div className="flex gap-2">
+                    <button onClick={handleDisconnectEtsy} className="px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20">
                       {t("settings.disconnect")}
                     </button>
-                  ) : (
-                    <a href={user?.id ? `/api/etsy/auth?userId=${user.id}` : '#'} className="px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer bg-orange-500/10 text-orange-400 border border-orange-500/30 hover:bg-orange-500/20">
-                      {t("settings.connect")}
-                    </a>
-                  )}
+                    {!etsyConnected && (
+                      <a href={user?.id ? `/api/etsy/auth?userId=${user.id}` : '#'} className="px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer bg-orange-500/10 text-orange-400 border border-orange-500/30 hover:bg-orange-500/20">
+                        {t("settings.connect")}
+                      </a>
+                    )}
+                  </div>
                   <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_10px] ${etsyConnected ? 'bg-emerald-400 shadow-emerald-400/80' : 'bg-red-500 shadow-red-500/80'}`} />
                 </div>
               </div>
