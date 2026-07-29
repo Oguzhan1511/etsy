@@ -481,10 +481,15 @@ export async function PUT(req: Request) {
 
     if (action === "update-product") {
       const body = await req.json();
-      const { shopId, productId, title, description, tags } = body;
+      const { shopId, productId, title, description, tags, variants } = body;
 
       if (!shopId || !productId) {
         return NextResponse.json({ error: "shopId and productId are required" }, { status: 400 });
+      }
+      
+      const payload: Record<string, any> = { title, description, tags };
+      if (variants && Array.isArray(variants)) {
+        payload.variants = variants;
       }
 
       const updateRes = await fetch(`https://api.printify.com/v1/shops/${shopId}/products/${productId}.json`, {
@@ -493,11 +498,7 @@ export async function PUT(req: Request) {
           Authorization: `Bearer ${activeToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          title,
-          description,
-          tags,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!updateRes.ok) {

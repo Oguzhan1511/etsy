@@ -196,6 +196,7 @@ export default function ProductsPage() {
   const [editDescription, setEditDescription] = useState("");
   const [editTags, setEditTags] = useState("");
   const [editImages, setEditImages] = useState<ProductImage[]>([]);
+  const [editVariants, setEditVariants] = useState<any[]>([]);
   const [largePreviewUrl, setLargePreviewUrl] = useState<string>("");
 
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -226,6 +227,7 @@ export default function ProductsPage() {
     setEditTitle(draft.title);
     setEditDescription(draft.description || "");
     setEditTags(draft.tags ? draft.tags.join(", ") : "");
+    setEditVariants(draft.variants ? JSON.parse(JSON.stringify(draft.variants)) : []);
     setOpenDropdownId(null);
     setShowExitConfirm(false);
   };
@@ -272,7 +274,8 @@ export default function ProductsPage() {
            productId: editingDraft.id,
            title: editTitle,
            description: editDescription,
-           tags: editTags ? editTags.split(",").map(t => t.trim()).filter(t => t !== "") : []
+           tags: editTags ? editTags.split(",").map(t => t.trim()).filter(t => t !== "") : [],
+           variants: editVariants
         })
       });
 
@@ -284,7 +287,8 @@ export default function ProductsPage() {
                  ...p,
                  title: editTitle,
                  description: editDescription,
-                 tags: editTags ? editTags.split(",").map(t => t.trim()).filter(t => t !== "") : []
+                 tags: editTags ? editTags.split(",").map(t => t.trim()).filter(t => t !== "") : [],
+                 variants: editVariants
                } : p
             )
          );
@@ -831,6 +835,52 @@ export default function ProductsPage() {
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-muted uppercase tracking-wider">{t("products.productTags")} (Virgül ile ayırın)</label>
                 <input type="text" placeholder={t("products.tagsPlaceholder")} value={editTags} onChange={(e) => setEditTags(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-black/20 text-xs text-foreground focus:outline-none focus:border-purple-500/50" />
+              </div>
+
+              <div className="space-y-2 mt-4 border-t border-border pt-4">
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider flex items-center justify-between">
+                  <span>Varyasyonlar ve Fiyatlandırma</span>
+                  <span className="text-[9px] text-secondary lowercase font-normal italic">({editVariants.length} varyant)</span>
+                </label>
+                <div className="max-h-60 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
+                  {editVariants.length > 0 ? editVariants.map((variant, index) => (
+                    <div key={variant.id} className={`flex items-center justify-between p-2 rounded-lg border transition-colors ${variant.is_enabled ? 'bg-black/20 border-border' : 'bg-black/10 border-border/40 opacity-60'}`}>
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newVars = [...editVariants];
+                            newVars[index].is_enabled = !newVars[index].is_enabled;
+                            setEditVariants(newVars);
+                          }}
+                          className={`w-9 h-5 rounded-full flex items-center transition-colors px-0.5 cursor-pointer ${variant.is_enabled ? 'bg-emerald-500/80' : 'bg-neutral-600'}`}
+                        >
+                          <div className={`w-4 h-4 rounded-full bg-white transition-transform ${variant.is_enabled ? 'translate-x-4' : 'translate-x-0'}`} />
+                        </button>
+                        <span className="text-[11px] font-medium text-foreground line-clamp-1 break-all pr-2">{variant.title}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-xs text-secondary">$</span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          disabled={!variant.is_enabled}
+                          value={variant.price ? (variant.price / 100).toFixed(2) : "0.00"}
+                          onChange={(e) => {
+                            const newVars = [...editVariants];
+                            const val = parseFloat(e.target.value);
+                            newVars[index].price = isNaN(val) ? 0 : Math.round(val * 100);
+                            setEditVariants(newVars);
+                          }}
+                          className="w-16 sm:w-20 px-2 py-1 rounded bg-black/40 border border-border text-xs text-foreground focus:outline-none focus:border-purple-500/50 text-right disabled:opacity-50"
+                        />
+                      </div>
+                    </div>
+                  )) : (
+                    <div className="text-xs text-secondary italic py-2">Bu üründe düzenlenebilir varyasyon bulunamadı.</div>
+                  )}
+                </div>
               </div>
             </div>
 
