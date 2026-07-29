@@ -39,7 +39,7 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
   };
 
   const searchRes = await fetch(
-    `https://api.etsy.com/v3/application/listings/active?keywords=${encodeURIComponent(keyword)}&limit=50&sort_on=score`,
+    `https://api.etsy.com/v3/application/listings/active?keywords=${encodeURIComponent(keyword)}&limit=100&sort_on=score`,
     { headers }
   );
 
@@ -57,7 +57,15 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
   const data = (await searchRes.json()) as Record<string, unknown>;
   let rawListings = (data.results as EtsyListing[]) || [];
 
-  rawListings = rawListings.filter(item => (item.views || 0) > 0 || (item.num_favorers || 0) > 0);
+  const personalizationRegex = /custom|personalized|personalisation|customized|kişiye\s*özel/i;
+
+  rawListings = rawListings.filter(item => {
+    const hasStats = (item.views || 0) > 0 || (item.num_favorers || 0) > 0;
+    const title = item.title || "";
+    const isPersonalized = personalizationRegex.test(title);
+    return hasStats && !isPersonalized;
+  });
+
   rawListings.sort((a, b) => {
     const scoreA = (a.views || 0) + (a.num_favorers || 0) * 15;
     const scoreB = (b.views || 0) + (b.num_favorers || 0) * 15;
