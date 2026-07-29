@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+import Jimp from 'jimp';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
 
@@ -107,10 +108,44 @@ Kullanıcı talimatı: ${prompt}`;
     // gpt-image-1 usually returns b64_json
     if (data.data && data.data[0]) {
       const resultData = data.data[0];
-      if (resultData.url) {
-        return NextResponse.json({ url: resultData.url });
-      } else if (resultData.b64_json) {
-        return NextResponse.json({ url: `data:image/png;base64,${resultData.b64_json}` });
+      
+      let base64Result = '';
+      if (resultData.b64_json) {
+        base64Result = resultData.b64_json;
+      } else if (resultData.url) {
+        const fetchRes = await fetch(resultData.url);
+        if (fetchRes.ok) {
+          const arrayBuffer = await fetchRes.arrayBuffer();
+          base64Result = Buffer.from(arrayBuffer).toString('base64');
+        }
+      }
+
+      if (base64Result) {
+        try {
+          // Arka plan şeffaflaştırma işlemi (Jimp)
+          const imgBuffer = Buffer.from(base64Result, 'base64');
+          const image = await Jimp.read(imgBuffer);
+          
+          image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
+            const r = this.bitmap.data[idx + 0];
+            const g = this.bitmap.data[idx + 1];
+            const b = this.bitmap.data[idx + 2];
+            
+            // Beyaz veya çok açık renkli pikselleri (r,g,b > 240) tamamen şeffaf yap
+            if (r > 235 && g > 235 && b > 235) {
+              this.bitmap.data[idx + 3] = 0; // Alpha kanalı sıfır = Tamamen şeffaf
+            }
+          });
+
+          const finalBuffer = await image.getBufferAsync(Jimp.MIME_PNG);
+          const finalBase64 = `data:image/png;base64,${finalBuffer.toString('base64')}`;
+          return NextResponse.json({ url: finalBase64 });
+        } catch (jimpError) {
+          console.error("Jimp background removal failed, returning original:", jimpError);
+          // Hata olursa orijinal resmi geri döndür
+          const original = resultData.b64_json ? `data:image/png;base64,${resultData.b64_json}` : resultData.url;
+          return NextResponse.json({ url: original });
+        }
       }
     }
     
