@@ -253,12 +253,71 @@ export default function SellerDashboard() {
   const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly" | "allTime">("weekly");
   const [selectedMetric, setSelectedMetric] = useState<string>("Sales");
   const [shopData, setShopData] = useState<ShopData | null>(null);
+  
+  // Real Data States
+  const [realOrders, setRealOrders] = useState<ActiveOrder[]>(activeOrders);
+  const [realBestSellers, setRealBestSellers] = useState<PerformanceItem[]>(bestSellersList);
+  const [realMostFavorited, setRealMostFavorited] = useState<PerformanceItem[]>(mostFavoritedList);
+  const [realSalesCount, setRealSalesCount] = useState<number | null>(null);
+  const [realRevenue, setRealRevenue] = useState<string | null>(null);
 
   useEffect(() => {
+    // Fetch Shop Data
     fetch('/api/etsy/shop')
       .then(res => res.json())
       .then(data => {
         if (!data.error) setShopData(data);
+      })
+      .catch(console.error);
+
+    // Fetch Orders Data
+    fetch('/api/etsy/orders')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error && data.orders) {
+          setRealOrders(data.orders.map((o: any) => ({
+            id: o.id,
+            orderId: `#${o.id}`,
+            buyerName: o.buyer,
+            product: o.item,
+            image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80", // Fallback image for order
+            sku: "-",
+            orderedTime: new Date(o.date).toLocaleDateString(),
+            shipBy: "Check Etsy",
+            status: o.status === "Gönderildi" ? "Ready to Ship" : "Processing"
+          })));
+          setRealSalesCount(data.total_orders);
+          setRealRevenue(`$${data.total_revenue}`);
+        }
+      })
+      .catch(console.error);
+
+    // Fetch Listings Data
+    fetch('/api/etsy/listings')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          if (data.bestSellers) {
+            setRealBestSellers(data.bestSellers.map((item: any) => ({
+              id: item.id,
+              name: item.name,
+              image: item.image,
+              value: `${item.sales} views`,
+              secondaryVal: "Etsy Data",
+              rate: item.revenue
+            })));
+          }
+          if (data.mostFavorited) {
+            setRealMostFavorited(data.mostFavorited.map((item: any) => ({
+              id: item.id,
+              name: item.name,
+              image: item.image,
+              value: `${item.favorites} favorites`,
+              secondaryVal: "Etsy Data",
+              rate: "Active"
+            })));
+          }
+        }
       })
       .catch(console.error);
   }, []);
@@ -362,7 +421,7 @@ export default function SellerDashboard() {
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {activeOrders.map((o) => (
+          {realOrders.map((o) => (
             <Link href="/orders" key={o.id} className="group block">
               <div className="bg-card border border-border group-hover:border-purple-500/20 rounded-xl p-5 space-y-3 transition-all hover:-translate-y-0.5 relative overflow-hidden flex flex-col justify-between min-h-[155px] h-auto">
                 
@@ -459,7 +518,7 @@ export default function SellerDashboard() {
               <span>{t("sellerDashboard.sales")}</span>
             </span>
             <div>
-              <div className="text-2xl font-extrabold text-foreground leading-none">{activeData.orders.split(" ")[0]}</div>
+              <div className="text-2xl font-extrabold text-foreground leading-none">{realSalesCount !== null ? realSalesCount : activeData.orders.split(" ")[0]}</div>
               <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.totalOrders")}</span>
             </div>
           </div>
@@ -495,7 +554,7 @@ export default function SellerDashboard() {
               <span>{t("sellerDashboard.revenue")}</span>
             </span>
             <div>
-              <div className="text-2xl font-extrabold text-emerald-400 leading-none">{activeData.revenue}</div>
+              <div className="text-2xl font-extrabold text-emerald-400 leading-none">{realRevenue !== null ? realRevenue : activeData.revenue}</div>
               <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.grossSales")}</span>
             </div>
           </div>
@@ -632,7 +691,7 @@ export default function SellerDashboard() {
           </div>
 
           <div className="px-3 py-1 space-y-0 divide-y divide-white/[0.04]">
-            {bestSellersList.map((item) => (
+            {realBestSellers.map((item) => (
               <div key={item.id} className="flex items-center justify-between gap-4 py-3 px-2 hover:bg-white/[0.02] transition-colors rounded-md">
                 <div className="flex items-center gap-3">
                   {/* Item Image */}
@@ -668,7 +727,7 @@ export default function SellerDashboard() {
           </div>
 
           <div className="px-3 py-1 space-y-0 divide-y divide-white/[0.04]">
-            {mostFavoritedList.map((item) => (
+            {realMostFavorited.map((item) => (
               <div key={item.id} className="flex items-center justify-between gap-4 py-3 px-2 hover:bg-white/[0.02] transition-colors rounded-md">
                 <div className="flex items-center gap-3">
                   {/* Item Image */}
