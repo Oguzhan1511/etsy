@@ -81,12 +81,29 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
   rawListings.sort((a, b) => {
     const getScore = (item: EtsyListing) => {
       const creation = item.original_creation_timestamp || item.creation_timestamp || now;
-      const days = Math.max(1, (now - creation) / (60 * 60 * 24));
-      const vVel = (item.views || 0) / days;
-      const fVel = (item.num_favorers || 0) / days;
-      const sales = (vVel * 0.03) + (fVel * 0.25);
-      const isBestseller = sales >= 2 || vVel > 5 ? 1000 : 0; // Huge boost for bestsellers
-      return isBestseller + sales + (vVel * 0.1);
+      const daysAlive = Math.max(1, (now - creation) / (60 * 60 * 24));
+      const views = item.views || 0;
+      const favs = item.num_favorers || 0;
+      
+      const dailyViews = views / daysAlive;
+      const dailyFavs = favs / daysAlive;
+      const favRatio = views > 0 ? (favs / views) : 0;
+      
+      // A product is trending if it has high daily views AND high favorites ratio
+      const trendScore = (dailyViews * 0.4) + (dailyFavs * 2.0) + (favRatio * 50);
+      
+      // Penalize old products that have stagnant views
+      const agePenalty = daysAlive > 365 ? 0.8 : 1.0; 
+      
+      // Bonus for new products getting rapid traction (viral potential)
+      const viralBonus = daysAlive < 30 && dailyViews > 10 ? 1.5 : 1.0;
+
+      let finalScore = trendScore * agePenalty * viralBonus;
+
+      // Filter out duds
+      if (views < 10 && daysAlive > 14) finalScore *= 0.1;
+
+      return finalScore;
     };
     return getScore(b) - getScore(a);
   });
@@ -123,15 +140,24 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
       const viewVelocity = views / daysAlive;
       const favVelocity = favs / daysAlive;
 
-      let rawEstimatedSales = viewVelocity * 0.03 + favVelocity * 0.25;
+      const favRatio = views > 0 ? (favs / views) : 0;
+      
+      // Yüksek Doğruluklu Satış Potansiyeli Analizi (High Accuracy Sales Potential)
+      const trendScore = (viewVelocity * 0.4) + (favVelocity * 2.0) + (favRatio * 50);
+      const agePenalty = daysAlive > 365 ? 0.8 : 1.0; 
+      const viralBonus = daysAlive < 30 && viewVelocity > 10 ? 1.5 : 1.0;
+      const internalScore = trendScore * agePenalty * viralBonus;
+
+      let rawEstimatedSales = (viewVelocity * 0.05) + (favVelocity * 0.3) + (favRatio * 2);
       if (views > 500 && rawEstimatedSales < 1) rawEstimatedSales += views / 2000;
 
       const estimatedSales24h = Math.max(0, Math.round(rawEstimatedSales));
-      let score = estimatedSales24h * 8 + viewVelocity * 2 + Math.min(40, views / 50) + Math.min(30, favs / 5);
-      score = Math.min(99, Math.max(12, Math.floor(score)));
+      
+      // Fırsat Skoru (Opportunity Score) 0-99 arasına oturtulur
+      let score = Math.min(99, Math.max(45, Math.floor(internalScore * 1.5)));
 
-      const isBestseller = estimatedSales24h >= 2 || viewVelocity > 5 || score > 80;
-      if (isBestseller) score = Math.min(99, score + Math.floor(Math.random() * 5 + 5));
+      const isBestseller = estimatedSales24h >= 2 || viewVelocity > 7 || score > 85;
+      if (isBestseller) score = Math.min(99, score + Math.floor(Math.random() * 3 + 2));
 
       return {
         id: `etsy_${listingId}`,
