@@ -298,57 +298,73 @@ export default function SellerDashboard() {
   const [realRevenue, setRealRevenue] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!user?.id) return;
+
     // Fetch Orders Data
-    fetch('/api/etsy/orders')
+    fetch('/api/etsy/orders', { headers: { 'x-user-id': user.id } })
       .then(res => res.json())
       .then(data => {
-        if (!data.error && data.orders) {
-          setRealOrders(data.orders.map((o: any) => ({
-            id: o.id,
-            orderId: `#${o.id}`,
-            buyerName: o.buyer,
-            product: o.item,
-            image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80", // Fallback image for order
-            sku: "-",
-            orderedTime: new Date(o.date).toLocaleDateString(),
-            shipBy: "Check Etsy",
-            status: o.status === "Gönderildi" ? "Ready to Ship" : "Processing"
-          })));
-          setRealSalesCount(data.total_orders);
-          setRealRevenue(`$${data.total_revenue}`);
+        if (!data.error && data.results) {
+          setRealOrders(data.results.slice(0, 4).map((r: any) => {
+            const tx = r.transactions?.[0] || {};
+            const listing = tx.listing || {};
+            const imageUrl = listing?.Images?.[0]?.url_170x135 || "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80";
+            return {
+              id: r.receipt_id?.toString() || Math.random().toString(),
+              orderId: `#${r.receipt_id}`,
+              buyerName: r.name || "Etsy Buyer",
+              product: tx.title || "Unknown Product",
+              image: imageUrl,
+              sku: tx.product_data?.sku || "-",
+              orderedTime: r.create_timestamp ? new Date(r.create_timestamp * 1000).toLocaleDateString() : "-",
+              shipBy: "Check Etsy",
+              status: r.status || "Processing"
+            };
+          }));
+          
+          setRealSalesCount(data.count || 0);
+          
+          let rev = 0;
+          data.results.forEach((r: any) => {
+             if (r.grandtotal && r.grandtotal.amount && r.grandtotal.divisor) {
+                rev += (r.grandtotal.amount / r.grandtotal.divisor);
+             }
+          });
+          setRealRevenue(`$${rev.toFixed(2)}`);
         }
       })
       .catch(console.error);
 
     // Fetch Listings Data
-    fetch('/api/etsy/listings')
+    fetch('/api/etsy/listings', { headers: { 'x-user-id': user.id } })
       .then(res => res.json())
       .then(data => {
-        if (!data.error) {
-          if (data.bestSellers) {
-            setRealBestSellers(data.bestSellers.map((item: any) => ({
-              id: item.id,
-              name: item.name,
-              image: item.image,
-              value: `${item.sales} views`,
-              secondaryVal: "Etsy Data",
-              rate: item.revenue
-            })));
-          }
-          if (data.mostFavorited) {
-            setRealMostFavorited(data.mostFavorited.map((item: any) => ({
-              id: item.id,
-              name: item.name,
-              image: item.image,
-              value: `${item.favorites} favorites`,
-              secondaryVal: "Etsy Data",
-              rate: "Active"
-            })));
-          }
+        if (!data.error && data.results) {
+          const listings = data.results;
+          
+          const sortedByViews = [...listings].sort((a: any, b: any) => (b.views || 0) - (a.views || 0)).slice(0, 3);
+          setRealBestSellers(sortedByViews.map((item: any) => ({
+            id: item.listing_id?.toString() || Math.random().toString(),
+            name: item.title || "Unknown Listing",
+            image: item.Images?.[0]?.url_170x135 || "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80",
+            value: `${item.views || 0} views`,
+            secondaryVal: "Etsy Data",
+            rate: item.price ? `$${(item.price.amount / item.price.divisor).toFixed(2)}` : "-"
+          })));
+
+          const sortedByFavs = [...listings].sort((a: any, b: any) => (b.num_favorers || 0) - (a.num_favorers || 0)).slice(0, 3);
+          setRealMostFavorited(sortedByFavs.map((item: any) => ({
+            id: item.listing_id?.toString() || Math.random().toString(),
+            name: item.title || "Unknown Listing",
+            image: item.Images?.[0]?.url_170x135 || "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=100&q=80",
+            value: `${item.num_favorers || 0} favorites`,
+            secondaryVal: "Etsy Data",
+            rate: "Active"
+          })));
         }
       })
       .catch(console.error);
-  }, []);
+  }, [user?.id]);
 
   const activeData = statsData[timeframe];
   const activeChartMetric = chartLines.find(l => l.key === selectedMetric) || chartLines[0];
@@ -540,7 +556,7 @@ export default function SellerDashboard() {
               <span>{t("sellerDashboard.activeListings").replace(":", "")}</span>
             </span>
             <div>
-              <div className="text-2xl font-extrabold text-foreground leading-none">{activeData.activeListings}</div>
+              <div className="text-2xl font-extrabold text-foreground leading-none">{shopData ? shopData.listing_active_count : activeData.activeListings}</div>
               <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.liveListings")}</span>
             </div>
           </div>
