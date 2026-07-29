@@ -78,7 +78,14 @@ Please generate the optimized Title, Description, and Tags (as a single comma-se
     if (!response.ok) {
       const errorData = await response.text();
       console.error("OpenAI Error:", errorData);
-      return NextResponse.json({ error: "OpenAI API hatası" }, { status: response.status });
+      let errorMsg = "OpenAI API hatası";
+      try {
+        const parsed = JSON.parse(errorData);
+        if (parsed.error && parsed.error.message) {
+          errorMsg = `OpenAI: ${parsed.error.message}`;
+        }
+      } catch (e) {}
+      return NextResponse.json({ error: errorMsg }, { status: response.status });
     }
 
     const data = await response.json();
