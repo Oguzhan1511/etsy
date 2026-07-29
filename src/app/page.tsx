@@ -137,10 +137,10 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-6">
             <Link
-              href="/login"
+              href="/waitlist"
               className="text-sm font-bold bg-white text-black px-6 py-2.5 rounded-full hover:bg-zinc-200 transition-transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
             >
-              Giriş Yap
+              Ön Kayıt Ol
             </Link>
           </div>
         </div>
@@ -166,15 +166,15 @@ export default function LandingPage() {
 
             <div className="flex flex-col items-center justify-center mb-16 gap-4">
               <Link
-                href="/login"
+                href="/waitlist"
                 className="px-8 py-4 rounded-full bg-white hover:bg-zinc-200 text-black font-bold text-lg transition-transform hover:scale-105 flex items-center gap-2 shadow-[0_0_40px_rgba(255,255,255,0.2)]"
               >
-                Hemen Başla
+                Ön Kayıt Listesine Katıl
                 <ArrowRight size={20} />
               </Link>
               <div className="flex items-center gap-2 text-sm text-zinc-400 bg-zinc-900/50 border border-white/5 px-4 py-1.5 rounded-full">
                 <Sparkles size={14} className="text-amber-400" />
-                <span>Yeni kullanıcılara özel <strong className="text-white">50 token hediye!</strong></span>
+                <span>Sınırlı sayıda kullanıcı <strong className="text-white">erken erişim kazanacak!</strong></span>
               </div>
             </div>
           </FadeInContent>
@@ -331,20 +331,20 @@ export default function LandingPage() {
         {/* FINAL CTA */}
         <section className="max-w-4xl mx-auto px-6 py-32 text-center mt-20">
           <FadeInContent>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Satışa Başlamak İçin Hazır Mısın?</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Erken Erişim İçin Yerini Ayırt</h2>
             <p className="text-xl text-zinc-400 mb-10 max-w-2xl mx-auto">
-              Hemen hesabını oluştur, mağazanı bağla ve yapay zeka gücüyle kazanmaya başla.
+              Hemen ön kayıt listesine katıl, sistem açıldığında ilk senin haberin olsun ve avantajlardan yararlan.
             </p>
             <div className="flex flex-col items-center gap-4">
               <Link
-                href="/login"
+                href="/waitlist"
                 className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-full bg-white hover:bg-zinc-200 text-black font-bold text-xl transition-transform hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.2)]"
               >
-                Hemen Ücretsiz Başla
+                Ön Kayıt Ol
                 <ArrowRight size={20} />
               </Link>
               <span className="text-sm font-medium text-amber-400 bg-amber-500/10 px-4 py-2 rounded-full border border-amber-500/20">
-                🎁 Yeni kullanıcılara 50 token hediye!
+                🎁 İlk kayıt olanlara özel sürprizler!
               </span>
             </div>
           </FadeInContent>
