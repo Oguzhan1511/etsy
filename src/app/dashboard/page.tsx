@@ -250,7 +250,7 @@ interface ShopData {
 export default function SellerDashboard() {
   const { t } = useLanguage();
   const { user } = useAuth();
-  const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly" | "allTime">("weekly");
+  const [timeframe, setTimeframe] = useState<"allTime">("allTime");
   const [selectedMetric, setSelectedMetric] = useState<string>("Sales");
   const [shopData, setShopData] = useState<ShopData | null>(null);
   const [etsyLoading, setEtsyLoading] = useState(true);
@@ -327,12 +327,19 @@ export default function SellerDashboard() {
           setRealSalesCount(data.count || 0);
           
           let rev = 0;
+          let currency = 'USD';
           data.results.forEach((r: any) => {
              if (r.grandtotal && r.grandtotal.amount && r.grandtotal.divisor) {
                 rev += (r.grandtotal.amount / r.grandtotal.divisor);
+                currency = r.grandtotal.currency_code || currency;
              }
           });
-          setRealRevenue(`$${rev.toFixed(2)}`);
+          
+          const formatter = new Intl.NumberFormat(currency === 'TRY' ? 'tr-TR' : 'en-US', {
+             style: 'currency',
+             currency: currency
+          });
+          setRealRevenue(formatter.format(rev));
         }
       })
       .catch(console.error);
@@ -532,27 +539,12 @@ export default function SellerDashboard() {
       {/* Unified Analytics Panel */}
       <div className="bg-card border border-border rounded-xl p-5 space-y-5 shadow-[0_4px_24px_rgba(0,0,0,0.15)]">
         
-        {/* Timeframe Selector Navigation Tabs */}
+        {/* Timeframe Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
           <div className="flex bg-white/[0.02] p-1 rounded-lg border border-border self-start">
-            {[
-              { id: "daily", label: t("sellerDashboard.daily") },
-              { id: "weekly", label: t("sellerDashboard.weekly") },
-              { id: "monthly", label: t("sellerDashboard.monthly") },
-              { id: "allTime", label: t("sellerDashboard.allTime") }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setTimeframe(tab.id as "daily" | "weekly" | "monthly" | "allTime")}
-                className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                  timeframe === tab.id
-                    ? "bg-purple-500/20 border border-purple-500/35 text-foreground shadow-md font-extrabold"
-                    : "text-secondary hover:text-foreground"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+            <div className="px-3.5 py-1.5 rounded-md text-xs font-extrabold bg-purple-500/20 border border-purple-500/35 text-foreground shadow-md">
+              {t("sellerDashboard.allTime")} (Etsy API)
+            </div>
           </div>
           <span className="text-[10px] font-bold text-muted uppercase tracking-wider px-2 sm:text-right">{t("sellerDashboard.storeAnalytics")}</span>
         </div>
@@ -608,15 +600,15 @@ export default function SellerDashboard() {
             </div>
           </div>
 
-          {/* Metric 5: Favoriler */}
+          {/* Metric 5: Ziyaretler (Visits) */}
           <div className="bg-black/20 border border-border rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-border transition-colors">
             <span className="text-[9px] font-bold text-secondary uppercase tracking-wider flex items-center gap-1">
-              <Heart size={10} className="text-pink-400" />
-              <span>{t("sellerDashboard.favorites")}</span>
+              <Eye size={10} className="text-pink-400" />
+              <span>Visits</span>
             </span>
             <div>
               <div className="text-2xl font-extrabold text-foreground leading-none">{realFavorites !== null ? realFavorites : activeData.favorites.split(" ")[0]}</div>
-              <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.listingFavs")}</span>
+              <span className="text-[9px] text-muted block mt-1">Total Store Visits</span>
             </div>
           </div>
 
