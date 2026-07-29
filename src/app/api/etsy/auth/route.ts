@@ -34,7 +34,7 @@ export async function GET(request: Request) {
   const response = NextResponse.redirect(
     `https://www.etsy.com/oauth/connect?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
       redirectUri
-    )}&scope=email_r%20listings_r%20listings_w%20orders_r%20orders_w%20profile_r%20profile_w%20shops_r%20shops_w%20transactions_r&code_challenge=${codeChallenge}&code_challenge_method=S256`
+    )}&scope=email_r%20listings_r%20listings_w%20transactions_r%20transactions_w%20profile_r%20profile_w%20shops_r%20shops_w&code_challenge=${codeChallenge}&code_challenge_method=S256`
   );
 
   response.cookies.set('etsy_code_verifier', codeVerifier, {
