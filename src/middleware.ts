@@ -41,26 +41,14 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // 2. If no dev access, restrict everything EXCEPT waitlist and its APIs
-  if (!hasDevAccess) {
-    // Only these paths are allowed for the public (Waitlist)
-    const isWaitlistRoute = 
-      path === '/waitlist' || 
-      path === '/api/auth/register' || 
-      path === '/api/auth/google' ||
-      path === '/api/etsy/callback'; // etsy callback might be needed if testing
-
-    if (!isAdminRoute && !isWaitlistRoute) {
-      // Redirect all public traffic to waitlist
-      return NextResponse.redirect(new URL('/waitlist', request.url));
-    }
-  }
+  // 2. Disabled waitlist restriction (Site is LIVE)
+  // if (!hasDevAccess) { ... }
 
   // 3. Normal Authentication Logic (Only runs if they have dev_access)
   const isPublicRoute = publicRoutes.includes(path);
   
   // If the route is not an API, not an admin route, and not explicitly public, it requires a user session.
-  if (!isAdminRoute && !isApiRoute && !isPublicRoute && hasDevAccess) {
+  if (!isAdminRoute && !isApiRoute && !isPublicRoute) {
     const authToken = request.cookies.get('auth_token')?.value;
 
     if (!authToken) {
