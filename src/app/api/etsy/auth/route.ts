@@ -22,8 +22,10 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "User ID is missing" }, { status: 400 });
   }
 
-  // Generate a random string for the code verifier
   const codeVerifier = crypto.randomBytes(32).toString('base64url');
+  
+  // Generate a random state string to prevent CSRF (Required by Etsy)
+  const state = crypto.randomBytes(16).toString('hex');
 
   // Create the code challenge using SHA-256
   const codeChallenge = crypto
@@ -34,8 +36,15 @@ export async function GET(request: Request) {
   const response = NextResponse.redirect(
     `https://www.etsy.com/oauth/connect?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
       redirectUri
-    )}&scope=email_r%20listings_r%20listings_w%20transactions_r%20transactions_w%20profile_r%20profile_w%20shops_r%20shops_w&code_challenge=${codeChallenge}&code_challenge_method=S256`
+    )}&scope=email_r%20listings_r%20listings_w%20transactions_r%20transactions_w%20profile_r%20profile_w%20shops_r%20shops_w&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`
   );
+
+  response.cookies.set('etsy_oauth_state', state, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: 60 * 10,
+  });
 
   response.cookies.set('etsy_code_verifier', codeVerifier, {
     httpOnly: true,

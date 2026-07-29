@@ -5,6 +5,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
+  const state = searchParams.get('state');
 
   if (error) {
     return NextResponse.redirect(new URL(`/?etsy_error=${error}`, request.url));
@@ -25,9 +26,20 @@ export async function GET(request: Request) {
   // Try to get cookie from request directly
   const cookieStore = request.headers.get('cookie') || '';
   let codeVerifier = '';
-  const match = cookieStore.match(/etsy_code_verifier=([^;]+)/);
-  if (match) {
-    codeVerifier = match[1];
+  const verifierMatch = cookieStore.match(/etsy_code_verifier=([^;]+)/);
+  if (verifierMatch) {
+    codeVerifier = verifierMatch[1];
+  }
+
+  let cookieState = '';
+  const stateMatch = cookieStore.match(/etsy_oauth_state=([^;]+)/);
+  if (stateMatch) {
+    cookieState = stateMatch[1];
+  }
+
+  if (state !== cookieState) {
+    console.error("Etsy OAuth State Mismatch", { state, cookieState });
+    return NextResponse.redirect(new URL('/?etsy_error=state_mismatch', request.url));
   }
 
   if (!clientId || !redirectUri || !codeVerifier) {
