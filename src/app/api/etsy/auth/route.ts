@@ -3,13 +3,19 @@ import crypto from 'crypto';
 
 export async function GET(request: Request) {
   const clientId = process.env.ETSY_API_KEY;
-  const redirectUri = process.env.ETSY_REDIRECT_URI;
+  
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const host = request.headers.get('host');
+  const dynamicRedirectUri = `${protocol}://${host}/api/etsy/callback`;
+  const redirectUri = process.env.ETSY_REDIRECT_URI && process.env.ETSY_REDIRECT_URI.includes('localhost') && process.env.NODE_ENV === 'production' 
+    ? dynamicRedirectUri 
+    : (process.env.ETSY_REDIRECT_URI || dynamicRedirectUri);
   
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get('userId');
 
   if (!clientId || !redirectUri) {
-    return NextResponse.json({ error: "Etsy credentials not configured in .env.local" }, { status: 500 });
+    return NextResponse.json({ error: "Etsy credentials not configured" }, { status: 500 });
   }
   
   if (!userId) {

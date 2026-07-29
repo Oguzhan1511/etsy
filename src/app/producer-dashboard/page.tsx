@@ -15,6 +15,7 @@ import {
   Users
 } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 import {
   AreaChart,
   Area,
@@ -378,6 +379,7 @@ const FallbackImage = ({ src, alt }: { src: string, alt: string }) => {
 
 export default function ProducerDashboardPage() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [activeCat, setActiveCat] = useState<CategoryDetail>(categoryDetails["T-Shirts"]);
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["Search Volume"]);
@@ -584,7 +586,7 @@ export default function ProducerDashboardPage() {
           </div>
           {!shopData && (
             <button
-              onClick={() => window.location.href = '/api/etsy/auth'}
+              onClick={() => window.location.href = `/api/etsy/auth?userId=${user?.id}`}
               className="px-4 py-1.5 text-xs font-bold text-foreground bg-[#F16421] hover:bg-[#E35D1F] rounded-xl transition-colors shadow-[0_0_10px_rgba(241,100,33,0.2)] flex items-center justify-center"
             >
               {t("settings.connect") || "Etsy Bağla"}

@@ -15,7 +15,12 @@ export async function GET(request: Request) {
   }
 
   const clientId = process.env.ETSY_API_KEY;
-  const redirectUri = process.env.ETSY_REDIRECT_URI;
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const host = request.headers.get('host');
+  const dynamicRedirectUri = `${protocol}://${host}/api/etsy/callback`;
+  const redirectUri = process.env.ETSY_REDIRECT_URI && process.env.ETSY_REDIRECT_URI.includes('localhost') && process.env.NODE_ENV === 'production' 
+    ? dynamicRedirectUri 
+    : (process.env.ETSY_REDIRECT_URI || dynamicRedirectUri);
   
   // Try to get cookie from request directly
   const cookieStore = request.headers.get('cookie') || '';

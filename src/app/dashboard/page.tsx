@@ -18,6 +18,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 import {
   AreaChart,
   Area,
@@ -248,6 +249,7 @@ interface ShopData {
 
 export default function SellerDashboard() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly" | "allTime">("weekly");
   const [selectedMetric, setSelectedMetric] = useState<string>("Sales");
   const [shopData, setShopData] = useState<ShopData | null>(null);
@@ -334,7 +336,7 @@ export default function SellerDashboard() {
           {/* Sync Connection state */}
           <div className="flex items-center gap-2">
             {!shopData ? (
-              <a href="/api/etsy/auth" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs transition-colors shadow-lg">
+              <a href={`/api/etsy/auth?userId=${user?.id}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs transition-colors shadow-lg">
                 {t("sellerDashboard.connectEtsyStore")}
               </a>
             ) : null}
