@@ -13,16 +13,24 @@ export async function GET(request: Request) {
     const meRes = await fetch('https://api.etsy.com/v3/application/users/me', {
       headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': clientId }
     });
-    if (!meRes.ok) throw new Error("Failed to fetch Etsy user");
+    if (!meRes.ok) {
+      const errText = await meRes.text();
+      throw new Error(`Failed to fetch Etsy user: ${meRes.status} ${errText}`);
+    }
     const meData = await meRes.json() as Record<string, unknown>;
 
     const shopRes = await fetch(`https://api.etsy.com/v3/application/users/${meData.user_id}/shops`, {
       headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': clientId }
     });
-    if (!shopRes.ok) throw new Error("Failed to fetch shop");
+    if (!shopRes.ok) {
+      const errText = await shopRes.text();
+      throw new Error(`Failed to fetch shop: ${shopRes.status} ${errText}`);
+    }
     const shopData = await shopRes.json() as Record<string, unknown>;
 
-    if (!shopData.shop_id) return NextResponse.json({ error: "User has no Etsy shop" }, { status: 404 });
+    if (!shopData.shop_id) {
+      return NextResponse.json({ error: "User has no Etsy shop", shopData }, { status: 404 });
+    }
 
     return NextResponse.json({
       shop_id: shopData.shop_id,
@@ -38,6 +46,6 @@ export async function GET(request: Request) {
     });
   } catch (err: unknown) {
     console.error("Etsy shop fetch error:", err);
-    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+    return NextResponse.json({ error: (err as Error).message, debug: true }, { status: 500 });
   }
 }

@@ -254,14 +254,26 @@ export default function SellerDashboard() {
   const [selectedMetric, setSelectedMetric] = useState<string>("Sales");
   const [shopData, setShopData] = useState<ShopData | null>(null);
   const [etsyLoading, setEtsyLoading] = useState(true);
+  const [etsyError, setEtsyError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user?.id) return;
     setEtsyLoading(true);
+    setEtsyError(null);
     fetch('/api/etsy/shop', { headers: { 'x-user-id': user.id } })
       .then(res => res.json())
-      .then(data => { if (!data.error) setShopData(data); else setShopData(null); })
-      .catch(console.error)
+      .then(data => { 
+        if (!data.error) {
+          setShopData(data); 
+        } else {
+          setShopData(null); 
+          setEtsyError(data.error);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        setEtsyError("An unexpected error occurred.");
+      })
       .finally(() => setEtsyLoading(false));
   }, [user?.id]);
   
@@ -418,13 +430,18 @@ export default function SellerDashboard() {
                 {t("sellerDashboard.connectEtsyStore")}
               </a>
             )}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-border text-xs">
+            <div className="relative flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-border text-xs">
               <div className={`w-2 h-2 rounded-full ${shopData ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
               <span className="text-secondary">{t("sellerDashboard.etsySync")}</span>
               <span className="text-foreground font-bold">
                 {shopData ? String(shopData.shop_name) : (etsyLoading ? '...' : 'Not Connected')}
               </span>
-            </div>
+              {etsyError && (
+              <div className="absolute top-full right-0 mt-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl max-w-sm w-max z-50">
+                <p className="text-red-400 text-[10px] font-mono break-all">{etsyError}</p>
+              </div>
+            )}
+          </div>
             {shopData && (
               <button
                 onClick={handleDisconnectEtsy}
