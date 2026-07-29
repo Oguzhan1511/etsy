@@ -37,10 +37,10 @@ export async function GET(request: Request) {
 
     if (!meRes.ok) throw new Error("Failed to fetch user");
     const meData = (await meRes.json()) as Record<string, unknown>;
-    const userId = meData.user_id;
+    const etsyUserId = meData.user_id;
 
     // 2. Get the shop for this user
-    const shopRes = await fetch(`https://api.etsy.com/v3/application/users/${userId}/shops`, {
+    const shopRes = await fetch(`https://api.etsy.com/v3/application/users/${etsyUserId}/shops`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'x-api-key': clientId,
