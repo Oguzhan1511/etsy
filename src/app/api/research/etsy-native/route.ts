@@ -59,21 +59,39 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
 
   const personalizationRegex = /custom|personalized|personalisation|customized|kişiye\s*özel/i;
 
+  const now = Date.now() / 1000;
+  
   rawListings = rawListings.filter(item => {
-    const hasStats = (item.views || 0) > 0 || (item.num_favorers || 0) > 0;
     const title = item.title || "";
-    const isPersonalized = personalizationRegex.test(title);
-    return hasStats && !isPersonalized;
+    if (personalizationRegex.test(title)) return false;
+
+    const views = item.views || 0;
+    const favs = item.num_favorers || 0;
+    const creationTime = item.original_creation_timestamp || item.creation_timestamp || now;
+    const daysAlive = Math.max(1, (now - creationTime) / (60 * 60 * 24));
+    
+    const viewVelocity = views / daysAlive;
+    const favVelocity = favs / daysAlive;
+    const estimatedSales24h = (viewVelocity * 0.03) + (favVelocity * 0.25);
+
+    // Koşul: 24 saatte satış almış olma potansiyeli veya 20'den fazla görüntülenme
+    return views > 20 || estimatedSales24h >= 0.5;
   });
 
   rawListings.sort((a, b) => {
-    const scoreA = (a.views || 0) + (a.num_favorers || 0) * 15;
-    const scoreB = (b.views || 0) + (b.num_favorers || 0) * 15;
-    return scoreB - scoreA;
+    const getScore = (item: EtsyListing) => {
+      const creation = item.original_creation_timestamp || item.creation_timestamp || now;
+      const days = Math.max(1, (now - creation) / (60 * 60 * 24));
+      const vVel = (item.views || 0) / days;
+      const fVel = (item.num_favorers || 0) / days;
+      const sales = (vVel * 0.03) + (fVel * 0.25);
+      const isBestseller = sales >= 2 || vVel > 5 ? 1000 : 0; // Huge boost for bestsellers
+      return isBestseller + sales + (vVel * 0.1);
+    };
+    return getScore(b) - getScore(a);
   });
-  rawListings = rawListings.slice(0, 12);
+  rawListings = rawListings.slice(0, 10);
 
-  const now = Date.now() / 1000;
 
   const fetchPromises = rawListings.map(async (item) => {
     const listingId = item.listing_id;
