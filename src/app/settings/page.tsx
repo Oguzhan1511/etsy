@@ -62,9 +62,9 @@ function SettingsContent() {
         .then(res => res.json())
         .then(data => {
           if (!data.error) { setEtsyConnected(true); setEtsyShopName(String(data.shop_name)); }
-          else setEtsyConnected(false);
+          else { setEtsyConnected(false); setEtsyShopName(null); }
         })
-        .catch(() => setEtsyConnected(false));
+        .catch(() => { setEtsyConnected(false); setEtsyShopName(null); });
     }
 
     if (typeof window !== "undefined") {
@@ -72,6 +72,17 @@ function SettingsContent() {
       if (savedToken) { setTimeout(() => { setPrintifyApiKey(savedToken); setPrintifyConnected(true); }, 0); }
     }
   }, [user?.id, searchParams]);
+
+  const handleDisconnectEtsy = async () => {
+    if (!user?.id) return;
+    try {
+      await fetch('/api/etsy/disconnect', { method: 'POST', headers: { 'x-user-id': user.id } });
+      setEtsyConnected(false);
+      setEtsyShopName(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleSaveProfile = () => {
     setSaved(true);
@@ -363,7 +374,7 @@ function SettingsContent() {
                 </div>
                 <div className="flex items-center gap-3">
                   {etsyConnected ? (
-                    <button onClick={() => setEtsyConnected(false)} className="px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30">
+                    <button onClick={handleDisconnectEtsy} className="px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30">
                       {t("settings.disconnect")}
                     </button>
                   ) : (

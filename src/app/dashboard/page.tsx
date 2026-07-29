@@ -260,10 +260,23 @@ export default function SellerDashboard() {
     setEtsyLoading(true);
     fetch('/api/etsy/shop', { headers: { 'x-user-id': user.id } })
       .then(res => res.json())
-      .then(data => { if (!data.error) setShopData(data); })
+      .then(data => { if (!data.error) setShopData(data); else setShopData(null); })
       .catch(console.error)
       .finally(() => setEtsyLoading(false));
   }, [user?.id]);
+  
+  const handleDisconnectEtsy = async () => {
+    if (!user?.id) return;
+    setEtsyLoading(true);
+    try {
+      await fetch('/api/etsy/disconnect', { method: 'POST', headers: { 'x-user-id': user.id } });
+      setShopData(null);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setEtsyLoading(false);
+    }
+  };
   
   // Real Data States
   const [realOrders, setRealOrders] = useState<ActiveOrder[]>(activeOrders);
@@ -412,6 +425,14 @@ export default function SellerDashboard() {
                 {shopData ? String(shopData.shop_name) : (etsyLoading ? '...' : 'Not Connected')}
               </span>
             </div>
+            {shopData && (
+              <button
+                onClick={handleDisconnectEtsy}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold text-xs transition-colors border border-red-500/30"
+              >
+                Bağlantıyı Kes
+              </button>
+            )}
           </div>
         </div>
       </div>
