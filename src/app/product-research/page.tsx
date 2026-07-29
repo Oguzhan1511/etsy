@@ -500,12 +500,20 @@ export default function ProductResearchPage() {
                         unoptimized={false}
                       />
                       
-                      {/* Bestseller Badge */}
-                      {product.isBestseller && (
-                        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-[#7c6af7] to-[#a855f7] text-foreground text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md shadow-lg border border-border">
-                          Bestseller
-                        </div>
-                      )}
+                      {/* Etsy Badges Area */}
+                      <div className="absolute top-2 left-2 z-10 flex flex-col gap-1.5 items-start">
+                        {product.isBestseller && (
+                          <div className="bg-[#FBE88C] text-[#222222] text-[11px] font-bold px-2 py-0.5 rounded-full shadow-md border border-[#FBE88C] flex items-center gap-1 leading-tight tracking-tight shadow-black/20">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                            Bestseller
+                          </div>
+                        )}
+                        {(product.estimatedSales24h > 0 || product.favs > 100) && (
+                          <div className="bg-[#f0f0f0] text-[#222222] text-[11px] font-medium px-2.5 py-0.5 rounded-full shadow-md border border-white flex items-center shadow-black/20">
+                            In {Math.min(20, Math.max(3, (product.estimatedSales24h * 5) + (product.favs > 1000 ? 10 : 0)))}+ carts
+                          </div>
+                        )}
+                      </div>
 
                       {/* Opportunity Score Badge */}
                       <div className="absolute top-2 right-2 z-10 bg-black/60 backdrop-blur-md border border-border text-foreground text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-md">
