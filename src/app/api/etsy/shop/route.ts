@@ -7,11 +7,14 @@ export async function GET(request: Request) {
 
   const token = await getValidEtsyToken(userId);
   const clientId = process.env.ETSY_API_KEY;
-  if (!token || !clientId) return NextResponse.json({ error: "Etsy store not connected" }, { status: 401 });
+  const clientSecret = process.env.ETSY_API_SECRET;
+  if (!token || !clientId || !clientSecret) return NextResponse.json({ error: "Etsy store not connected (missing credentials)" }, { status: 401 });
+
+  const apiKeyWithSecret = `${clientId}:${clientSecret}`;
 
   try {
     const meRes = await fetch('https://api.etsy.com/v3/application/users/me', {
-      headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': clientId }
+      headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': apiKeyWithSecret }
     });
     if (!meRes.ok) {
       const errText = await meRes.text();
@@ -20,7 +23,7 @@ export async function GET(request: Request) {
     const meData = await meRes.json() as Record<string, unknown>;
 
     const shopRes = await fetch(`https://api.etsy.com/v3/application/users/${meData.user_id}/shops`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': clientId }
+      headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': apiKeyWithSecret }
     });
     if (!shopRes.ok) {
       const errText = await shopRes.text();

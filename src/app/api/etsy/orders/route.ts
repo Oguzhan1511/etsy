@@ -7,17 +7,20 @@ export async function GET(request: Request) {
 
   const token = await getValidEtsyToken(userId);
   const clientId = process.env.ETSY_API_KEY;
-  if (!token || !clientId) return NextResponse.json({ error: "Etsy store not connected" }, { status: 401 });
+  const clientSecret = process.env.ETSY_API_SECRET;
+  if (!token || !clientId || !clientSecret) return NextResponse.json({ error: "Etsy store not connected" }, { status: 401 });
+
+  const apiKeyWithSecret = `${clientId}:${clientSecret}`;
 
   try {
     const meRes = await fetch('https://api.etsy.com/v3/application/users/me', {
-      headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': clientId }
+      headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': apiKeyWithSecret }
     });
     if (!meRes.ok) throw new Error("Failed to fetch Etsy user");
     const meData = await meRes.json();
 
     const shopRes = await fetch(`https://api.etsy.com/v3/application/users/${meData.user_id}/shops`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': clientId }
+      headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': apiKeyWithSecret }
     });
     if (!shopRes.ok) throw new Error("Failed to fetch shop");
     const shopData = await shopRes.json();
@@ -30,7 +33,7 @@ export async function GET(request: Request) {
 
     const receiptsRes = await fetch(
       `https://api.etsy.com/v3/application/shops/${shopId}/receipts?limit=${limit}&offset=${offset}&includes=Transactions,Listings`,
-      { headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': clientId } }
+      { headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': apiKeyWithSecret } }
     );
     if (!receiptsRes.ok) {
       const errTxt = await receiptsRes.text();
