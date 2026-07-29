@@ -296,6 +296,8 @@ export default function SellerDashboard() {
   const [realMostFavorited, setRealMostFavorited] = useState<PerformanceItem[]>(mostFavoritedList);
   const [realSalesCount, setRealSalesCount] = useState<number | null>(null);
   const [realRevenue, setRealRevenue] = useState<string | null>(null);
+  const [realViews, setRealViews] = useState<number | null>(null);
+  const [realFavorites, setRealFavorites] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -341,6 +343,15 @@ export default function SellerDashboard() {
       .then(data => {
         if (!data.error && data.results) {
           const listings = data.results;
+          
+          let v = 0;
+          let f = 0;
+          listings.forEach((item: any) => {
+            v += (item.views || 0);
+            f += (item.num_favorers || 0);
+          });
+          setRealViews(v);
+          setRealFavorites(f);
           
           const sortedByViews = [...listings].sort((a: any, b: any) => (b.views || 0) - (a.views || 0)).slice(0, 3);
           setRealBestSellers(sortedByViews.map((item: any) => ({
@@ -580,7 +591,7 @@ export default function SellerDashboard() {
               <span>{t("sellerDashboard.sales")}</span>
             </span>
             <div>
-              <div className="text-2xl font-extrabold text-foreground leading-none">{realSalesCount !== null ? realSalesCount : activeData.orders.split(" ")[0]}</div>
+              <div className="text-2xl font-extrabold text-foreground leading-none">{shopData ? shopData.transaction_sold_count : activeData.orders.split(" ")[0]}</div>
               <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.totalOrders")}</span>
             </div>
           </div>
@@ -592,7 +603,7 @@ export default function SellerDashboard() {
               <span>{t("sellerDashboard.views")}</span>
             </span>
             <div>
-              <div className="text-2xl font-extrabold text-foreground leading-none">{activeData.views.split(" ")[0]}</div>
+              <div className="text-2xl font-extrabold text-foreground leading-none">{realViews !== null ? realViews : activeData.views.split(" ")[0]}</div>
               <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.storeVisits")}</span>
             </div>
           </div>
@@ -604,7 +615,7 @@ export default function SellerDashboard() {
               <span>{t("sellerDashboard.favorites")}</span>
             </span>
             <div>
-              <div className="text-2xl font-extrabold text-foreground leading-none">{activeData.favorites.split(" ")[0]}</div>
+              <div className="text-2xl font-extrabold text-foreground leading-none">{realFavorites !== null ? realFavorites : activeData.favorites.split(" ")[0]}</div>
               <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.listingFavs")}</span>
             </div>
           </div>
