@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 const ETSY_API_KEY = process.env.ETSY_API_KEY!;
+const ETSY_API_SECRET = process.env.ETSY_API_SECRET!;
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
 
 interface EtsyListing {
@@ -33,7 +34,7 @@ interface EtsyImage {
 async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
   const headers = {
     'Authorization': `Bearer ${accessToken}`,
-    'x-api-key': ETSY_API_KEY,
+    'x-api-key': `${ETSY_API_KEY}:${ETSY_API_SECRET}`,
     'Content-Type': 'application/json',
   };
 
