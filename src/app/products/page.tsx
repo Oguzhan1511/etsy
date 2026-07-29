@@ -844,43 +844,52 @@ export default function ProductsPage() {
                   <span className="text-[9px] text-secondary lowercase font-normal italic">({editVariants.length} varyant)</span>
                 </label>
                 <div className="max-h-60 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
-                  {editVariants.length > 0 ? editVariants.map((variant, index) => (
-                    <div key={variant.id} className={`flex items-center justify-between p-2 rounded-lg border transition-colors ${variant.is_enabled ? 'bg-black/20 border-border' : 'bg-black/10 border-border/40 opacity-60'}`}>
-                      <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newVars = [...editVariants];
-                            newVars[index].is_enabled = !newVars[index].is_enabled;
-                            setEditVariants(newVars);
-                          }}
-                          className={`w-9 h-5 rounded-full flex items-center transition-colors px-0.5 cursor-pointer ${variant.is_enabled ? 'bg-emerald-500/80' : 'bg-neutral-600'}`}
-                        >
-                          <div className={`w-4 h-4 rounded-full bg-white transition-transform ${variant.is_enabled ? 'translate-x-4' : 'translate-x-0'}`} />
-                        </button>
-                        <span className="text-[11px] font-medium text-foreground line-clamp-1 break-all pr-2">{variant.title}</span>
+                  {(() => {
+                    const sortedVariants = [...editVariants].sort((a, b) => {
+                      if (a.is_enabled && !b.is_enabled) return -1;
+                      if (!a.is_enabled && b.is_enabled) return 1;
+                      return a.title.localeCompare(b.title);
+                    });
+                    
+                    return sortedVariants.length > 0 ? sortedVariants.map((variant) => (
+                      <div key={variant.id} className={`flex items-center justify-between p-2 rounded-lg border transition-colors ${variant.is_enabled ? 'bg-black/20 border-border' : 'bg-black/10 border-border/40 opacity-60'}`}>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditVariants(prev => prev.map(v => 
+                                v.id === variant.id ? { ...v, is_enabled: !v.is_enabled } : v
+                              ));
+                            }}
+                            className={`w-9 h-5 rounded-full flex items-center transition-colors px-0.5 cursor-pointer ${variant.is_enabled ? 'bg-emerald-500/80' : 'bg-neutral-600'}`}
+                          >
+                            <div className={`w-4 h-4 rounded-full bg-white transition-transform ${variant.is_enabled ? 'translate-x-4' : 'translate-x-0'}`} />
+                          </button>
+                          <span className="text-[11px] font-medium text-foreground line-clamp-1 break-all pr-2">{variant.title}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="text-xs text-secondary">$</span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            disabled={!variant.is_enabled}
+                            value={variant.price ? (variant.price / 100).toFixed(2) : "0.00"}
+                            onChange={(e) => {
+                              const val = parseFloat(e.target.value);
+                              const newPrice = isNaN(val) ? 0 : Math.round(val * 100);
+                              setEditVariants(prev => prev.map(v => 
+                                v.id === variant.id ? { ...v, price: newPrice } : v
+                              ));
+                            }}
+                            className="w-16 sm:w-20 px-2 py-1 rounded bg-black/40 border border-border text-xs text-foreground focus:outline-none focus:border-purple-500/50 text-right disabled:opacity-50"
+                          />
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-xs text-secondary">$</span>
-                        <input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          disabled={!variant.is_enabled}
-                          value={variant.price ? (variant.price / 100).toFixed(2) : "0.00"}
-                          onChange={(e) => {
-                            const newVars = [...editVariants];
-                            const val = parseFloat(e.target.value);
-                            newVars[index].price = isNaN(val) ? 0 : Math.round(val * 100);
-                            setEditVariants(newVars);
-                          }}
-                          className="w-16 sm:w-20 px-2 py-1 rounded bg-black/40 border border-border text-xs text-foreground focus:outline-none focus:border-purple-500/50 text-right disabled:opacity-50"
-                        />
-                      </div>
-                    </div>
-                  )) : (
-                    <div className="text-xs text-secondary italic py-2">Bu üründe düzenlenebilir varyasyon bulunamadı.</div>
-                  )}
+                    )) : (
+                      <div className="text-xs text-secondary italic py-2">Bu üründe düzenlenebilir varyasyon bulunamadı.</div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
