@@ -459,6 +459,17 @@ export const en = {
   "login.backToLogin": "Back to Login",
   "login.forgotPasswordDesc": "Enter your email address and we will send you a link to reset your password.",
 
+  "mockupPublish.tabPrintify": "Printify Catalog",
+  "mockupPublish.tabCustom": "My Custom Mockups",
+  "mockupPublish.customMockupTitle": "Custom Mockup Studio",
+  "mockupPublish.customMockupDesc": "Upload your own mockup templates and position your designs with drag and drop.",
+  "mockupPublish.uploadTemplate": "Upload Template",
+  "mockupPublish.selectDesign": "Select Design from Library",
+  "mockupPublish.downloadMockup": "Download Mockup",
+  "mockupPublish.noTemplates": "You haven't uploaded any custom mockup templates yet.",
+  "mockupPublish.noDesigns": "No designs found in the library.",
+  "mockupPublish.deleteTemplate": "Delete Template",
+
   // General
   "common.language": "Language",
 };

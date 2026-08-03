@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { Package, Search, ChevronDown, ChevronRight, Loader2, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import CustomMockupStudio from "@/components/CustomMockupStudio";
 
 interface ProductModel {
   id: string;
@@ -19,6 +20,7 @@ export default function MockupPublishPage() {
   const { t } = useLanguage();
 
   const [allBlueprints, setAllBlueprints] = useState<ProductModel[]>([]);
+  const [activeTab, setActiveTab] = useState<"printify" | "custom">("printify");
   const [isLoadingCatalog, setIsLoadingCatalog] = useState(false);
   const [catalogError, setCatalogError] = useState<string | null>(null);
 
@@ -221,14 +223,41 @@ export default function MockupPublishPage() {
             <span className="text-xs text-secondary">{t("mockupPublish.printifyCenter")}</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-[#f1f0ff] to-[#a09cb0] bg-clip-text text-transparent">
-            {t("mockupPublish.catalog")}
+            {activeTab === "printify" ? t("mockupPublish.catalog") : t("mockupPublish.customMockupTitle")}
           </h1>
           <p className="text-sm mt-1 text-secondary">
-            {t("mockupPublish.desc1")} {" "}
-            <span className="text-amber-400 font-medium">{t("mockupPublish.desc2")}</span>
+            {activeTab === "printify" ? (
+              <>
+                {t("mockupPublish.desc1")} {" "}
+                <span className="text-amber-400 font-medium">{t("mockupPublish.desc2")}</span>
+              </>
+            ) : (
+              t("mockupPublish.customMockupDesc")
+            )}
           </p>
         </div>
+        <div className="flex bg-black/40 p-1 rounded-xl border border-border">
+          <button 
+            onClick={() => setActiveTab("printify")}
+            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+              activeTab === "printify" ? "bg-purple-500 text-white shadow-lg" : "text-secondary hover:text-foreground"
+            }`}
+          >
+            {t("mockupPublish.tabPrintify")}
+          </button>
+          <button 
+            onClick={() => setActiveTab("custom")}
+            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+              activeTab === "custom" ? "bg-purple-500 text-white shadow-lg" : "text-secondary hover:text-foreground"
+            }`}
+          >
+            {t("mockupPublish.tabCustom")}
+          </button>
+        </div>
       </div>
+
+      {activeTab === "printify" ? (
+        <>
 
       {catalogError && (
         <div className="px-6 py-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
@@ -439,6 +468,10 @@ export default function MockupPublishPage() {
           )}
         </div>
       </div>
+      </>
+      ) : (
+        <CustomMockupStudio />
+      )}
     </div>
   );
 }

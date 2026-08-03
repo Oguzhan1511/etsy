@@ -459,6 +459,17 @@ export const tr = {
   "login.backToLogin": "Giriş Ekranına Dön",
   "login.forgotPasswordDesc": "E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim.",
 
+  "mockupPublish.tabPrintify": "Printify Kataloğu",
+  "mockupPublish.tabCustom": "Özel Mokaplarım",
+  "mockupPublish.customMockupTitle": "Özel Mokap Stüdyosu",
+  "mockupPublish.customMockupDesc": "Kendi mokap şablonlarınızı yükleyin ve tasarımlarınızı sürükle-bırak ile konumlandırın.",
+  "mockupPublish.uploadTemplate": "Şablon Yükle",
+  "mockupPublish.selectDesign": "Kütüphaneden Tasarım Seç",
+  "mockupPublish.downloadMockup": "Mokabı İndir",
+  "mockupPublish.noTemplates": "Henüz özel mokap şablonu yüklemediniz.",
+  "mockupPublish.noDesigns": "Kütüphanede tasarım bulunamadı.",
+  "mockupPublish.deleteTemplate": "Şablonu Sil",
+
   // General
   "common.language": "Dil",
 };
