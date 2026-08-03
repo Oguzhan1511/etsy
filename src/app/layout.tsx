@@ -15,9 +15,11 @@ export const metadata = {
   title: "PrintySell — Dashboard",
   description: "Premium SaaS dashboard for PrintySell",
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
+    icon: [
+      { url: "/icon.png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
   },
 };
 
