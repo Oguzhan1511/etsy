@@ -14,6 +14,11 @@ const inter = Inter({
 export const metadata = {
   title: "PrintySell — Dashboard",
   description: "Premium SaaS dashboard for PrintySell",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 import { ThemeProvider } from "../components/ThemeProvider";
