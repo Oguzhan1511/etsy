@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Search, Download, Trash2, Edit2, Check, X, CalendarDays, ImageIcon, Eye } from "lucide-react";
+import { get, set } from "idb-keyval";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface DesignItem {
@@ -57,20 +58,20 @@ export default function DesignLibraryPage() {
   const [syncWarning, setSyncWarning] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load from local storage
-    const stored = localStorage.getItem("ai_designs_library");
-    if (stored) {
+    const loadDesigns = async () => {
       try {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        setDesigns(JSON.parse(stored));
-      } catch {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        const stored = await get<DesignItem[]>("ai_designs_library");
+        if (stored) {
+          setDesigns(stored);
+        } else {
+          setDesigns(DEFAULT_MOCK_DESIGNS);
+          await set("ai_designs_library", DEFAULT_MOCK_DESIGNS);
+        }
+      } catch (err) {
         setDesigns(DEFAULT_MOCK_DESIGNS);
       }
-    } else {
-      setDesigns(DEFAULT_MOCK_DESIGNS);
-      localStorage.setItem("ai_designs_library", JSON.stringify(DEFAULT_MOCK_DESIGNS));
-    }
+    };
+    loadDesigns();
   }, []);
 
   // Background Sync Effect
@@ -115,7 +116,7 @@ export default function DesignLibraryPage() {
 
       if (hasChanges) {
         setDesigns(updatedDesigns);
-        localStorage.setItem("ai_designs_library", JSON.stringify(updatedDesigns));
+        await set("ai_designs_library", updatedDesigns);
       }
     };
 
@@ -124,9 +125,9 @@ export default function DesignLibraryPage() {
     return () => clearTimeout(timer);
   }, [designs.length]);
 
-  const saveDesigns = (newDesigns: DesignItem[]) => {
+  const saveDesigns = async (newDesigns: DesignItem[]) => {
     setDesigns(newDesigns);
-    localStorage.setItem("ai_designs_library", JSON.stringify(newDesigns));
+    await set("ai_designs_library", newDesigns);
   };
 
   const handleDelete = (id: string) => {

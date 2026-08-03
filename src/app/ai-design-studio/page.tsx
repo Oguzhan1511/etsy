@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Sparkles, Wand2, Loader2, Download, Library, CheckCircle2, Image as ImageIcon, UploadCloud, X, Zap, Coins } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { get, set } from "idb-keyval";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTokens } from "@/context/TokenContext";
 
@@ -106,7 +107,7 @@ export default function AIDesignStudioPage() {
     }
   };
 
-  const saveToLibrary = () => {
+  const saveToLibrary = async () => {
     if (!generatedImage) return;
 
     const newDesign: DesignItem = {
@@ -117,10 +118,10 @@ export default function AIDesignStudioPage() {
     };
 
     try {
-      const stored = localStorage.getItem("ai_designs_library");
-      const designs: DesignItem[] = stored ? JSON.parse(stored) : [];
+      const stored = await get<DesignItem[]>("ai_designs_library");
+      const designs: DesignItem[] = stored ? stored : [];
       designs.unshift(newDesign);
-      localStorage.setItem("ai_designs_library", JSON.stringify(designs));
+      await set("ai_designs_library", designs);
       setIsSaved(true);
 
       // Background sync to Printify
@@ -138,13 +139,12 @@ export default function AIDesignStudioPage() {
           const data = await res.json();
           if (data.success && data.imageId) {
             // Update local storage
-            const currentStored = localStorage.getItem("ai_designs_library");
+            const currentStored = await get<DesignItem[]>("ai_designs_library");
             if (currentStored) {
-              const currentDesigns = JSON.parse(currentStored);
-              const updatedDesigns = currentDesigns.map((d: DesignItem) => 
+              const updatedDesigns = currentStored.map((d: DesignItem) => 
                 d.id === newDesign.id ? { ...d, printifyImageId: data.imageId } : d
               );
-              localStorage.setItem("ai_designs_library", JSON.stringify(updatedDesigns));
+              await set("ai_designs_library", updatedDesigns);
             }
           }
         } catch (err) {
