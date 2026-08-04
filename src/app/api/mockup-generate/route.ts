@@ -1,0 +1,198 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { jwtVerify } from 'jose';
+import { cookies } from 'next/headers';
+
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
+
+export async function POST(req: Request) {
+  try {
+    // 1. Authenticate user
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth_token')?.value;
+
+    let userId = '';
+    if (token) {
+      try {
+        const { payload } = await jwtVerify(token, JWT_SECRET);
+        userId = payload.id as string;
+      } catch {
+        // invalid token
+      }
+    }
+
+    // Fallback: check header if token missing in dev
+    if (!userId) {
+      const headerUserId = req.headers.get('x-user-id');
+      if (headerUserId) userId = headerUserId;
+    }
+
+    if (!userId) {
+      return NextResponse.json({ error: 'Lütfen giriş yapın.' }, { status: 401 });
+    }
+
+    // 2. Check token balance (requires 3 tokens for 3 mockups)
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user || user.tokens < 3) {
+      return NextResponse.json({ 
+        error: `Yetersiz token. 3 adet canlı mockup seti üretmek için en az 3 Token gereklidir. Mevcut: ${user?.tokens || 0}` 
+      }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const { 
+      designImage, 
+      productType = 'tshirt', 
+      modelGender = 'female', 
+      color = 'white', 
+      environment = 'studio',
+      customPrompt = '' 
+    } = body;
+
+    if (!designImage) {
+      return NextResponse.json({ error: 'Lütfen uygulanacak tasarımı seçin veya yükleyin.' }, { status: 400 });
+    }
+
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: 'OpenAI API Anahtarı eksik.' }, { status: 500 });
+    }
+
+    // Map selections to rich descriptors
+    const productLabels: Record<string, string> = {
+      tshirt: 'crewneck t-shirt',
+      oversized_tshirt: 'oversized streetwear t-shirt',
+      hoodie: 'premium heavy blend pullover hoodie',
+      sweatshirt: 'classic crewneck sweatshirt',
+      totebag: 'canvas tote bag with sturdy handles',
+      mug: 'glossy ceramic coffee mug',
+      pillow: 'square decorative throw pillow',
+      tanktop: 'sleeveless cotton tank top'
+    };
+
+    const genderLabels: Record<string, string> = {
+      female: 'beautiful young female model',
+      male: 'handsome young male model',
+      unisex: 'stylish modern unisex fashion model'
+    };
+
+    const envLabels: Record<string, string> = {
+      studio: 'minimalist high-end studio with clean soft shadows and neutral beige backdrop',
+      urban_street: 'vibrant sunlit city street with modern urban architecture and soft bokeh',
+      aesthetic_cafe: 'cozy sunlit Scandinavian coffee shop with warm ambient lighting',
+      nature_outdoor: 'golden hour outdoor scenic park with soft lens flare and lush green nature'
+    };
+
+    const selectedProduct = productLabels[productType] || 't-shirt';
+    const selectedGender = genderLabels[modelGender] || 'fashion model';
+    const selectedEnv = envLabels[environment] || 'bright aesthetic studio';
+
+    // 3 distinct prompt variations for 3 professional angles
+    const prompt1 = `Professional commercial fashion e-commerce mockup photograph: A ${selectedGender} wearing a ${color} ${selectedProduct} displaying this exact graphic design printed vividly on the front. Studio portrait shot, straight-on view, authentic realistic fabric texture, natural wrinkles, flawless studio lighting, crisp 8k detail, Etsy best seller apparel showcase. ${customPrompt ? `Note: ${customPrompt}` : ''}`;
+
+    const prompt2 = `Lifestyle e-commerce catalog photograph: A trendy ${selectedGender} wearing a ${color} ${selectedProduct} with this exact graphic print on it, photographed candidly in a ${selectedEnv}. Dynamic 3/4 angle pose, natural sunlight, depth of field, photorealistic fabric draping, hyperrealistic live model photography.`;
+
+    const prompt3 = `Editorial lookbook close-up photograph: Detailed medium close-up of the ${color} ${selectedProduct} worn by the ${selectedGender}, showing the high-resolution printed graphic design centered on the chest, realistic woven cotton texture, aesthetic warm grading, stylish magazine quality.`;
+
+    // Prepare image buffer
+    let buffer: Buffer;
+    let mimeType = 'image/png';
+    let ext = 'png';
+
+    if (designImage.startsWith('http://') || designImage.startsWith('https://')) {
+      const imgRes = await fetch(designImage);
+      if (!imgRes.ok) {
+        return NextResponse.json({ error: 'Tasarım görseli indirilemedi.' }, { status: 400 });
+      }
+      const arrayBuffer = await imgRes.arrayBuffer();
+      buffer = Buffer.from(arrayBuffer);
+      mimeType = imgRes.headers.get('content-type') || 'image/png';
+      ext = mimeType.split('/')[1] || 'png';
+    } else {
+      const base64Data = designImage.includes(',') ? designImage.split(',')[1] : designImage;
+      const mimeMatch = designImage.match(/^data:(image\/\w+);base64,/);
+      mimeType = mimeMatch ? mimeMatch[1] : 'image/png';
+      ext = mimeType.split('/')[1] || 'png';
+      buffer = Buffer.from(base64Data, 'base64');
+    }
+
+    const blob = new Blob([new Uint8Array(buffer)], { type: mimeType });
+
+    // Helper to request 1 image edit from OpenAI
+    const generateSingleMockup = async (promptText: string) => {
+      const formData = new FormData();
+      formData.append('model', 'gpt-image-1');
+      formData.append('image', blob, `design.${ext}`);
+      formData.append('prompt', promptText);
+      formData.append('input_fidelity', 'high');
+      formData.append('background', 'opaque');
+      formData.append('quality', 'high');
+      formData.append('size', '1024x1024');
+      formData.append('n', '1');
+
+      const response = await fetch('https://api.openai.com/v1/images/edits', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${apiKey}` },
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("OpenAI Mockup Error:", errorText);
+        throw new Error(`OpenAI API Hatası: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.data && data.data[0]) {
+        const resObj = data.data[0];
+        if (resObj.b64_json) {
+          return `data:image/png;base64,${resObj.b64_json}`;
+        }
+        if (resObj.url) {
+          return resObj.url;
+        }
+      }
+      throw new Error("Görsel üretilemedi");
+    };
+
+    // Execute 3 generations in parallel
+    const results = await Promise.allSettled([
+      generateSingleMockup(prompt1),
+      generateSingleMockup(prompt2),
+      generateSingleMockup(prompt3)
+    ]);
+
+    const generatedUrls: string[] = [];
+    results.forEach((res, index) => {
+      if (res.status === 'fulfilled') {
+        generatedUrls.push(res.value);
+      } else {
+        console.error(`Mockup ${index + 1} failed:`, res.reason);
+      }
+    });
+
+    if (generatedUrls.length === 0) {
+      return NextResponse.json({ error: 'Görseller üretilemedi, lütfen tekrar deneyin.' }, { status: 500 });
+    }
+
+    // Deduct 3 tokens upon successful generation
+    const tokenCost = 3;
+    await prisma.user.update({
+      where: { id: userId },
+      data: { tokens: { decrement: tokenCost } }
+    });
+
+    // Return the generated mockups array
+    return NextResponse.json({
+      success: true,
+      mockups: generatedUrls,
+      tokensUsed: tokenCost,
+      remainingTokens: (user.tokens - tokenCost)
+    });
+
+  } catch (error: unknown) {
+    console.error('Mockup Generation Server Error:', error);
+    const msg = error instanceof Error ? error.message : 'Sunucu hatası oluştu';
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+}
