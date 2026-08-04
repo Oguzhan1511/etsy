@@ -126,12 +126,51 @@ export default function DesignLibraryPage() {
   };
 
   const handleDownload = (url: string, name: string) => {
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${name.replace(/\s+/g, '_').toLowerCase()}_design.png`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const img = new window.Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        const origW = img.naturalWidth || img.width;
+        const origH = img.naturalHeight || img.height;
+        const targetW = Math.max(2048, origW < 1024 ? 2048 : origW);
+        const targetH = Math.max(2048, origH < 1024 ? 2048 : origH);
+        canvas.width = targetW;
+        canvas.height = targetH;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+          ctx.drawImage(img, 0, 0, targetW, targetH);
+          const highResData = canvas.toDataURL("image/png");
+          const a = document.createElement("a");
+          a.href = highResData;
+          a.download = `${name.replace(/\s+/g, '_').toLowerCase()}_print_ready.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          return;
+        }
+      } catch (e) {
+        console.error("Canvas upscale fallback:", e);
+      }
+      // Fallback
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${name.replace(/\s+/g, '_').toLowerCase()}_design.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+    img.onerror = () => {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${name.replace(/\s+/g, '_').toLowerCase()}_design.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+    img.src = url;
   };
 
   const startRename = (design: DesignItem) => {

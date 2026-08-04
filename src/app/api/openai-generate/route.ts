@@ -131,11 +131,16 @@ Kullanıcı talimatı: ${prompt}`;
             const g = this.bitmap.data[idx + 1];
             const b = this.bitmap.data[idx + 2];
             
-            // Beyaz veya çok açık renkli pikselleri (r,g,b > 240) tamamen şeffaf yap
+            // Beyaz veya çok açık renkli pikselleri (r,g,b > 235) tamamen şeffaf yap
             if (r > 235 && g > 235 && b > 235) {
               this.bitmap.data[idx + 3] = 0; // Alpha kanalı sıfır = Tamamen şeffaf
             }
           });
+
+          // Printify POD yüksek çözünürlük garantisi: En az 2048x2048 piksel
+          if (image.bitmap.width < 2048 || image.bitmap.height < 2048) {
+            image.resize(2048, 2048, Jimp.RESIZE_BICUBIC);
+          }
 
           const finalBuffer = await image.getBufferAsync(Jimp.MIME_PNG);
           const finalBase64 = `data:image/png;base64,${finalBuffer.toString('base64')}`;

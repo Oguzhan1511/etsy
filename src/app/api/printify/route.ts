@@ -1,4 +1,30 @@
 import { NextResponse } from "next/server";
+import Jimp from "jimp";
+
+// Helper to ensure image meets Printify minimum requirements (>= 1024px, recommended 2048px)
+async function preparePrintifyImageBuffer(buffer: Buffer): Promise<Buffer> {
+  try {
+    const image = await Jimp.read(buffer);
+    const w = image.bitmap.width;
+    const h = image.bitmap.height;
+
+    // If either width or height is below 1024 (or smaller than 2048), upscale
+    if (w < 1024 || h < 1024) {
+      const scale = Math.max(2048 / Math.max(w, 1), 2048 / Math.max(h, 1));
+      const targetW = Math.max(2048, Math.round(w * scale));
+      const targetH = Math.max(2048, Math.round(h * scale));
+      image.resize(targetW, targetH, Jimp.RESIZE_BICUBIC);
+    } else if (w < 2048 && h < 2048) {
+      // Upscale for high print resolution
+      image.resize(Math.round(w * 2), Math.round(h * 2), Jimp.RESIZE_BICUBIC);
+    }
+
+    return await image.getBufferAsync(Jimp.MIME_PNG);
+  } catch (err) {
+    console.error("Failed to process image with Jimp for Printify, using original buffer:", err);
+    return buffer;
+  }
+}
 
 // Global memory cache map
 const memoryCache = new Map<string, { data: unknown; expiry: number }>();
@@ -229,10 +255,19 @@ export async function POST(req: Request) {
       }
 
       try {
-        const imgRes = await fetch(body.url);
-        if (!imgRes.ok) throw new Error("Failed to fetch image from URL");
-        const arrayBuffer = await imgRes.arrayBuffer();
-        const base64Str = Buffer.from(arrayBuffer).toString('base64');
+        let rawBuffer: Buffer;
+        if (body.url.startsWith("http://") || body.url.startsWith("https://")) {
+          const imgRes = await fetch(body.url);
+          if (!imgRes.ok) throw new Error("Failed to fetch image from URL");
+          const arrayBuffer = await imgRes.arrayBuffer();
+          rawBuffer = Buffer.from(arrayBuffer);
+        } else {
+          const base64Data = body.url.includes(',') ? body.url.split(',')[1] : body.url;
+          rawBuffer = Buffer.from(base64Data, 'base64');
+        }
+
+        const processedBuffer = await preparePrintifyImageBuffer(rawBuffer);
+        const base64Str = processedBuffer.toString('base64');
 
         const uploadRes = await fetch("https://api.printify.com/v1/uploads/images.json", {
           method: "POST",
@@ -288,10 +323,19 @@ export async function POST(req: Request) {
         if (!imageId && body.designUrl) {
           try {
             // Fetch the image from the URL and convert to Base64
-            const imgRes = await fetch(body.designUrl);
-            if (!imgRes.ok) throw new Error("Failed to fetch image from URL");
-            const arrayBuffer = await imgRes.arrayBuffer();
-            const base64Str = Buffer.from(arrayBuffer).toString('base64');
+            let rawBuffer: Buffer;
+            if (body.designUrl.startsWith("http://") || body.designUrl.startsWith("https://")) {
+              const imgRes = await fetch(body.designUrl);
+              if (!imgRes.ok) throw new Error("Failed to fetch image from URL");
+              const arrayBuffer = await imgRes.arrayBuffer();
+              rawBuffer = Buffer.from(arrayBuffer);
+            } else {
+              const base64Data = body.designUrl.includes(',') ? body.designUrl.split(',')[1] : body.designUrl;
+              rawBuffer = Buffer.from(base64Data, 'base64');
+            }
+
+            const processedBuffer = await preparePrintifyImageBuffer(rawBuffer);
+            const base64Str = processedBuffer.toString('base64');
 
             // Upload image using base64 'contents'
             const uploadRes = await fetch("https://api.printify.com/v1/uploads/images.json", {
