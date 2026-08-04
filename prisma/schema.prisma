@@ -87,3 +87,17 @@ model EtsyDailyStat {
 
   @@unique([userId, date])
 }
+
+model VideoJob {
+  id            String   @id @default(uuid())
+  status        String   @default("pending")
+  script        String?
+  voiceoverUrl  String?
+  videoUrl      String?
+  finalVideoUrl String?
+  youtubeUrl    String?
+  errorMessage  String?
+  falRequestId  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
