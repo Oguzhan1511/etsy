@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, Download, Trash2, Edit2, Check, X, CalendarDays, ImageIcon, Eye } from "lucide-react";
+import Link from "next/link";
+import { Search, Download, Trash2, Edit2, Check, X, CalendarDays, ImageIcon, Eye, Sparkles } from "lucide-react";
 import { get, set } from "idb-keyval";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -13,33 +14,6 @@ interface DesignItem {
   createdAt: number;
   printifyImageId?: string;
 }
-
-const DEFAULT_MOCK_DESIGNS: DesignItem[] = [
-  {
-    id: "1",
-    name: "Golden Meadows",
-    url: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=600&q=80",
-    createdAt: Date.now() - 1000000,
-  },
-  {
-    id: "2",
-    name: "Abstract Neon Wave",
-    url: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=600&q=80",
-    createdAt: Date.now() - 2000000,
-  },
-  {
-    id: "3",
-    name: "Retro Solar Circle",
-    url: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80",
-    createdAt: Date.now() - 3000000,
-  },
-  {
-    id: "4",
-    name: "Cyberpunk Cityscape",
-    url: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80",
-    createdAt: Date.now() - 4000000,
-  },
-];
 
 export default function DesignLibraryPage() {
   const { t } = useLanguage();
@@ -61,14 +35,13 @@ export default function DesignLibraryPage() {
     const loadDesigns = async () => {
       try {
         const stored = await get<DesignItem[]>("ai_designs_library");
-        if (stored) {
+        if (stored && Array.isArray(stored)) {
           setDesigns(stored);
         } else {
-          setDesigns(DEFAULT_MOCK_DESIGNS);
-          await set("ai_designs_library", DEFAULT_MOCK_DESIGNS);
+          setDesigns([]);
         }
       } catch (err) {
-        setDesigns(DEFAULT_MOCK_DESIGNS);
+        setDesigns([]);
       }
     };
     loadDesigns();
@@ -234,11 +207,20 @@ export default function DesignLibraryPage() {
             </div>
           </div>
           <h3 className="text-lg font-bold text-foreground mb-2">{t("designLibrary.noDesigns")}</h3>
-          <p className="text-sm text-secondary max-w-md mx-auto">
+          <p className="text-sm text-secondary max-w-md mx-auto mb-6">
             {searchQuery 
               ? t("designLibrary.noMatch")
               : t("designLibrary.empty")}
           </p>
+          {!searchQuery && (
+            <Link
+              href="/ai-design-studio"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-foreground bg-gradient-to-r from-[#7c6af7] to-[#a855f7] hover:brightness-110 shadow-[0_4px_20px_rgba(124,106,247,0.3)] transition-all"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Yeni Tasarım Üret</span>
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

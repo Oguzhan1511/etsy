@@ -32,118 +32,11 @@ interface Product {
   url?: string;
 }
 
-const mockProducts: Product[] = [
-  {
-    id: "prod_1",
-    title: "Cozy Autumn Sweatshirt - Unisex Heavy Blend Crewneck Sweatshirt",
-    category: "sweat",
-    price: 34.90,
-    views: 3420,
-    favs: 890,
-    estimatedSales24h: 12,
-    opportunityScore: 96,
-    isBestseller: true,
-    shopName: "CozyVibesApparel",
-    imageUrl: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "prod_2",
-    title: "Custom Birth Flower Mug - Personalized Ceramic Coffee Mug Gift",
-    category: "mug",
-    price: 16.50,
-    views: 4120,
-    favs: 920,
-    estimatedSales24h: 14,
-    opportunityScore: 94,
-    isBestseller: true,
-    shopName: "PetalAndClay",
-    imageUrl: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "prod_3",
-    title: "14K Gold Personalized Name Necklace - Custom Dainty Jewelry for Her",
-    category: "jewelry",
-    price: 48.00,
-    views: 2890,
-    favs: 710,
-    estimatedSales24h: 10,
-    opportunityScore: 92,
-    isBestseller: true,
-    shopName: "AureliaStudio",
-    imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "prod_4",
-    title: "Organic Cotton Canvas Tote Bag - Aesthetic Reusable Grocery Bag",
-    category: "bag",
-    price: 19.99,
-    views: 1450,
-    favs: 310,
-    estimatedSales24h: 5,
-    opportunityScore: 88,
-    isBestseller: false,
-    shopName: "EarthBoundGoods",
-    imageUrl: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "prod_5",
-    title: "Retro Wildflower T-Shirt - Aesthetic Vintage Graphic Tee Shirt",
-    category: "t-shirt",
-    price: 24.95,
-    views: 2150,
-    favs: 640,
-    estimatedSales24h: 7,
-    opportunityScore: 91,
-    isBestseller: false,
-    shopName: "WildFlowerPrints",
-    imageUrl: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "prod_6",
-    title: "Minimalist Wooden Jewelry Box - Custom Engraved Organizer Chest",
-    category: "jewelry",
-    price: 39.00,
-    views: 1250,
-    favs: 410,
-    estimatedSales24h: 4,
-    opportunityScore: 89,
-    isBestseller: false,
-    shopName: "TimberCraftCo",
-    imageUrl: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "prod_7",
-    title: "Oversized Acid Wash Hoodie - Premium Streetwear Graphic Sweatshirt",
-    category: "sweat",
-    price: 59.99,
-    views: 1800,
-    favs: 530,
-    estimatedSales24h: 6,
-    opportunityScore: 86,
-    isBestseller: false,
-    shopName: "UrbanPrintLabs",
-    imageUrl: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "prod_8",
-    title: "Personalized Enamel Camping Mug - Retro Outdoor Coffee Cup",
-    category: "mug",
-    price: 15.99,
-    views: 980,
-    favs: 310,
-    estimatedSales24h: 3,
-    opportunityScore: 85,
-    isBestseller: false,
-    shopName: "CampfireStories",
-    imageUrl: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80",
-  },
-];
-
 export default function ProductResearchPage() {
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -265,7 +158,7 @@ export default function ProductResearchPage() {
     }
     setSearchTerm("");
     setActiveQuery("");
-    setProducts(mockProducts);
+    setProducts([]);
     setError(null);
     setSelectedProduct(null);
     setLoadingStatus("");
@@ -456,22 +349,33 @@ export default function ProductResearchPage() {
             </div>
           </div>
         ) : products.length === 0 ? (
-          /* Empty Search State */
+          /* Empty / Initial State */
           <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-border bg-white/[0.01]">
             <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center mx-auto mb-4 text-purple-400 border border-purple-500/20">
               <Search className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground">{t("research.noProducts")}</h3>
-            <p className="text-sm mt-1 max-w-sm mx-auto text-secondary">
-              {t("research.noMatches")} &quot;{activeQuery}&quot;. {t("research.tryTyping")}
-            </p>
-            <button
-              onClick={handleResetSearch}
-              className="mt-4 px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 hover:border-purple-500/40 text-purple-300 font-semibold text-sm rounded-lg transition-all cursor-pointer inline-flex items-center gap-1.5"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>{t("research.clearFilter")}</span>
-            </button>
+            {activeQuery ? (
+              <>
+                <h3 className="text-lg font-semibold text-foreground">{t("research.noProducts")}</h3>
+                <p className="text-sm mt-1 max-w-sm mx-auto text-secondary">
+                  {t("research.noMatches")} &quot;{activeQuery}&quot;. {t("research.tryTyping")}
+                </p>
+                <button
+                  onClick={handleResetSearch}
+                  className="mt-4 px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 hover:border-purple-500/40 text-purple-300 font-semibold text-sm rounded-lg transition-all cursor-pointer inline-flex items-center gap-1.5"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>{t("research.clearFilter")}</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <h3 className="text-lg font-semibold text-foreground">Etsy Canlı Pazar Analizi</h3>
+                <p className="text-sm mt-1 max-w-md mx-auto text-secondary">
+                  Etsy üzerindeki trend ürünleri, tahmini 24 saatlik satışları ve fırsat skorlarını incelemek için yukarıdaki arama çubuğuna bir ürün veya niş kelimesi yazıp analizi başlatın.
+                </p>
+              </>
+            )}
           </div>
         ) : (
           /* Actual Products Grid */

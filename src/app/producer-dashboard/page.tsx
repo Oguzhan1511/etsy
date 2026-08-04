@@ -487,33 +487,10 @@ export default function ProducerDashboardPage() {
 
 
 
-  const [totalBlueprints] = useState(() => {
-    if (typeof window !== "undefined" && localStorage.getItem("printify_api_key")) {
-      return 1430;
-    }
-    return 987;
-  });
-
-  const [designedCount] = useState(() => {
-    if (typeof window !== "undefined" && localStorage.getItem("printify_api_key")) {
-      return 284;
-    }
-    return 148;
-  });
-
-  const [draftCount] = useState(() => {
-    if (typeof window !== "undefined" && localStorage.getItem("printify_api_key")) {
-      return 47;
-    }
-    return 36;
-  });
-
-  const [publishedCount, setPublishedCount] = useState(() => {
-    if (typeof window !== "undefined" && localStorage.getItem("printify_api_key")) {
-      return 118;
-    }
-    return 64;
-  });
+  const [totalBlueprints, setTotalBlueprints] = useState<number>(0);
+  const [designedCount, setDesignedCount] = useState<number>(0);
+  const [draftCount, setDraftCount] = useState<number>(0);
+  const [publishedCount, setPublishedCount] = useState<number>(0);
 
   interface ShopData {
     shop_name: string;
@@ -527,12 +504,24 @@ export default function ProducerDashboardPage() {
   const [shopData, setShopData] = useState<ShopData | null>(null);
 
   useEffect(() => {
+    // Load local designed count from IndexedDB
+    import("idb-keyval").then(({ get }) => {
+      get("ai_designs_library").then((val) => {
+        if (Array.isArray(val)) {
+          setDesignedCount(val.length);
+        }
+      }).catch(console.error);
+    }).catch(console.error);
+
+    // Fetch live Etsy shop data
     fetch('/api/etsy/shop')
       .then(res => res.json())
       .then(data => {
         if (!data.error) {
           setShopData(data);
-          setPublishedCount(data.listing_active_count || 0);
+          const activeCount = data.listing_active_count || 0;
+          setPublishedCount(activeCount);
+          setTotalBlueprints(activeCount > 0 ? activeCount : 0);
         }
       })
       .catch(console.error);
