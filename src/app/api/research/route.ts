@@ -29,7 +29,7 @@ interface ApifyItem {
   reviewCount?: number;
   tags?: string[];
 }
-const APIFY_TOKEN = process.env.APIFY_TOKEN || "";
+const APIFY_TOKEN = process.env.APIFY_TOKEN || process.env.APIFY_API_TOKEN || "";
 
 // POST starts the scraper run asynchronously
 export async function POST(req: Request) {
