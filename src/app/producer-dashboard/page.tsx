@@ -508,7 +508,8 @@ export default function ProducerDashboardPage() {
     import("idb-keyval").then(({ get }) => {
       get("ai_designs_library").then((val) => {
         if (Array.isArray(val)) {
-          setDesignedCount(val.length);
+          const real = val.filter((d: any) => d && d.id && !d.id.startsWith("mock-") && !d.url?.includes("unsplash.com"));
+          setDesignedCount(real.length);
         }
       }).catch(console.error);
     }).catch(console.error);

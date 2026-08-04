@@ -40,7 +40,15 @@ export default function CustomMockupStudio() {
         if (storedTemplates) setTemplates(storedTemplates);
         
         const storedDesigns = await get<DesignItem[]>("ai_designs_library");
-        if (storedDesigns) setDesigns(storedDesigns);
+        if (storedDesigns && Array.isArray(storedDesigns)) {
+          const realDesigns = storedDesigns.filter(d => 
+            d && 
+            d.id && 
+            !d.id.startsWith("mock-") &&
+            !d.url?.includes("unsplash.com")
+          );
+          setDesigns(realDesigns);
+        }
       } catch (err) {
         console.error("Failed to load local data", err);
       }

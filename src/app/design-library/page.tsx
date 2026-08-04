@@ -36,7 +36,22 @@ export default function DesignLibraryPage() {
       try {
         const stored = await get<DesignItem[]>("ai_designs_library");
         if (stored && Array.isArray(stored)) {
-          setDesigns(stored);
+          // Filter out legacy mock designs
+          const realDesigns = stored.filter(d => 
+            d && 
+            d.id && 
+            !d.id.startsWith("mock-") &&
+            !d.url?.includes("unsplash.com") &&
+            !d.name?.includes("Vintage Mountain") &&
+            !d.name?.includes("Retro Sunset") &&
+            !d.name?.includes("Cyberpunk Neon") &&
+            !d.name?.includes("Minimalist Botanical")
+          );
+          
+          if (realDesigns.length !== stored.length) {
+            await set("ai_designs_library", realDesigns);
+          }
+          setDesigns(realDesigns);
         } else {
           setDesigns([]);
         }
