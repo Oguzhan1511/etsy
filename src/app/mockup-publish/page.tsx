@@ -226,14 +226,7 @@ export default function MockupPublishPage() {
             {activeTab === "printify" ? t("mockupPublish.catalog") : t("mockupPublish.customMockupTitle")}
           </h1>
           <p className="text-sm mt-1 text-secondary">
-            {activeTab === "printify" ? (
-              <>
-                {t("mockupPublish.desc1")} {" "}
-                <span className="text-amber-400 font-medium">{t("mockupPublish.desc2")}</span>
-              </>
-            ) : (
-              t("mockupPublish.customMockupDesc")
-            )}
+            {activeTab === "printify" ? t("mockupPublish.descCatalog") : t("mockupPublish.customMockupDesc")}
           </p>
         </div>
         <div className="flex bg-black/40 p-1 rounded-xl border border-border">
