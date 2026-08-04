@@ -57,8 +57,9 @@ export default function MockupStudioPage() {
   const [savedIndex, setSavedIndex] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Load designs from IndexedDB on mount
+  // Load designs and refresh tokens from DB on mount
   useEffect(() => {
+    refreshTokens();
     const loadSavedDesigns = async () => {
       try {
         const stored = await get<DesignItem[]>("ai_designs_library");
@@ -97,7 +98,7 @@ export default function MockupStudioPage() {
         setActiveTab("upload");
       }
     }
-  }, []);
+  }, [refreshTokens]);
 
   // Handle local file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,16 +174,31 @@ export default function MockupStudioPage() {
     setGeneratedMockups([]);
 
     try {
+      let currentUserId = "";
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("printysell-auth-user");
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed?.id) currentUserId = parsed.id;
+          } catch {}
+        }
+      }
+
       const res = await fetch("/api/mockup-generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(currentUserId ? { "x-user-id": currentUserId } : {})
+        },
         body: JSON.stringify({
           designImage: selectedDesign.url,
           productType,
           modelGender,
           color: productColor,
           environment,
-          customPrompt
+          customPrompt,
+          userId: currentUserId
         })
       });
 
