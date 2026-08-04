@@ -31,14 +31,31 @@ export function TokenProvider({ children }: { children: React.ReactNode }) {
 
   const refreshTokens = useCallback(async () => {
     try {
-      const res = await fetch("/api/user/tokens");
+      let headers: Record<string, string> = {};
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("printysell-auth-user");
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed && parsed.id) {
+              headers["x-user-id"] = parsed.id;
+            }
+          } catch {}
+        }
+      }
+
+      const res = await fetch("/api/user/tokens", { headers });
       if (res.ok) {
         const text = await res.text();
         try {
           const data = JSON.parse(text);
-          setAvailableTokens(data.tokens);
-          setPlanType(data.plan as PlanType);
-          setTotalEverGranted(PLAN_LIMITS[data.plan as PlanType] || 30);
+          if (typeof data.tokens === "number") {
+            setAvailableTokens(data.tokens);
+          }
+          if (data.plan) {
+            setPlanType(data.plan as PlanType);
+            setTotalEverGranted(PLAN_LIMITS[data.plan as PlanType] || 5000);
+          }
         } catch {
           console.error("Token API returned invalid JSON:", text);
         }
