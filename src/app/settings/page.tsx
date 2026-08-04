@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useSearchParams } from "next/navigation";
 import {
@@ -455,88 +456,167 @@ function SettingsContent() {
       )}
 
       {/* ── PLAN TAB ── */}
-      {activeTab === "plan" && (
-        <div className="space-y-4">
-          {/* Current Plan */}
-          <div
-            className="rounded-2xl p-5 border space-y-3 relative overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg, rgba(124,106,247,0.12) 0%, rgba(168,85,247,0.06) 100%)",
-              borderColor: "rgba(124,106,247,0.25)",
-            }}
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-purple-500/5 blur-2xl pointer-events-none" />
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-purple-400">{t("settings.currentPlan")}</span>
-                <h2 className="text-xl font-bold text-foreground mt-1 flex items-center gap-2">
-                  <Zap size={18} className="text-purple-400" />
-                  {t("settings.proPlan")}
-                </h2>
-                <p className="text-xs text-secondary mt-1">{t("settings.proPlanDesc")}</p>
-              </div>
-              <span className="text-2xl font-bold text-foreground">₺299<span className="text-xs text-muted font-normal">{t("settings.perMonth")}</span></span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 pt-2">
-              {[t("settings.featureUnlimited"), "AI Design Studio", t("settings.featureAnalytics"), t("settings.featureSupport")].map((f) => (
-                <div key={f} className="flex items-center gap-1.5 text-[11px] text-secondary">
-                  <Check size={10} className="text-purple-400 shrink-0" />
-                  {f}
-                </div>
-              ))}
-            </div>
-          </div>
+      {activeTab === "plan" && (() => {
+        const userPlan = (user?.plan || "pro").toLowerCase();
+        const isStandart = userPlan === "standart" || userPlan === "standard";
+        const isPremium = userPlan === "premium" || userPlan === "plus";
+        const isPro = !isStandart && !isPremium;
 
-          {/* Plan Options */}
-          <div className="space-y-2">
-            {[
-              { name: "Starter", price: "₺99", desc: t("settings.starterDesc"), features: [t("settings.starterFeat1"), t("settings.starterFeat2"), t("settings.starterFeat3")] },
-              { name: "Pro", price: "₺299", desc: t("settings.proDesc"), features: [t("settings.featureUnlimited"), "AI Design Studio", t("settings.featureSupport")], current: true },
-              { name: "Business", price: "₺699", desc: t("settings.businessDesc"), features: [t("settings.businessFeat1"), t("settings.businessFeat2"), t("settings.businessFeat3")] },
-            ].map((plan) => (
-              <div
-                key={plan.name}
-                className={`bg-card border rounded-xl p-4 flex items-center justify-between transition-all ${
-                  plan.current ? "border-purple-500/40" : "border-border hover:border-border"
-                }`}
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-foreground">{plan.name}</span>
-                    {plan.current && (
-                      <span className="text-[9px] font-bold bg-purple-500/20 border border-purple-500/30 text-purple-400 px-1.5 py-0.5 rounded-full">
-                        {t("settings.active")}
+        const currentPlanInfo = isStandart
+          ? {
+              name: "Standart Plan",
+              price: "₺260",
+              desc: "Yeni başlayan satıcılar için temel araçlar.",
+              tokens: "10 Token / ay",
+              features: ["10 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "Sipariş ve Ürün Takibi", "Canlı Mockup Stüdyosu"],
+            }
+          : isPremium
+          ? {
+              name: "Premium Plan",
+              price: "₺710",
+              desc: "Sınırları zorlayan devasa mağazalar için maksimum güç.",
+              tokens: "100 Token / ay",
+              features: ["100 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "VIP Hızlı Üretim", "Canlı Mockup Stüdyosu"],
+            }
+          : {
+              name: "Pro Plan",
+              price: "₺480",
+              desc: "Büyümek isteyen profesyonel satıcılar için en popüler plan.",
+              tokens: "50 Token / ay",
+              features: ["50 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "Öncelikli Destek", "Canlı Mockup Stüdyosu"],
+            };
+
+        const planList = [
+          {
+            id: "standart",
+            name: "Standart",
+            price: "₺260",
+            tokens: "10 Token / ay",
+            desc: "Yeni başlayan satıcılar için",
+            features: ["10 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "Sipariş Takibi", "Canlı Mockup Stüdyosu"],
+            current: isStandart,
+          },
+          {
+            id: "pro",
+            name: "Pro",
+            price: "₺480",
+            tokens: "50 Token / ay",
+            desc: "Büyüyen satıcılar için (En Popüler)",
+            features: ["50 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "Öncelikli Destek", "Canlı Mockup Stüdyosu"],
+            current: isPro,
+          },
+          {
+            id: "premium",
+            name: "Premium",
+            price: "₺710",
+            tokens: "100 Token / ay",
+            desc: "Ekipler ve profesyoneller için maksimum kapasite",
+            features: ["100 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "VIP Hızlı Üretim", "Canlı Mockup Stüdyosu"],
+            current: isPremium,
+          },
+        ];
+
+        return (
+          <div className="space-y-4">
+            {/* Current Plan */}
+            <div
+              className="rounded-2xl p-5 border space-y-3 relative overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, rgba(124,106,247,0.12) 0%, rgba(168,85,247,0.06) 100%)",
+                borderColor: "rgba(124,106,247,0.25)",
+              }}
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-purple-500/5 blur-2xl pointer-events-none" />
+              <div className="flex items-start justify-between">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-purple-400">
+                    {t("settings.currentPlan")}
+                  </span>
+                  <h2 className="text-xl font-bold text-foreground mt-1 flex items-center gap-2">
+                    <Zap size={18} className="text-purple-400" />
+                    {currentPlanInfo.name}
+                  </h2>
+                  <p className="text-xs text-secondary mt-1">{currentPlanInfo.desc}</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-2xl font-bold text-foreground">
+                    {currentPlanInfo.price}
+                    <span className="text-xs text-muted font-normal">{t("settings.perMonth")}</span>
+                  </span>
+                  <p className="text-[11px] font-semibold text-purple-300 mt-0.5">{currentPlanInfo.tokens}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-purple-500/10 mt-2">
+                {currentPlanInfo.features.map((f) => (
+                  <div key={f} className="flex items-center gap-1.5 text-[11px] text-secondary">
+                    <Check size={10} className="text-purple-400 shrink-0" />
+                    {f}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Plan Options */}
+            <div className="space-y-2">
+              {planList.map((plan) => (
+                <div
+                  key={plan.name}
+                  className={`bg-card border rounded-xl p-4 flex items-center justify-between transition-all ${
+                    plan.current ? "border-purple-500/40 shadow-[0_0_20px_rgba(139,92,246,0.15)]" : "border-border hover:border-border"
+                  }`}
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-foreground">{plan.name} Plan</span>
+                      <span className="text-[10px] text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-md font-semibold border border-purple-500/20">
+                        {plan.tokens}
+                      </span>
+                      {plan.current && (
+                        <span className="text-[9px] font-bold bg-purple-500/20 border border-purple-500/30 text-purple-400 px-1.5 py-0.5 rounded-full">
+                          {t("settings.active")}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-muted">{plan.desc}</p>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {plan.features.map((f) => (
+                        <span key={f} className="text-[9px] text-secondary flex items-center gap-1">
+                          <Check size={8} className="text-purple-400" />
+                          {f}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0 ml-4">
+                    <p className="text-base font-bold text-foreground">
+                      {plan.price}
+                      <span className="text-[10px] text-muted font-normal">{t("settings.perMonth")}</span>
+                    </p>
+                    {!plan.current ? (
+                      <Link
+                        href={`/checkout?plan=${plan.id}`}
+                        className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-purple-500/20 border border-border hover:border-purple-500/30 text-[10px] font-bold text-secondary hover:text-foreground transition-all cursor-pointer"
+                      >
+                        {t("settings.upgrade")} <ChevronRight size={10} />
+                      </Link>
+                    ) : (
+                      <span className="mt-2 inline-block text-[10px] font-bold text-purple-400">
+                        Mevcut Planınız
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-muted">{plan.desc}</p>
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {plan.features.map((f) => (
-                      <span key={f} className="text-[9px] text-secondary flex items-center gap-1">
-                        <Check size={8} className="text-purple-400" />{f}
-                      </span>
-                    ))}
-                  </div>
                 </div>
-                <div className="text-right shrink-0 ml-4">
-                  <p className="text-base font-bold text-foreground">{plan.price}<span className="text-[10px] text-muted font-normal">{t("settings.perMonth")}</span></p>
-                  {!plan.current && (
-                    <button className="mt-2 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-purple-500/20 border border-border hover:border-purple-500/30 text-[10px] font-bold text-secondary hover:text-foreground transition-all cursor-pointer">
-                      {t("settings.upgrade")} <ChevronRight size={10} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* Security badge */}
-          <div className="flex items-center gap-2 text-[10px] text-muted justify-center pt-1">
-            <Shield size={11} />
-            {t("settings.ssl")}
+            {/* Security badge */}
+            <div className="flex items-center gap-2 text-[10px] text-muted justify-center pt-1">
+              <Shield size={11} />
+              {t("settings.ssl")}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
