@@ -9,13 +9,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
+    // Determine plan and tokens
+    let assignedPlan = 'Standard';
+    let grantedTokens = 10;
+
+    const normalizedPlan = (planId || '').toLowerCase();
+    if (normalizedPlan === 'premium' || normalizedPlan === 'plus') {
+      assignedPlan = 'Premium';
+      grantedTokens = 100;
+    } else if (normalizedPlan === 'pro') {
+      assignedPlan = 'Pro';
+      grantedTokens = 50;
+    } else {
+      assignedPlan = 'Standard';
+      grantedTokens = 10;
+    }
+
     // Mock payment successful: Update user plan and payment status
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        plan: planId || 'pro',
+        plan: assignedPlan,
         paymentStatus: true,
-        tokens: planId === 'plus' ? 999999 : (planId === 'pro' ? 100 : 30)
+        tokens: grantedTokens
       }
     });
 

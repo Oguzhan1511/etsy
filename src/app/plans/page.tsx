@@ -14,7 +14,7 @@ export default function PlansPage() {
     {
       id: "standart",
       name: "Standart",
-      price: "$6",
+      price: "260 ₺",
       period: "/ay",
       description: "Yeni başlayan satıcılar için temel araçlar.",
       icon: TrendingUp,
@@ -23,14 +23,15 @@ export default function PlansPage() {
         "Etsy Mağaza Analizi",
         "Sipariş ve Ürün Takibi",
         "Ürün Analizi",
-        "Aylık 1 Adet Yapay Zeka Tasarımı",
-        "Printify Bağlantısı"
+        "Aylık 10 Adet Yapay Zeka Tasarımı",
+        "Printify Bağlantısı",
+        "Canlı Mockup Stüdyosu Erişimi"
       ]
     },
     {
       id: "pro",
       name: "Pro",
-      price: "$10",
+      price: "480 ₺",
       period: "/ay",
       description: "Büyümek isteyen profesyonel satıcılar için.",
       icon: Zap,
@@ -40,14 +41,16 @@ export default function PlansPage() {
         "Etsy Mağaza Analizi",
         "Sipariş ve Ürün Takibi",
         "Ürün Analizi",
-        "Aylık 10 Adet Yapay Zeka Tasarımı",
-        "Printify Bağlantısı"
+        "Aylık 50 Adet Yapay Zeka Tasarımı",
+        "Printify Bağlantısı",
+        "Canlı Mockup Stüdyosu Erişimi",
+        "Öncelikli Üretim Desteği"
       ]
     },
     {
-      id: "plus",
-      name: "Plus",
-      price: "$18",
+      id: "premium",
+      name: "Premium",
+      price: "710 ₺",
       period: "/ay",
       description: "Sınırları zorlayan devasa mağazalar için.",
       icon: Sparkles,
@@ -56,8 +59,10 @@ export default function PlansPage() {
         "Etsy Mağaza Analizi",
         "Sipariş ve Ürün Takibi",
         "Ürün Analizi",
-        "Sınırsız Yapay Zeka Tasarımı",
-        "Printify Bağlantısı"
+        "Aylık 100 Adet Yapay Zeka Tasarımı",
+        "Printify Bağlantısı",
+        "Canlı Mockup Stüdyosu Erişimi",
+        "Öncelikli VIP Destek & Hızlı Üretim"
       ]
     }
   ];

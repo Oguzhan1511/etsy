@@ -5,10 +5,10 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 export type PlanType = "Standard" | "Pro" | "Premium" | "none";
 
 export const PLAN_LIMITS: Record<PlanType, number> = {
-  Standard: 100,
-  Pro: 500,
-  Premium: 2000,
-  none: 30,
+  Standard: 10,
+  Pro: 50,
+  Premium: 100,
+  none: 0,
 };
 
 interface TokenContextType {

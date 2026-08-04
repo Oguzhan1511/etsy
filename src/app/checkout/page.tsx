@@ -15,9 +15,10 @@ function CheckoutContent() {
   const [success, setSuccess] = useState(false);
 
   const plans = {
-    standart: { name: "Standart Plan", price: "$6.00" },
-    pro: { name: "Pro Plan", price: "$10.00" },
-    plus: { name: "Plus Plan", price: "$18.00" },
+    standart: { name: "Standart Plan", price: "260 TL", priceNumber: 260, tokens: 10 },
+    pro: { name: "Pro Plan", price: "480 TL", priceNumber: 480, tokens: 50 },
+    premium: { name: "Premium Plan", price: "710 TL", priceNumber: 710, tokens: 100 },
+    plus: { name: "Premium Plan", price: "710 TL", priceNumber: 710, tokens: 100 },
   };
 
   const selectedPlan = plans[planId as keyof typeof plans] || plans.pro;
@@ -31,7 +32,7 @@ function CheckoutContent() {
       const res = await fetch("/api/user/mock-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, planId }),
+        body: JSON.stringify({ userId: user.id, planId: planId === "plus" ? "premium" : planId }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -91,9 +92,13 @@ function CheckoutContent() {
 
           <div className="bg-white/[0.02] border border-border rounded-2xl p-6 backdrop-blur-xl">
             <h2 className="text-lg font-semibold text-foreground mb-4 border-b border-border pb-4">Sipariş Özeti</h2>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-3">
               <span className="text-foreground/80">{selectedPlan.name} (Aylık)</span>
-              <span className="text-foreground font-bold">299.00 TL</span>
+              <span className="text-foreground font-bold">{selectedPlan.price}</span>
+            </div>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-foreground/60 text-sm">Dahil Edilen Token</span>
+              <span className="text-violet-400 font-bold">{selectedPlan.tokens} Token / ay</span>
             </div>
             <div className="flex justify-between items-center mb-4">
               <span className="text-green-400 text-sm">Güvenli Altyapı</span>
@@ -101,7 +106,7 @@ function CheckoutContent() {
             </div>
             <div className="border-t border-border pt-4 mt-4 flex justify-between items-center">
               <span className="text-foreground font-semibold">Toplam Ödenecek</span>
-              <span className="text-2xl font-black text-foreground">299.00 TL</span>
+              <span className="text-2xl font-black text-foreground">{selectedPlan.price}</span>
             </div>
             <p className="text-xs text-foreground/40 mt-6 flex items-start gap-2">
               <Lock size={14} className="shrink-0" />

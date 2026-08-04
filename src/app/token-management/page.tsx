@@ -108,41 +108,41 @@ const PLAN_BADGE_COLORS: Record<PlanType, string> = {
 // ─── Token Package Cards ──────────────────────────────────────────────────────
 const TOKEN_PACKAGES = [
   {
-    id: "starter",
-    label: "Başlangıç Paketi",
-    tokens: 50,
-    price: 200,
+    id: "token_10",
+    label: "10 Token Paketi",
+    tokens: 10,
+    price: 60,
     icon: <Zap size={22} className="text-blue-400" />,
     gradient: "from-blue-900/60 to-blue-800/30",
     border: "border-blue-500/20 hover:border-blue-400/50",
     glow: "hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]",
-    badge: null,
-    badgeColor: "",
+    badge: "Temel",
+    badgeColor: "bg-blue-500/20 text-blue-300 border border-blue-500/30",
     priceColor: "text-blue-300",
   },
   {
-    id: "popular",
-    label: "Avantajlı Paket",
-    tokens: 100,
-    price: 400,
+    id: "token_30",
+    label: "30 Token Paketi",
+    tokens: 30,
+    price: 160,
     icon: <Flame size={22} className="text-violet-400" />,
     gradient: "from-violet-900/70 to-purple-800/40",
     border: "border-violet-500/40 hover:border-violet-400/70",
     glow: "hover:shadow-[0_0_40px_rgba(139,92,246,0.3)]",
-    badge: "En Popüler",
+    badge: "En Çok Tercih Edilen",
     badgeColor: "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white",
     priceColor: "text-violet-300",
   },
   {
-    id: "mega",
-    label: "Mega Paket",
-    tokens: 250,
-    price: 900,
+    id: "token_50",
+    label: "50 Token Paketi",
+    tokens: 50,
+    price: 270,
     icon: <Crown size={22} className="text-amber-400" />,
     gradient: "from-amber-900/60 to-yellow-800/30",
     border: "border-amber-500/20 hover:border-amber-400/50",
     glow: "hover:shadow-[0_0_30px_rgba(245,158,11,0.2)]",
-    badge: "Maksimum Değer",
+    badge: "Avantajlı Paket",
     badgeColor: "bg-gradient-to-r from-amber-500 to-yellow-500 text-black",
     priceColor: "text-amber-300",
   },
@@ -150,7 +150,7 @@ const TOKEN_PACKAGES = [
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function TokenManagementPage() {
-  const { planType, availableTokens, totalEverGranted, addTokens, isLoaded } = useTokens();
+  const { planType, availableTokens, totalEverGranted, addTokens, isLoaded, refreshTokens } = useTokens();
   const [toast, setToast] = useState({ visible: false, message: "" });
   const [purchasing, setPurchasing] = useState<string | null>(null);
 
@@ -161,11 +161,32 @@ export default function TokenManagementPage() {
 
   const handlePurchase = async (pkg: (typeof TOKEN_PACKAGES)[0]) => {
     setPurchasing(pkg.id);
-    // Simulate payment processing
-    await new Promise((r) => setTimeout(r, 1200));
-    addTokens(pkg.tokens);
-    setPurchasing(null);
-    showToast(`${pkg.tokens} Token hesabınıza yüklendi! 🎉`);
+    try {
+      let headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("printysell-auth-user");
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed && parsed.id) headers["x-user-id"] = parsed.id;
+          } catch {}
+        }
+      }
+      await fetch("/api/user/tokens", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ amount: pkg.tokens, packageId: pkg.id })
+      });
+      addTokens(pkg.tokens);
+      await refreshTokens();
+      showToast(`${pkg.tokens} Token hesabınıza yüklendi! 🎉`);
+    } catch (e) {
+      console.error(e);
+      addTokens(pkg.tokens);
+      showToast(`${pkg.tokens} Token hesabınıza yüklendi! 🎉`);
+    } finally {
+      setPurchasing(null);
+    }
   };
 
   if (!isLoaded) {

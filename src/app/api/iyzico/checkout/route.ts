@@ -37,12 +37,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const { plan } = await req.json(); // e.g. "Pro"
-    if (!plan || plan !== "Pro") {
-      return NextResponse.json({ error: 'Invalid plan selected' }, { status: 400 });
-    }
+    const { plan, packageId } = await req.json(); // e.g. "standart", "pro", "premium", "token_10", etc.
+    
+    let price = "480.00";
+    let itemName = "PrintySell Pro Plan";
+    const selected = (plan || packageId || 'pro').toLowerCase();
 
-    const price = "299.00"; // Fake price for the Pro Plan in TRY
+    if (selected === 'standart' || selected === 'standard') {
+      price = "260.00";
+      itemName = "PrintySell Standart Plan (10 Token)";
+    } else if (selected === 'pro') {
+      price = "480.00";
+      itemName = "PrintySell Pro Plan (50 Token)";
+    } else if (selected === 'premium' || selected === 'plus') {
+      price = "710.00";
+      itemName = "PrintySell Premium Plan (100 Token)";
+    } else if (selected === 'token_10') {
+      price = "60.00";
+      itemName = "PrintySell 10 Token Paketi";
+    } else if (selected === 'token_30') {
+      price = "160.00";
+      itemName = "PrintySell 30 Token Paketi";
+    } else if (selected === 'token_50') {
+      price = "270.00";
+      itemName = "PrintySell 50 Token Paketi";
+    }
 
     // Iyzico Request Payload
     const request = {
