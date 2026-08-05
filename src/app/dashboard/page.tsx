@@ -526,7 +526,7 @@ export default function SellerDashboard() {
 
   const formatYAxis = (value: number) => {
     const formatted = value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value.toString();
-    return activeChartMetric.isCurrency ? `$${formatted}` : formatted;
+    return activeChartMetric.isCurrency ? `₺${formatted}` : formatted;
   };
 
   return (
@@ -846,7 +846,7 @@ export default function SellerDashboard() {
                 labelStyle={{ color: '#a09cb0', fontWeight: 'bold', marginBottom: '6px', fontSize: '11px', textTransform: 'uppercase' }}
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 formatter={(value: any) => {
-                  if (activeChartMetric.isCurrency) return [`$${Number(value).toLocaleString()}`, activeChartMetric.name];
+                  if (activeChartMetric.isCurrency) return [`₺${Number(value).toLocaleString()}`, activeChartMetric.name];
                   return [Number(value).toLocaleString(), activeChartMetric.name];
                 }}
               />
