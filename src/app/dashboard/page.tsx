@@ -104,8 +104,7 @@ const chartLines = [
   { key: "Sales", name: "Sales", color: "#8b5cf6" },
   { key: "Views", name: "Views", color: "#3b82f6" },
   { key: "Favorites", name: "Favorites", color: "#ec4899" },
-  { key: "Revenue", name: "Revenue", color: "#10b981", isCurrency: true },
-  { key: "NetMargin", name: "Net Margin", color: "#f59e0b", isCurrency: true }
+  { key: "Revenue", name: "Revenue", color: "#10b981", isCurrency: true }
 ];
 
 // Timeframe mapping datasets
@@ -440,20 +439,19 @@ export default function SellerDashboard() {
       sales: Math.max(0, base.sales - (past.salesCount || 0)),
       views: Math.max(0, base.views - (past.views || 0)),
       favorites: Math.max(0, base.favorites - (past.favorites || 0)),
-      revenue: Math.max(0, base.revenue - (past.revenue || 0)),
-      profit: "$0.00"
+      revenue: Math.max(0, base.revenue - (past.revenue || 0))
     };
   };
 
   const currentData = computeActiveData();
   const formatRev = (val: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val); 
+    return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(val); 
   };
 
   const buildChartData = () => {
     if (!realReceipts || realReceipts.length === 0) {
       return [{
-        name: "Bugün", Sales: 0, Views: 0, Favorites: 0, Revenue: 0, NetMargin: 0
+        name: "Bugün", Sales: 0, Views: 0, Favorites: 0, Revenue: 0
       }];
     }
 
@@ -480,14 +478,13 @@ export default function SellerDashboard() {
       }
 
       if (!grouped[key]) {
-        grouped[key] = { name: key, Sales: 0, Revenue: 0, Views: 0, Favorites: 0, NetMargin: 0, timestamp: d.getTime() };
+        grouped[key] = { name: key, Sales: 0, Revenue: 0, Views: 0, Favorites: 0, timestamp: d.getTime() };
       }
       
       grouped[key].Sales += 1;
       if (o.grandtotal && o.grandtotal.amount && o.grandtotal.divisor) {
          const amt = o.grandtotal.amount / o.grandtotal.divisor;
          grouped[key].Revenue += amt;
-         grouped[key].NetMargin += amt * 0.4;
       }
     });
 
@@ -511,7 +508,7 @@ export default function SellerDashboard() {
         }
         
         if (!grouped[key]) {
-          grouped[key] = { name: key, Sales: 0, Revenue: 0, Views: 0, Favorites: 0, NetMargin: 0, timestamp: d.getTime() };
+          grouped[key] = { name: key, Sales: 0, Revenue: 0, Views: 0, Favorites: 0, timestamp: d.getTime() };
         }
         
         grouped[key].Views += Math.max(0, current.views - prev.views);
@@ -545,7 +542,6 @@ export default function SellerDashboard() {
     views: `${timeframe === 'allTime' ? (realViews || 0) : currentData.views} views`,
     favorites: `${timeframe === 'allTime' ? (realFavorites || 0) : currentData.favorites} favs`,
     revenue: timeframe === 'allTime' ? (realRevenue || "$0.00") : formatRev(currentData.revenue),
-    profit: formatRev((timeframe === 'allTime' ? (realRevenueRaw || 0) : currentData.revenue) * 0.4),
     chartData: buildChartData()
   } : statsData[timeframe];
 
@@ -729,7 +725,7 @@ export default function SellerDashboard() {
         </div>
 
         {/* Core Etsy Shop Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           
           {/* Metric 1: Aktif Ürünler */}
           <div className="bg-black/20 border border-border rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-border transition-colors">
@@ -800,18 +796,6 @@ export default function SellerDashboard() {
             <div>
               <div className="text-2xl font-extrabold text-emerald-400 leading-none">{activeData.revenue}</div>
               <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.grossSales")}</span>
-            </div>
-          </div>
-
-          {/* Metric 7: Net Kâr */}
-          <div className="bg-black/20 border border-border rounded-xl p-3.5 flex flex-col justify-between h-24 hover:border-border transition-colors">
-            <span className="text-[9px] font-bold text-secondary uppercase tracking-wider flex items-center gap-1">
-              <TrendingUp size={10} className="text-amber-400" />
-              <span>{t("sellerDashboard.netMargin")}</span>
-            </span>
-            <div>
-              <div className="text-2xl font-extrabold text-amber-400 leading-none">{activeData.profit}</div>
-              <span className="text-[9px] text-muted block mt-1">{t("sellerDashboard.netMargins")}</span>
             </div>
           </div>
 
