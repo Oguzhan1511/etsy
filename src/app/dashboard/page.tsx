@@ -112,73 +112,65 @@ const statsData = {
   daily: {
     activeListings: 124,
     draftListings: 12,
-    orders: "28 orders",
-    views: "840 views",
-    favorites: "42 favs",
-    revenue: "$616.00",
-    profit: "$345.00",
+    orders: "12 orders",
+    views: "850 views",
+    favorites: "45 favs",
+    revenue: "$345.00",
     chartData: [
-      { name: "Mon", Sales: 2, Views: 80, Favorites: 4, Revenue: 44, NetMargin: 25 },
-      { name: "Tue", Sales: 3, Views: 90, Favorites: 3, Revenue: 66, NetMargin: 37 },
-      { name: "Wed", Sales: 1, Views: 75, Favorites: 2, Revenue: 22, NetMargin: 12 },
-      { name: "Thu", Sales: 4, Views: 110, Favorites: 5, Revenue: 88, NetMargin: 50 },
-      { name: "Fri", Sales: 4, Views: 120, Favorites: 6, Revenue: 88, NetMargin: 50 },
-      { name: "Sat", Sales: 7, Views: 165, Favorites: 10, Revenue: 154, NetMargin: 85 },
-      { name: "Sun", Sales: 7, Views: 200, Favorites: 12, Revenue: 154, NetMargin: 86 }
+      { name: "00:00", Sales: 1, Views: 45, Favorites: 2, Revenue: 25 },
+      { name: "04:00", Sales: 0, Views: 20, Favorites: 1, Revenue: 0 },
+      { name: "08:00", Sales: 3, Views: 120, Favorites: 5, Revenue: 85 },
+      { name: "12:00", Sales: 5, Views: 240, Favorites: 12, Revenue: 140 },
+      { name: "16:00", Sales: 2, Views: 280, Favorites: 15, Revenue: 60 },
+      { name: "20:00", Sales: 1, Views: 145, Favorites: 10, Revenue: 35 }
     ]
   },
   weekly: {
     activeListings: 124,
     draftListings: 12,
-    orders: "194 orders",
-    views: "5,840 views",
-    favorites: "290 favs",
-    revenue: "$4,268.00",
-    profit: "$2,380.00",
+    orders: "86 orders",
+    views: "5,420 views",
+    favorites: "312 favs",
+    revenue: "$2,380.00",
     chartData: [
-      { name: "Mon", Sales: 15, Views: 650, Favorites: 30, Revenue: 330, NetMargin: 185 },
-      { name: "Tue", Sales: 20, Views: 720, Favorites: 34, Revenue: 440, NetMargin: 246 },
-      { name: "Wed", Sales: 25, Views: 840, Favorites: 38, Revenue: 550, NetMargin: 308 },
-      { name: "Thu", Sales: 30, Views: 880, Favorites: 42, Revenue: 660, NetMargin: 370 },
-      { name: "Fri", Sales: 32, Views: 900, Favorites: 45, Revenue: 704, NetMargin: 394 },
-      { name: "Sat", Sales: 34, Views: 920, Favorites: 49, Revenue: 748, NetMargin: 418 },
-      { name: "Sun", Sales: 38, Views: 930, Favorites: 52, Revenue: 836, NetMargin: 469 }
+      { name: "Mon", Sales: 12, Views: 850, Favorites: 45, Revenue: 345 },
+      { name: "Tue", Sales: 15, Views: 920, Favorites: 52, Revenue: 420 },
+      { name: "Wed", Sales: 10, Views: 780, Favorites: 38, Revenue: 290 },
+      { name: "Thu", Sales: 18, Views: 1100, Favorites: 65, Revenue: 510 },
+      { name: "Fri", Sales: 14, Views: 890, Favorites: 48, Revenue: 395 },
+      { name: "Sat", Sales: 9, Views: 560, Favorites: 30, Revenue: 250 },
+      { name: "Sun", Sales: 8, Views: 320, Favorites: 34, Revenue: 170 }
     ]
   },
   monthly: {
     activeListings: 124,
     draftListings: 12,
-    orders: "840 orders",
-    views: "24,800 views",
+    orders: "342 orders",
+    views: "24,500 views",
     favorites: "1,240 favs",
-    revenue: "$18,480.00",
-    profit: "$10,350.00",
+    revenue: "$10,350.00",
     chartData: [
-      { name: "Week 1", Sales: 80, Views: 2200, Favorites: 120, Revenue: 1700, NetMargin: 980 },
-      { name: "Week 2", Sales: 120, Views: 3100, Favorites: 150, Revenue: 2600, NetMargin: 1400 },
-      { name: "Week 3", Sales: 160, Views: 4000, Favorites: 180, Revenue: 3500, NetMargin: 1900 },
-      { name: "Week 4", Sales: 140, Views: 3600, Favorites: 160, Revenue: 3000, NetMargin: 1600 },
-      { name: "Week 5", Sales: 180, Views: 4500, Favorites: 200, Revenue: 3900, NetMargin: 2100 },
-      { name: "Week 6", Sales: 200, Views: 5100, Favorites: 210, Revenue: 4400, NetMargin: 2400 },
-      { name: "Week 7", Sales: 220, Views: 5700, Favorites: 220, Revenue: 4800, NetMargin: 2600 }
+      { name: "Week 1", Sales: 86, Views: 5420, Favorites: 312, Revenue: 2380 },
+      { name: "Week 2", Sales: 92, Views: 6100, Favorites: 345, Revenue: 2650 },
+      { name: "Week 3", Sales: 78, Views: 4950, Favorites: 280, Revenue: 2150 },
+      { name: "Week 4", Sales: 86, Views: 8030, Favorites: 303, Revenue: 3170 }
     ]
   },
   allTime: {
     activeListings: 124,
     draftListings: 12,
-    orders: "4,820 orders",
-    views: "142,400 views",
-    favorites: "7,840 favs",
-    revenue: "$106,040.00",
-    profit: "$59,380.00",
+    orders: "1,845 orders",
+    views: "145,200 views",
+    favorites: "8,930 favs",
+    revenue: "$59,380.00",
     chartData: [
-      { name: "Jan", Sales: 320, Views: 10000, Favorites: 500, Revenue: 7000, NetMargin: 3900 },
-      { name: "Feb", Sales: 540, Views: 16000, Favorites: 800, Revenue: 11800, NetMargin: 6600 },
-      { name: "Mar", Sales: 680, Views: 22000, Favorites: 1100, Revenue: 14900, NetMargin: 8300 },
-      { name: "Apr", Sales: 820, Views: 28000, Favorites: 1400, Revenue: 18000, NetMargin: 10000 },
-      { name: "May", Sales: 950, Views: 32000, Favorites: 1600, Revenue: 20900, NetMargin: 11700 },
-      { name: "Jun", Sales: 1100, Views: 38000, Favorites: 1900, Revenue: 24200, NetMargin: 13500 },
-      { name: "Jul", Sales: 1400, Views: 46000, Favorites: 2300, Revenue: 30800, NetMargin: 17200 }
+      { name: "Jan", Sales: 240, Views: 18500, Favorites: 1100, Revenue: 7500 },
+      { name: "Feb", Sales: 180, Views: 15200, Favorites: 950, Revenue: 5800 },
+      { name: "Mar", Sales: 210, Views: 16800, Favorites: 1050, Revenue: 6400 },
+      { name: "Apr", Sales: 280, Views: 21500, Favorites: 1350, Revenue: 8900 },
+      { name: "May", Sales: 310, Views: 24000, Favorites: 1500, Revenue: 9800 },
+      { name: "Jun", Sales: 285, Views: 22100, Favorites: 1420, Revenue: 9100 },
+      { name: "Jul", Sales: 340, Views: 27100, Favorites: 1560, Revenue: 11880 }
     ]
   }
 };
@@ -449,14 +441,18 @@ export default function SellerDashboard() {
   };
 
   const buildChartData = () => {
-    if (!realReceipts || realReceipts.length === 0) {
+    // If we only have today's record (or none), we show just today
+    if (!historicalStats?.allHistory || historicalStats.allHistory.length <= 1) {
       return [{
-        name: "Bugün", Sales: 0, Views: 0, Favorites: 0, Revenue: 0
+        name: "Bugün", 
+        Sales: currentData.sales, 
+        Views: currentData.views, 
+        Favorites: currentData.favorites, 
+        Revenue: currentData.revenue
       }];
     }
 
     const grouped: Record<string, any> = {};
-    const sortedReceipts = [...realReceipts].sort((a, b) => a.create_timestamp - b.create_timestamp);
 
     const getWeek = (d: Date) => {
         const firstDayOfYear = new Date(d.getFullYear(), 0, 1);
@@ -464,11 +460,17 @@ export default function SellerDashboard() {
         return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
     };
 
-    // 1. Group Sales & Revenue from actual receipts, and add deterministic simulated traffic for realism
-    sortedReceipts.forEach(o => {
-      const d = new Date(o.create_timestamp * 1000);
-      let key = "";
+    // We strictly use the historical stats recorded FROM the connection day
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const history = [...historicalStats.allHistory].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    // Start at i = 1 to only compute diffs, bypassing the base snapshot on day 0
+    for (let i = 1; i < history.length; i++) {
+      const current = history[i];
+      const prev = history[i-1];
+      const d = new Date(current.date);
       
+      let key = "";
       if (timeframe === "daily") {
         key = d.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' });
       } else if (timeframe === "weekly") {
@@ -476,62 +478,19 @@ export default function SellerDashboard() {
       } else {
         key = d.toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' });
       }
-
+      
       if (!grouped[key]) {
         grouped[key] = { name: key, Sales: 0, Revenue: 0, Views: 0, Favorites: 0, timestamp: d.getTime() };
       }
       
-      grouped[key].Sales += 1;
-      
-      // Revenue conversion to TRY (if USD)
-      if (o.grandtotal && o.grandtotal.amount && o.grandtotal.divisor) {
-         let amt = o.grandtotal.amount / o.grandtotal.divisor;
-         if (o.grandtotal.currency_code === 'USD') {
-             amt *= 33.5; // Approximate USD -> TRY to match UI formatting
-         }
-         grouped[key].Revenue += amt;
-      }
-      
-      // Deterministic simulation for Views/Favorites (since Etsy v3 API lacks historical traffic data)
-      // Generates a consistent number based on the timestamp and sales count
-      const pseudoRandom = (d.getTime() % 100) / 100; // 0.0 to 1.0
-      grouped[key].Views += Math.floor(40 + pseudoRandom * 80); 
-      grouped[key].Favorites += Math.floor(3 + pseudoRandom * 10);
-    });
+      const revDiff = Math.max(0, current.revenue - prev.revenue);
+      // Since Etsy mostly uses USD, multiply by 33.5 to match the TRY display if we don't have currency data stored
+      const revInTRY = revDiff * 33.5;
 
-    // 2. Override with real traffic stats from database if available (for days AFTER the bot was connected)
-    if (historicalStats?.allHistory && historicalStats.allHistory.length > 1) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const history = [...historicalStats.allHistory].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
-      
-      for (let i = 1; i < history.length; i++) {
-        const current = history[i];
-        const prev = history[i-1];
-        const d = new Date(current.date);
-        
-        let key = "";
-        if (timeframe === "daily") {
-          key = d.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' });
-        } else if (timeframe === "weekly") {
-          key = `Hafta ${getWeek(d)}, '${d.getFullYear().toString().slice(-2)}`;
-        } else {
-          key = d.toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' });
-        }
-        
-        if (!grouped[key]) {
-          grouped[key] = { name: key, Sales: 0, Revenue: 0, Views: 0, Favorites: 0, timestamp: d.getTime() };
-        }
-        
-        // If we have actual database diffs for this day, replace the simulated ones
-        const realViews = Math.max(0, current.views - prev.views);
-        const realFavs = Math.max(0, current.favorites - prev.favorites);
-        
-        if (realViews > 0 || realFavs > 0) {
-           // We add to it or overwrite depending on preference, overwrite is safer for realism
-           grouped[key].Views = realViews;
-           grouped[key].Favorites = realFavs;
-        }
-      }
+      grouped[key].Sales += Math.max(0, current.salesCount - prev.salesCount);
+      grouped[key].Revenue += revInTRY;
+      grouped[key].Views += Math.max(0, current.views - prev.views);
+      grouped[key].Favorites += Math.max(0, current.favorites - prev.favorites);
     }
 
     // Convert to array and sort by timestamp

@@ -476,17 +476,6 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
-          <div>
-            <span className="text-[10px] text-muted block uppercase font-bold tracking-wider">{t("products.netInventoryProfit")}</span>
-            <span className="text-2xl font-bold text-amber-400 mt-1 block">
-              ${products.reduce((acc, curr) => acc + curr.profit, 0).toLocaleString()}
-            </span>
-          </div>
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400">
-            <TrendingUp size={18} />
-          </div>
-        </div>
       </div>
 
       {/* Search and Filters Controller bar */}
@@ -550,7 +539,7 @@ export default function ProductsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 md:flex md:items-center md:justify-around md:flex-1 text-center md:text-left px-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:flex md:items-center md:justify-around md:flex-1 text-center md:text-left px-2">
                   <div className="space-y-0.5">
                     <span className="text-[9px] text-muted uppercase font-bold tracking-wider block">{t("products.sales")}</span>
                     <span className="text-xs font-bold text-foreground flex items-center gap-1 justify-center md:justify-start">
@@ -576,12 +565,6 @@ export default function ProductsPage() {
                     <span className="text-[9px] text-muted uppercase font-bold tracking-wider block">{t("products.revenue")}</span>
                     <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5 justify-center md:justify-start">
                       <span>${p.revenue.toLocaleString()}</span>
-                    </span>
-                  </div>
-                  <div className="space-y-0.5">
-                    <span className="text-[9px] text-muted uppercase font-bold tracking-wider block">{t("products.profit")}</span>
-                    <span className="text-xs font-bold text-amber-400 flex items-center gap-0.5 justify-center md:justify-start">
-                      <span>${p.profit.toLocaleString()}</span>
                     </span>
                   </div>
                 </div>
