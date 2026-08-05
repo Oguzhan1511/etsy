@@ -565,24 +565,7 @@ export default function ProducerDashboardPage() {
             {t("dashboard.producerDesc")}
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          <div
-            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl border border-border backdrop-blur-md bg-white/[0.02]"
-          >
-            <div className={`w-1.5 h-1.5 rounded-full ${shopData ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-red-500'} `} />
-            <span className="text-secondary">
-              {t("dashboard.connection")} <span className="text-foreground font-semibold">{shopData ? t("dashboard.liveApi") : t("dashboard.sandbox")}</span>
-            </span>
-          </div>
-          {!shopData && (
-            <button
-              onClick={() => window.location.href = `/api/etsy/auth?userId=${user?.id}`}
-              className="px-4 py-1.5 text-xs font-bold text-foreground bg-[#F16421] hover:bg-[#E35D1F] rounded-xl transition-colors shadow-[0_0_10px_rgba(241,100,33,0.2)] flex items-center justify-center"
-            >
-              {t("settings.connect") || "Etsy Bağla"}
-            </button>
-          )}
-        </div>
+
       </div>
 
       {/* Üretici İstatistikleri Panel (Stats Grid) */}
