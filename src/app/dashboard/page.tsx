@@ -382,24 +382,30 @@ export default function SellerDashboard() {
           setRealFavorites(f);
           
           const sortedByViews = [...listings].sort((a: any, b: any) => (b.views || 0) - (a.views || 0)).slice(0, 3);
-          setRealBestSellers(sortedByViews.map((item: any) => ({
-            id: item.listing_id?.toString() || Math.random().toString(),
-            name: item.title || "Unknown Listing",
-            image: item.Images?.[0]?.url_170x135 || "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80",
-            value: `${item.views || 0} views`,
-            secondaryVal: "Etsy Data",
-            rate: item.price ? `$${(item.price.amount / item.price.divisor).toFixed(2)}` : "-"
-          })));
+          setRealBestSellers(sortedByViews.map((item: any) => {
+            const img = item.images?.[0]?.url_170x135 || item.Images?.[0]?.url_170x135 || "";
+            return {
+              id: item.listing_id?.toString() || Math.random().toString(),
+              name: item.title || "İsimsiz İlan",
+              image: img,
+              value: `${item.views || 0} Görüntülenme`,
+              secondaryVal: "Yayında",
+              rate: item.price ? `₺${(item.price.amount / item.price.divisor).toFixed(2)}` : "-"
+            };
+          }));
 
           const sortedByFavs = [...listings].sort((a: any, b: any) => (b.num_favorers || 0) - (a.num_favorers || 0)).slice(0, 3);
-          setRealMostFavorited(sortedByFavs.map((item: any) => ({
-            id: item.listing_id?.toString() || Math.random().toString(),
-            name: item.title || "Unknown Listing",
-            image: item.Images?.[0]?.url_170x135 || "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=100&q=80",
-            value: `${item.num_favorers || 0} favorites`,
-            secondaryVal: "Etsy Data",
-            rate: "Active"
-          })));
+          setRealMostFavorited(sortedByFavs.map((item: any) => {
+            const img = item.images?.[0]?.url_170x135 || item.Images?.[0]?.url_170x135 || "";
+            return {
+              id: item.listing_id?.toString() || Math.random().toString(),
+              name: item.title || "İsimsiz İlan",
+              image: img,
+              value: `${item.num_favorers || 0} Favori`,
+              secondaryVal: "Yayında",
+              rate: "Aktif"
+            };
+          }));
         }
       })
       .catch(console.error);
@@ -908,7 +914,11 @@ export default function SellerDashboard() {
                 <div className="flex items-center gap-3">
                   {/* Item Image */}
                   <div className="w-11 h-11 rounded-lg overflow-hidden border border-border shrink-0 bg-neutral-900 flex items-center justify-center">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    {item.image ? (
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <ShoppingBag className="w-4 h-4 text-secondary" />
+                    )}
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-foreground truncate max-w-[180px] sm:max-w-[280px]" title={item.name}>
@@ -944,7 +954,11 @@ export default function SellerDashboard() {
                 <div className="flex items-center gap-3">
                   {/* Item Image */}
                   <div className="w-11 h-11 rounded-lg overflow-hidden border border-border shrink-0 bg-neutral-900 flex items-center justify-center">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    {item.image ? (
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <ShoppingBag className="w-4 h-4 text-secondary" />
+                    )}
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-foreground truncate max-w-[180px] sm:max-w-[280px]" title={item.name}>
