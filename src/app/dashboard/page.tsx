@@ -88,14 +88,19 @@ export default function SellerDashboard() {
       .then(data => { 
         if (!data.error) {
           setShopData(data); 
+          setEtsyError(null);
         } else {
           setShopData(null); 
-          setEtsyError(data.error);
+          if (data.error !== "Etsy store not connected" && data.error !== "Not authenticated" && data.error !== "Etsy store not connected (missing credentials)") {
+            setEtsyError(data.error);
+          } else {
+            setEtsyError(null);
+          }
         }
       })
       .catch(err => {
         console.error(err);
-        setEtsyError("An unexpected error occurred.");
+        setEtsyError(null);
       })
       .finally(() => setEtsyLoading(false));
   }, [user?.id]);
@@ -397,18 +402,13 @@ export default function SellerDashboard() {
                 {t("sellerDashboard.connectEtsyStore")}
               </a>
             )}
-            <div className="relative flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-border text-xs">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-border text-xs">
               <div className={`w-2 h-2 rounded-full ${shopData ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
               <span className="text-secondary">{t("sellerDashboard.etsySync")}</span>
               <span className="text-foreground font-bold">
                 {shopData ? String(shopData.shop_name) : (etsyLoading ? '...' : 'Not Connected')}
               </span>
-              {etsyError && (
-              <div className="absolute top-full right-0 mt-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl max-w-sm w-max z-50">
-                <p className="text-red-400 text-[10px] font-mono break-all">{etsyError}</p>
-              </div>
-            )}
-          </div>
+            </div>
             {shopData && (
               <button
                 onClick={handleDisconnectEtsy}
