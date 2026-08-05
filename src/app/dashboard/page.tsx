@@ -445,10 +445,10 @@ export default function SellerDashboard() {
     if (!historicalStats?.allHistory || historicalStats.allHistory.length <= 1) {
       return [{
         name: "Bugün", 
-        Sales: currentData.sales, 
-        Views: currentData.views, 
-        Favorites: currentData.favorites, 
-        Revenue: currentData.revenue
+        Sales: 0, 
+        Views: 0, 
+        Favorites: 0, 
+        Revenue: 0
       }];
     }
 
