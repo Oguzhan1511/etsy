@@ -50,7 +50,10 @@ export async function POST(request: Request) {
     const lastMonth = new Date(today);
     lastMonth.setUTCDate(lastMonth.getUTCDate() - 30);
 
-    const [statYesterday, statLastWeek, statLastMonth] = await Promise.all([
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setUTCDate(thirtyDaysAgo.getUTCDate() - 30);
+
+    const [statYesterday, statLastWeek, statLastMonth, allHistory] = await Promise.all([
       prisma.etsyDailyStat.findUnique({ where: { userId_date: { userId, date: yesterday } } }),
       prisma.etsyDailyStat.findFirst({
         where: { userId, date: { lte: lastWeek } },
@@ -59,6 +62,10 @@ export async function POST(request: Request) {
       prisma.etsyDailyStat.findFirst({
         where: { userId, date: { lte: lastMonth } },
         orderBy: { date: 'desc' },
+      }),
+      prisma.etsyDailyStat.findMany({
+        where: { userId, date: { gte: thirtyDaysAgo } },
+        orderBy: { date: 'asc' },
       }),
     ]);
 
@@ -69,6 +76,7 @@ export async function POST(request: Request) {
         yesterday: statYesterday,
         lastWeek: statLastWeek,
         lastMonth: statLastMonth,
+        allHistory,
       },
     });
   } catch (error: any) {
