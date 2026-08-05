@@ -325,7 +325,8 @@ export default function SellerDashboard() {
       .then(res => res.json())
       .then(data => {
         if (!data.error && data.results) {
-          setRealOrders(data.results.slice(0, 4).map((r: any) => {
+          const activeOnly = data.results.filter((r: any) => !r.is_shipped && r.status !== 'Canceled' && r.status !== 'Canceled');
+          setRealOrders(activeOnly.slice(0, 4).map((r: any) => {
             const tx = r.transactions?.[0] || {};
             const listing = tx.listing || {};
             const imageUrl = listing?.Images?.[0]?.url_170x135 || "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80";
