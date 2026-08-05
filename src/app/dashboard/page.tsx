@@ -297,6 +297,7 @@ export default function SellerDashboard() {
   const [realSalesCount, setRealSalesCount] = useState<number | null>(null);
   const [realRevenue, setRealRevenue] = useState<string | null>(null);
   const [realRevenueRaw, setRealRevenueRaw] = useState<number | null>(null);
+  const [realReceipts, setRealReceipts] = useState<any[]>([]);
   const [realViews, setRealViews] = useState<number | null>(null);
   const [realFavorites, setRealFavorites] = useState<number | null>(null);
   const [historicalStats, setHistoricalStats] = useState<any>(null);
@@ -351,6 +352,7 @@ export default function SellerDashboard() {
           }));
           
           setRealSalesCount(data.count || 0);
+          setRealReceipts(data.results || []);
           
           let rev = 0;
           let currency = 'USD';
@@ -449,14 +451,51 @@ export default function SellerDashboard() {
   };
 
   const buildChartData = () => {
-    if (!historicalStats?.allHistory || historicalStats.allHistory.length === 0) {
+    // ALL TIME TIMELINE (Using realReceipts for Sales & Revenue)
+    if (timeframe === "allTime") {
+      if (!realReceipts || realReceipts.length === 0) return [];
+      const grouped: Record<string, any> = {};
+      const sortedReceipts = [...realReceipts].sort((a, b) => a.create_timestamp - b.create_timestamp);
+      
+      sortedReceipts.forEach(o => {
+        const d = new Date(o.create_timestamp * 1000);
+        const key = d.toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' });
+        if (!grouped[key]) {
+          grouped[key] = { name: key, Sales: 0, Revenue: 0, Views: 0, Favorites: 0, NetMargin: 0 };
+        }
+        grouped[key].Sales += 1;
+        if (o.grandtotal && o.grandtotal.amount && o.grandtotal.divisor) {
+           const amt = o.grandtotal.amount / o.grandtotal.divisor;
+           grouped[key].Revenue += amt;
+           grouped[key].NetMargin += amt * 0.4;
+        }
+      });
+      return Object.values(grouped);
+    }
+    
+    // DAILY, WEEKLY, MONTHLY
+    if (!historicalStats?.allHistory || historicalStats.allHistory.length <= 1) {
+      // If we only have today's record (or none), compute today's stats from receipts
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      let todaySales = 0;
+      let todayRev = 0;
+      realReceipts.forEach(o => {
+        if (o.create_timestamp * 1000 >= todayStart.getTime()) {
+          todaySales++;
+          if (o.grandtotal && o.grandtotal.amount && o.grandtotal.divisor) {
+             todayRev += (o.grandtotal.amount / o.grandtotal.divisor);
+          }
+        }
+      });
+      
       return [{
-        name: "Today",
-        Sales: currentData.sales,
-        Views: currentData.views,
-        Favorites: currentData.favorites,
-        Revenue: currentData.revenue,
-        NetMargin: currentData.revenue * 0.4
+        name: "Bugün",
+        Sales: todaySales,
+        Views: 0,
+        Favorites: 0,
+        Revenue: todayRev,
+        NetMargin: todayRev * 0.4
       }];
     }
     
@@ -464,24 +503,19 @@ export default function SellerDashboard() {
     const history = [...historicalStats.allHistory].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
     
     const chart = [];
-    for (let i = 0; i < history.length; i++) {
+    // Start at i = 1 to only compute diffs, bypassing the huge lifetime total on day 0
+    for (let i = 1; i < history.length; i++) {
       const current = history[i];
-      let salesDiff = current.salesCount;
-      let viewsDiff = current.views;
-      let favsDiff = current.favorites;
-      let revDiff = current.revenue;
+      const prev = history[i-1];
       
-      if (i > 0) {
-        const prev = history[i-1];
-        salesDiff = Math.max(0, current.salesCount - prev.salesCount);
-        viewsDiff = Math.max(0, current.views - prev.views);
-        favsDiff = Math.max(0, current.favorites - prev.favorites);
-        revDiff = Math.max(0, current.revenue - prev.revenue);
-      }
+      const salesDiff = Math.max(0, current.salesCount - prev.salesCount);
+      const viewsDiff = Math.max(0, current.views - prev.views);
+      const favsDiff = Math.max(0, current.favorites - prev.favorites);
+      const revDiff = Math.max(0, current.revenue - prev.revenue);
       
       const dateObj = new Date(current.date);
       chart.push({
-        name: dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        name: dateObj.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' }),
         Sales: salesDiff,
         Views: viewsDiff,
         Favorites: favsDiff,
@@ -491,7 +525,7 @@ export default function SellerDashboard() {
     }
     
     let slicedChart = chart;
-    if (timeframe === "daily") slicedChart = chart.slice(-2);
+    if (timeframe === "daily") slicedChart = chart.slice(-1);
     else if (timeframe === "weekly") slicedChart = chart.slice(-7);
     else if (timeframe === "monthly") slicedChart = chart.slice(-30);
     
