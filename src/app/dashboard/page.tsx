@@ -53,52 +53,7 @@ interface ActiveOrder {
   status: string;
 }
 
-const activeOrders: ActiveOrder[] = [
-  {
-    id: "1",
-    orderId: "#ET-14205",
-    buyerName: "Olivia Vance",
-    product: "Wildflower Garden Custom Canvas Tote Bag",
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80",
-    sku: "SKU: TOTE-WF-GARDEN",
-    orderedTime: "2 hours ago",
-    shipBy: "Tomorrow, 2:00 PM",
-    status: "Processing"
-  },
-  {
-    id: "2",
-    orderId: "#ET-14204",
-    buyerName: "Liam Sterling",
-    product: "Golden Meadows Fine Art Accent Mug 11oz",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=100&q=80",
-    sku: "SKU: MUG-GM-ACC-11",
-    orderedTime: "4 hours ago",
-    shipBy: "Tomorrow, 5:00 PM",
-    status: "Processing"
-  },
-  {
-    id: "3",
-    orderId: "#ET-14203",
-    buyerName: "Sophia Martinez",
-    product: "Retro Custom Botanical Unisex Tee",
-    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=100&q=80",
-    sku: "SKU: TEE-RET-BOT-M",
-    orderedTime: "6 hours ago",
-    shipBy: "Jul 21, 12:00 PM",
-    status: "Ready to Ship"
-  },
-  {
-    id: "4",
-    orderId: "#ET-14202",
-    buyerName: "Emma Watson",
-    product: "Funny Sarcastic Soy Wax Jar Candle",
-    image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=100&q=80",
-    sku: "SKU: CAND-SARC-SOY",
-    orderedTime: "12 hours ago",
-    shipBy: "Jul 21, 3:00 PM",
-    status: "Ready to Ship"
-  }
-];
+
 
 const chartLines = [
   { key: "Sales", name: "Sales", color: "#8b5cf6" },
@@ -107,127 +62,9 @@ const chartLines = [
   { key: "Revenue", name: "Revenue", color: "#10b981", isCurrency: true }
 ];
 
-// Timeframe mapping datasets
-const statsData = {
-  daily: {
-    activeListings: 124,
-    draftListings: 12,
-    orders: "12 orders",
-    views: "850 views",
-    favorites: "45 favs",
-    revenue: "$345.00",
-    chartData: [
-      { name: "00:00", Sales: 1, Views: 45, Favorites: 2, Revenue: 25 },
-      { name: "04:00", Sales: 0, Views: 20, Favorites: 1, Revenue: 0 },
-      { name: "08:00", Sales: 3, Views: 120, Favorites: 5, Revenue: 85 },
-      { name: "12:00", Sales: 5, Views: 240, Favorites: 12, Revenue: 140 },
-      { name: "16:00", Sales: 2, Views: 280, Favorites: 15, Revenue: 60 },
-      { name: "20:00", Sales: 1, Views: 145, Favorites: 10, Revenue: 35 }
-    ]
-  },
-  weekly: {
-    activeListings: 124,
-    draftListings: 12,
-    orders: "86 orders",
-    views: "5,420 views",
-    favorites: "312 favs",
-    revenue: "$2,380.00",
-    chartData: [
-      { name: "Mon", Sales: 12, Views: 850, Favorites: 45, Revenue: 345 },
-      { name: "Tue", Sales: 15, Views: 920, Favorites: 52, Revenue: 420 },
-      { name: "Wed", Sales: 10, Views: 780, Favorites: 38, Revenue: 290 },
-      { name: "Thu", Sales: 18, Views: 1100, Favorites: 65, Revenue: 510 },
-      { name: "Fri", Sales: 14, Views: 890, Favorites: 48, Revenue: 395 },
-      { name: "Sat", Sales: 9, Views: 560, Favorites: 30, Revenue: 250 },
-      { name: "Sun", Sales: 8, Views: 320, Favorites: 34, Revenue: 170 }
-    ]
-  },
-  monthly: {
-    activeListings: 124,
-    draftListings: 12,
-    orders: "342 orders",
-    views: "24,500 views",
-    favorites: "1,240 favs",
-    revenue: "$10,350.00",
-    chartData: [
-      { name: "Week 1", Sales: 86, Views: 5420, Favorites: 312, Revenue: 2380 },
-      { name: "Week 2", Sales: 92, Views: 6100, Favorites: 345, Revenue: 2650 },
-      { name: "Week 3", Sales: 78, Views: 4950, Favorites: 280, Revenue: 2150 },
-      { name: "Week 4", Sales: 86, Views: 8030, Favorites: 303, Revenue: 3170 }
-    ]
-  },
-  allTime: {
-    activeListings: 124,
-    draftListings: 12,
-    orders: "1,845 orders",
-    views: "145,200 views",
-    favorites: "8,930 favs",
-    revenue: "$59,380.00",
-    chartData: [
-      { name: "Jan", Sales: 240, Views: 18500, Favorites: 1100, Revenue: 7500 },
-      { name: "Feb", Sales: 180, Views: 15200, Favorites: 950, Revenue: 5800 },
-      { name: "Mar", Sales: 210, Views: 16800, Favorites: 1050, Revenue: 6400 },
-      { name: "Apr", Sales: 280, Views: 21500, Favorites: 1350, Revenue: 8900 },
-      { name: "May", Sales: 310, Views: 24000, Favorites: 1500, Revenue: 9800 },
-      { name: "Jun", Sales: 285, Views: 22100, Favorites: 1420, Revenue: 9100 },
-      { name: "Jul", Sales: 340, Views: 27100, Favorites: 1560, Revenue: 11880 }
-    ]
-  }
-};
 
-const bestSellersList: PerformanceItem[] = [
-  {
-    id: "1",
-    name: "Wildflower Garden Custom Canvas Tote Bag",
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80",
-    value: "142 orders",
-    secondaryVal: "4.8% conv",
-    rate: "$3,550"
-  },
-  {
-    id: "2",
-    name: "Golden Meadows Fine Art Accent Mug 11oz",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=100&q=80",
-    value: "96 orders",
-    secondaryVal: "3.9% conv",
-    rate: "$1,440"
-  },
-  {
-    id: "3",
-    name: "Retro Custom Botanical Unisex Tee",
-    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=100&q=80",
-    value: "84 orders",
-    secondaryVal: "5.1% conv",
-    rate: "$2,100"
-  }
-];
 
-const mostFavoritedList: PerformanceItem[] = [
-  {
-    id: "1",
-    name: "Funny Sarcastic Soy Wax Jar Candle - Golden Meadows",
-    image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=100&q=80",
-    value: "410 favorites",
-    secondaryVal: "14 in carts",
-    rate: "In Stock"
-  },
-  {
-    id: "2",
-    name: "Retro Wildflower Bella+Canvas 3001 Tee",
-    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=100&q=80",
-    value: "284 favorites",
-    secondaryVal: "8 in carts",
-    rate: "In Stock"
-  },
-  {
-    id: "3",
-    name: "Vintage Art Deco Accent Mug 15oz",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=100&q=80",
-    value: "196 favorites",
-    secondaryVal: "3 in carts",
-    rate: "Low Stock (5)"
-  }
-];
+
 
 interface ShopData {
   shop_name: string;
@@ -283,8 +120,8 @@ export default function SellerDashboard() {
   
   // Real Data States
   const [realOrders, setRealOrders] = useState<any[]>([]);
-  const [realBestSellers, setRealBestSellers] = useState<PerformanceItem[]>(bestSellersList);
-  const [realMostFavorited, setRealMostFavorited] = useState<PerformanceItem[]>(mostFavoritedList);
+  const [realBestSellers, setRealBestSellers] = useState<PerformanceItem[]>([]);
+  const [realMostFavorited, setRealMostFavorited] = useState<PerformanceItem[]>([]);
   const [realSalesCount, setRealSalesCount] = useState<number | null>(null);
   const [realRevenue, setRealRevenue] = useState<string | null>(null);
   const [realRevenueRaw, setRealRevenueRaw] = useState<number | null>(null);
@@ -519,15 +356,15 @@ export default function SellerDashboard() {
   };
 
   const isConnected = !!shopData;
-  const activeData = isConnected ? {
-    activeListings: currentData.activeListings,
-    draftListings: currentData.draftListings,
-    orders: `${timeframe === 'allTime' ? (shopData?.transaction_sold_count || 0) : currentData.sales} orders`,
-    views: `${timeframe === 'allTime' ? (realViews || 0) : currentData.views} views`,
-    favorites: `${timeframe === 'allTime' ? (realFavorites || 0) : currentData.favorites} favs`,
-    revenue: timeframe === 'allTime' ? (realRevenue || "$0.00") : formatRev(currentData.revenue),
-    chartData: buildChartData()
-  } : statsData[timeframe];
+  const activeData = {
+    activeListings: isConnected ? currentData.activeListings : 0,
+    draftListings: isConnected ? currentData.draftListings : 0,
+    orders: `${isConnected ? (timeframe === 'allTime' ? (shopData?.transaction_sold_count || 0) : currentData.sales) : 0} Sipariş`,
+    views: `${isConnected ? (timeframe === 'allTime' ? (realViews || 0) : currentData.views) : 0} Görüntülenme`,
+    favorites: `${isConnected ? (timeframe === 'allTime' ? (realFavorites || 0) : currentData.favorites) : 0} Favori`,
+    revenue: isConnected ? (timeframe === 'allTime' ? (realRevenue || "₺0.00") : formatRev(currentData.revenue)) : "₺0.00",
+    chartData: isConnected ? buildChartData() : [{ name: "Bugün", Sales: 0, Views: 0, Favorites: 0, Revenue: 0 }]
+  };
 
   const activeChartMetric = chartLines.find(l => l.key === selectedMetric) || chartLines[0];
 
