@@ -451,85 +451,90 @@ export default function SellerDashboard() {
   };
 
   const buildChartData = () => {
-    // ALL TIME TIMELINE (Using realReceipts for Sales & Revenue)
-    if (timeframe === "allTime") {
-      if (!realReceipts || realReceipts.length === 0) return [];
-      const grouped: Record<string, any> = {};
-      const sortedReceipts = [...realReceipts].sort((a, b) => a.create_timestamp - b.create_timestamp);
-      
-      sortedReceipts.forEach(o => {
-        const d = new Date(o.create_timestamp * 1000);
-        const key = d.toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' });
-        if (!grouped[key]) {
-          grouped[key] = { name: key, Sales: 0, Revenue: 0, Views: 0, Favorites: 0, NetMargin: 0 };
-        }
-        grouped[key].Sales += 1;
-        if (o.grandtotal && o.grandtotal.amount && o.grandtotal.divisor) {
-           const amt = o.grandtotal.amount / o.grandtotal.divisor;
-           grouped[key].Revenue += amt;
-           grouped[key].NetMargin += amt * 0.4;
-        }
-      });
-      return Object.values(grouped);
-    }
-    
-    // DAILY, WEEKLY, MONTHLY
-    if (!historicalStats?.allHistory || historicalStats.allHistory.length <= 1) {
-      // If we only have today's record (or none), compute today's stats from receipts
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-      let todaySales = 0;
-      let todayRev = 0;
-      realReceipts.forEach(o => {
-        if (o.create_timestamp * 1000 >= todayStart.getTime()) {
-          todaySales++;
-          if (o.grandtotal && o.grandtotal.amount && o.grandtotal.divisor) {
-             todayRev += (o.grandtotal.amount / o.grandtotal.divisor);
-          }
-        }
-      });
-      
+    if (!realReceipts || realReceipts.length === 0) {
       return [{
-        name: "Bugün",
-        Sales: todaySales,
-        Views: 0,
-        Favorites: 0,
-        Revenue: todayRev,
-        NetMargin: todayRev * 0.4
+        name: "Bugün", Sales: 0, Views: 0, Favorites: 0, Revenue: 0, NetMargin: 0
       }];
     }
-    
+
+    const grouped: Record<string, any> = {};
+    const sortedReceipts = [...realReceipts].sort((a, b) => a.create_timestamp - b.create_timestamp);
+
+    const getWeek = (d: Date) => {
+        const firstDayOfYear = new Date(d.getFullYear(), 0, 1);
+        const pastDaysOfYear = (d.getTime() - firstDayOfYear.getTime()) / 86400000;
+        return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+    };
+
+    // 1. Group Sales & Revenue from actual receipts
+    sortedReceipts.forEach(o => {
+      const d = new Date(o.create_timestamp * 1000);
+      let key = "";
+      
+      if (timeframe === "daily") {
+        key = d.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' });
+      } else if (timeframe === "weekly") {
+        key = `Hafta ${getWeek(d)}, '${d.getFullYear().toString().slice(-2)}`;
+      } else {
+        key = d.toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' });
+      }
+
+      if (!grouped[key]) {
+        grouped[key] = { name: key, Sales: 0, Revenue: 0, Views: 0, Favorites: 0, NetMargin: 0, timestamp: d.getTime() };
+      }
+      
+      grouped[key].Sales += 1;
+      if (o.grandtotal && o.grandtotal.amount && o.grandtotal.divisor) {
+         const amt = o.grandtotal.amount / o.grandtotal.divisor;
+         grouped[key].Revenue += amt;
+         grouped[key].NetMargin += amt * 0.4;
+      }
+    });
+
+    // 2. Add Views & Favorites from historicalStats (EtsyDailyStat)
+    if (historicalStats?.allHistory && historicalStats.allHistory.length > 1) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const history = [...historicalStats.allHistory].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      
+      for (let i = 1; i < history.length; i++) {
+        const current = history[i];
+        const prev = history[i-1];
+        const d = new Date(current.date);
+        
+        let key = "";
+        if (timeframe === "daily") {
+          key = d.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' });
+        } else if (timeframe === "weekly") {
+          key = `Hafta ${getWeek(d)}, '${d.getFullYear().toString().slice(-2)}`;
+        } else {
+          key = d.toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' });
+        }
+        
+        if (!grouped[key]) {
+          grouped[key] = { name: key, Sales: 0, Revenue: 0, Views: 0, Favorites: 0, NetMargin: 0, timestamp: d.getTime() };
+        }
+        
+        grouped[key].Views += Math.max(0, current.views - prev.views);
+        grouped[key].Favorites += Math.max(0, current.favorites - prev.favorites);
+      }
+    }
+
+    // Convert to array and sort by timestamp
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const history = [...historicalStats.allHistory].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    let result = Object.values(grouped).sort((a: any, b: any) => a.timestamp - b.timestamp);
     
-    const chart = [];
-    // Start at i = 1 to only compute diffs, bypassing the huge lifetime total on day 0
-    for (let i = 1; i < history.length; i++) {
-      const current = history[i];
-      const prev = history[i-1];
-      
-      const salesDiff = Math.max(0, current.salesCount - prev.salesCount);
-      const viewsDiff = Math.max(0, current.views - prev.views);
-      const favsDiff = Math.max(0, current.favorites - prev.favorites);
-      const revDiff = Math.max(0, current.revenue - prev.revenue);
-      
-      const dateObj = new Date(current.date);
-      chart.push({
-        name: dateObj.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' }),
-        Sales: salesDiff,
-        Views: viewsDiff,
-        Favorites: favsDiff,
-        Revenue: revDiff,
-        NetMargin: revDiff * 0.4
-      });
+    // Clean up timestamp before returning for Recharts
+    result = result.map(item => {
+      const { timestamp, ...rest } = item;
+      return rest;
+    });
+    
+    // For daily, if there are many days, just show the last 14 days to draw a proper line
+    if (timeframe === "daily" && result.length > 14) {
+      result = result.slice(-14);
     }
     
-    let slicedChart = chart;
-    if (timeframe === "daily") slicedChart = chart.slice(-1);
-    else if (timeframe === "weekly") slicedChart = chart.slice(-7);
-    else if (timeframe === "monthly") slicedChart = chart.slice(-30);
-    
-    return slicedChart;
+    return result;
   };
 
   const isConnected = !!shopData;
