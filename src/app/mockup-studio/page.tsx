@@ -138,15 +138,33 @@ export default function MockupStudioPage() {
     { id: "unisex", label: "Unisex / Sokak Modeli", badge: "Genç", desc: "Dinamik çağdaş sokak tarzı" },
   ];
 
-  // Color options config
+  // Color options config (20 popular Etsy POD colors)
   const colorOptions = [
-    { id: "white", label: "Beyaz", hex: "#FFFFFF", border: "border-neutral-300" },
-    { id: "black", label: "Siyah", hex: "#18181B", border: "border-neutral-700" },
-    { id: "heather_grey", label: "Gri", hex: "#9CA3AF", border: "border-neutral-400" },
-    { id: "beige", label: "Bej / Krem", hex: "#E7DEC8", border: "border-neutral-400" },
-    { id: "navy", label: "Lacivert", hex: "#1E293B", border: "border-blue-900" },
-    { id: "pink", label: "Pastel Pembe", hex: "#FBCFE8", border: "border-pink-300" },
-    { id: "forest_green", label: "Haki / Yeşil", hex: "#2E4F3E", border: "border-green-800" },
+    // Neutrals & Classics
+    { id: "white", label: "Beyaz", hex: "#FFFFFF", border: "border-neutral-300", isLight: true },
+    { id: "black", label: "Siyah", hex: "#18181B", border: "border-neutral-700", isLight: false },
+    { id: "sand", label: "Doğal / Kum", hex: "#F4F0EA", border: "border-neutral-300", isLight: true },
+    { id: "beige", label: "Bej / Krem", hex: "#E7DEC8", border: "border-amber-200/50", isLight: true },
+    { id: "heather_grey", label: "Açık Gri", hex: "#D1D5DB", border: "border-neutral-400", isLight: true },
+    { id: "charcoal", label: "Antrasit / Füme", hex: "#374151", border: "border-neutral-600", isLight: false },
+    // Blues
+    { id: "navy", label: "Lacivert", hex: "#1E293B", border: "border-blue-900", isLight: false },
+    { id: "royal_blue", label: "Saks Mavisi", hex: "#1D4ED8", border: "border-blue-700", isLight: false },
+    { id: "light_blue", label: "Pastel Mavi", hex: "#BAE6FD", border: "border-sky-300", isLight: true },
+    // Greens
+    { id: "forest_green", label: "Orman Yeşili", hex: "#1B4332", border: "border-emerald-900", isLight: false },
+    { id: "military_green", label: "Haki / Askeri Yeşil", hex: "#4B5320", border: "border-lime-900", isLight: false },
+    { id: "sage_green", label: "Adaçayı Yeşili", hex: "#87A987", border: "border-emerald-300", isLight: true },
+    // Reds & Pinks
+    { id: "maroon", label: "Bordo / Şarap", hex: "#6B1D2F", border: "border-rose-900", isLight: false },
+    { id: "red", label: "Klasik Kırmızı", hex: "#DC2626", border: "border-red-700", isLight: false },
+    { id: "pink", label: "Pastel Pembe", hex: "#FBCFE8", border: "border-pink-300", isLight: true },
+    { id: "dusty_rose", label: "Gül Kurusu", hex: "#D4A5A5", border: "border-rose-300", isLight: true },
+    // Warm Earth & Pastels
+    { id: "brown", label: "Çikolata Kahve", hex: "#4A2E1B", border: "border-amber-900", isLight: false },
+    { id: "mustard", label: "Hardal Sarısı", hex: "#D97706", border: "border-amber-500", isLight: false },
+    { id: "terracotta", label: "Kiremit / Pas", hex: "#C2410C", border: "border-orange-800", isLight: false },
+    { id: "lavender", label: "Lavanta / Lila", hex: "#DDD6FE", border: "border-purple-300", isLight: true },
   ];
 
   // Environment options
@@ -516,10 +534,15 @@ export default function MockupStudioPage() {
               
               {/* Product Color */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-foreground uppercase tracking-wider">
-                  {t("mockupStudio.productColor")}
-                </label>
-                <div className="flex items-center gap-2 flex-wrap bg-black/30 p-2 rounded-xl border border-border">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-foreground uppercase tracking-wider">
+                    {t("mockupStudio.productColor")}
+                  </label>
+                  <span className="text-xs font-semibold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20">
+                    {colorOptions.find((c) => c.id === productColor)?.label || productColor}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap bg-black/30 p-2.5 rounded-xl border border-border max-h-[140px] overflow-y-auto custom-scrollbar">
                   {colorOptions.map((c) => {
                     const isSelected = productColor === c.id;
                     return (
@@ -528,13 +551,13 @@ export default function MockupStudioPage() {
                         type="button"
                         onClick={() => setProductColor(c.id)}
                         title={c.label}
-                        className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer ${
+                        className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer relative ${
                           c.border
-                        } ${isSelected ? "scale-115 ring-2 ring-purple-500 shadow-md" : "hover:scale-105 opacity-80 hover:opacity-100"}`}
+                        } ${isSelected ? "scale-115 ring-2 ring-purple-500 shadow-lg shadow-purple-500/20 z-10" : "hover:scale-110 opacity-80 hover:opacity-100"}`}
                         style={{ backgroundColor: c.hex }}
                       >
                         {isSelected && (
-                          <Check size={12} className={c.id === "white" || c.id === "beige" || c.id === "pink" ? "text-black" : "text-white"} />
+                          <Check size={12} className={c.isLight ? "text-black stroke-[3]" : "text-white stroke-[3]"} />
                         )}
                       </button>
                     );

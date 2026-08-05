@@ -88,16 +88,40 @@ export async function POST(req: Request) {
       nature_outdoor: 'golden hour outdoor scenic park with soft lens flare and lush green nature'
     };
 
+    const colorLabels: Record<string, string> = {
+      white: 'crisp solid white',
+      black: 'deep solid black',
+      sand: 'sand natural cream',
+      beige: 'aesthetic soft oatmeal beige',
+      heather_grey: 'athletic heather grey',
+      charcoal: 'dark charcoal heather grey',
+      navy: 'classic dark navy blue',
+      royal_blue: 'vibrant royal blue',
+      light_blue: 'pastel baby blue',
+      forest_green: 'deep forest green',
+      military_green: 'military olive khaki green',
+      sage_green: 'soft pastel sage green',
+      maroon: 'rich maroon burgundy',
+      red: 'classic vibrant red',
+      pink: 'soft pastel light pink',
+      dusty_rose: 'vintage dusty rose pink',
+      brown: 'warm chocolate brown',
+      mustard: 'vintage mustard gold yellow',
+      terracotta: 'warm rustic terracotta orange',
+      lavender: 'aesthetic pastel lavender lilac',
+    };
+
     const selectedProduct = productLabels[productType] || 't-shirt';
     const selectedGender = genderLabels[modelGender] || 'fashion model';
     const selectedEnv = envLabels[environment] || 'bright aesthetic studio';
+    const selectedColor = colorLabels[color] || color || 'solid white';
 
     // 3 distinct prompt variations for 3 professional angles
-    const prompt1 = `Professional commercial fashion e-commerce mockup photograph: A ${selectedGender} wearing a ${color} ${selectedProduct} displaying this exact graphic design printed vividly on the front. Studio portrait shot, straight-on view, authentic realistic fabric texture, natural wrinkles, flawless studio lighting, crisp 8k detail, Etsy best seller apparel showcase. ${customPrompt ? `Note: ${customPrompt}` : ''}`;
+    const prompt1 = `Professional commercial fashion e-commerce mockup photograph: A ${selectedGender} wearing a ${selectedColor} ${selectedProduct} displaying this exact graphic design printed vividly on the front. Studio portrait shot, straight-on view, authentic realistic fabric texture, natural wrinkles, flawless studio lighting, crisp 8k detail, Etsy best seller apparel showcase. ${customPrompt ? `Note: ${customPrompt}` : ''}`;
 
-    const prompt2 = `Lifestyle e-commerce catalog photograph: A trendy ${selectedGender} wearing a ${color} ${selectedProduct} with this exact graphic print on it, photographed candidly in a ${selectedEnv}. Dynamic 3/4 angle pose, natural sunlight, depth of field, photorealistic fabric draping, hyperrealistic live model photography.`;
+    const prompt2 = `Lifestyle e-commerce catalog photograph: A trendy ${selectedGender} wearing a ${selectedColor} ${selectedProduct} with this exact graphic print on it, photographed candidly in a ${selectedEnv}. Dynamic 3/4 angle pose, natural sunlight, depth of field, photorealistic fabric draping, hyperrealistic live model photography.`;
 
-    const prompt3 = `Editorial lookbook close-up photograph: Detailed medium close-up of the ${color} ${selectedProduct} worn by the ${selectedGender}, showing the high-resolution printed graphic design centered on the chest, realistic woven cotton texture, aesthetic warm grading, stylish magazine quality.`;
+    const prompt3 = `Editorial lookbook close-up photograph: Detailed medium close-up of the ${selectedColor} ${selectedProduct} worn by the ${selectedGender}, showing the high-resolution printed graphic design centered on the chest, realistic woven cotton texture, aesthetic warm grading, stylish magazine quality.`;
 
     // Prepare image buffer
     let buffer: Buffer;
