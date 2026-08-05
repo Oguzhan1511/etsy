@@ -282,7 +282,7 @@ export default function SellerDashboard() {
   };
   
   // Real Data States
-  const [realOrders, setRealOrders] = useState<ActiveOrder[]>(activeOrders);
+  const [realOrders, setRealOrders] = useState<any[]>([]);
   const [realBestSellers, setRealBestSellers] = useState<PerformanceItem[]>(bestSellersList);
   const [realMostFavorited, setRealMostFavorited] = useState<PerformanceItem[]>(mostFavoritedList);
   const [realSalesCount, setRealSalesCount] = useState<number | null>(null);
@@ -638,7 +638,12 @@ export default function SellerDashboard() {
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {realOrders.map((o) => (
+          {realOrders.length === 0 ? (
+            <div className="col-span-full p-8 flex items-center justify-center border border-border bg-black/5 rounded-xl">
+              <span className="text-xs font-medium text-secondary">{t("sellerDashboard.noActiveOrders") || "Henüz aktif siparişiniz bulunmamaktadır."}</span>
+            </div>
+          ) : (
+            realOrders.map((o) => (
             <Link href="/orders" key={o.id} className="group block">
               <div className="bg-card border border-border group-hover:border-purple-500/20 rounded-xl p-5 space-y-3 transition-all hover:-translate-y-0.5 relative overflow-hidden flex flex-col justify-between min-h-[155px] h-auto">
                 
@@ -669,7 +674,8 @@ export default function SellerDashboard() {
 
               </div>
             </Link>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
