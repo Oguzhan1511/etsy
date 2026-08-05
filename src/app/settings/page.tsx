@@ -19,15 +19,27 @@ import {
   Shield,
   ChevronRight,
   LogOut,
+  AlertTriangle,
+  Clock,
+  CheckCircle2,
+  X,
+  Loader2,
+  Calendar,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 type Tab = "profile" | "settings" | "plan";
 
 function SettingsContent() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
+
+  // Plan cancellation state
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelSuccessMsg, setCancelSuccessMsg] = useState("");
+  const [subscriptionInfo, setSubscriptionInfo] = useState<any>(null);
 
   // Profile form state
   const [name, setName] = useState(user?.name ?? "");
@@ -72,7 +84,54 @@ function SettingsContent() {
       const savedToken = localStorage.getItem("printify_api_token");
       if (savedToken) { setTimeout(() => { setPrintifyApiKey(savedToken); setPrintifyConnected(true); }, 0); }
     }
+
+    if (user?.id) {
+      fetch(`/api/user/subscription?userId=${user.id}`, { headers: { 'x-user-id': user.id } })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.subscription) {
+            setSubscriptionInfo(data.subscription);
+          }
+        })
+        .catch(() => {});
+    }
   }, [user?.id, searchParams]);
+
+  const handleCancelSubscription = async () => {
+    if (!user?.id) return;
+    setCancelling(true);
+    try {
+      const res = await fetch("/api/user/subscription/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-user-id": user.id },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setCancelSuccessMsg(data.message || "Aboneliğiniz başarıyla iptal edildi.");
+        if (data.user) {
+          updateUser(data.user);
+        }
+        setSubscriptionInfo({
+          plan: "none",
+          paymentStatus: false,
+          subscriptionStatus: "cancelled",
+          isTrialActive: false,
+          daysLeftInTrial: 0,
+        });
+        setTimeout(() => {
+          setCancelModalOpen(false);
+          setCancelSuccessMsg("");
+        }, 2500);
+      } else {
+        alert(data.error || "İptal işlemi gerçekleştirilemedi.");
+      }
+    } catch (err) {
+      alert("Sunucuya bağlanılamadı.");
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   const handleDisconnectEtsy = async () => {
     if (!user?.id) return;
@@ -457,15 +516,18 @@ function SettingsContent() {
 
       {/* ── PLAN TAB ── */}
       {activeTab === "plan" && (() => {
-        const userPlan = (user?.plan || "pro").toLowerCase();
+        const userPlan = (user?.plan || "none").toLowerCase();
         const isStandart = userPlan === "standart" || userPlan === "standard";
         const isPremium = userPlan === "premium" || userPlan === "plus";
-        const isPro = !isStandart && !isPremium;
+        const isPro = userPlan === "pro";
+        const hasActiveSubscription = user?.paymentStatus && userPlan !== "none" && user?.subscriptionStatus !== "cancelled";
+        const isTrial = subscriptionInfo?.isTrialActive || user?.subscriptionStatus === "trial";
 
         const currentPlanInfo = isStandart
           ? {
               name: "Standart Plan",
               price: "₺260",
+              priceNum: 260,
               desc: "Yeni başlayan satıcılar için temel araçlar.",
               tokens: "10 Token / ay",
               features: ["10 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "Sipariş ve Ürün Takibi", "Canlı Mockup Stüdyosu"],
@@ -474,16 +536,27 @@ function SettingsContent() {
           ? {
               name: "Premium Plan",
               price: "₺710",
+              priceNum: 710,
               desc: "Sınırları zorlayan devasa mağazalar için maksimum güç.",
               tokens: "100 Token / ay",
               features: ["100 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "VIP Hızlı Üretim", "Canlı Mockup Stüdyosu"],
             }
-          : {
+          : isPro
+          ? {
               name: "Pro Plan",
               price: "₺480",
+              priceNum: 480,
               desc: "Büyümek isteyen profesyonel satıcılar için en popüler plan.",
               tokens: "50 Token / ay",
               features: ["50 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "Öncelikli Destek", "Canlı Mockup Stüdyosu"],
+            }
+          : {
+              name: "Aktif Plan Yok",
+              price: "₺0",
+              priceNum: 0,
+              desc: "Henüz bir plana abone değilsiniz. 3 gün ücretsiz deneyebilirsiniz.",
+              tokens: "0 Token",
+              features: ["3 Günlük Ücretsiz Deneme", "İstediğiniz An İptal Güvencesi"],
             };
 
         const planList = [
@@ -494,7 +567,7 @@ function SettingsContent() {
             tokens: "10 Token / ay",
             desc: "Yeni başlayan satıcılar için",
             features: ["10 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "Sipariş Takibi", "Canlı Mockup Stüdyosu"],
-            current: isStandart,
+            current: isStandart && hasActiveSubscription,
           },
           {
             id: "pro",
@@ -503,7 +576,7 @@ function SettingsContent() {
             tokens: "50 Token / ay",
             desc: "Büyüyen satıcılar için (En Popüler)",
             features: ["50 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "Öncelikli Destek", "Canlı Mockup Stüdyosu"],
-            current: isPro,
+            current: isPro && hasActiveSubscription,
           },
           {
             id: "premium",
@@ -512,55 +585,128 @@ function SettingsContent() {
             tokens: "100 Token / ay",
             desc: "Ekipler ve profesyoneller için maksimum kapasite",
             features: ["100 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "VIP Hızlı Üretim", "Canlı Mockup Stüdyosu"],
-            current: isPremium,
+            current: isPremium && hasActiveSubscription,
           },
         ];
 
+        // Format trial / billing date
+        const nextDate = user?.trialEndsAt 
+          ? new Date(user.trialEndsAt).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })
+          : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+
         return (
           <div className="space-y-4">
-            {/* Current Plan */}
-            <div
-              className="rounded-2xl p-5 border space-y-3 relative overflow-hidden"
-              style={{
-                background: "linear-gradient(135deg, rgba(124,106,247,0.12) 0%, rgba(168,85,247,0.06) 100%)",
-                borderColor: "rgba(124,106,247,0.25)",
-              }}
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-purple-500/5 blur-2xl pointer-events-none" />
-              <div className="flex items-start justify-between">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-purple-400">
-                    {t("settings.currentPlan")}
-                  </span>
-                  <h2 className="text-xl font-bold text-foreground mt-1 flex items-center gap-2">
-                    <Zap size={18} className="text-purple-400" />
-                    {currentPlanInfo.name}
-                  </h2>
-                  <p className="text-xs text-secondary mt-1">{currentPlanInfo.desc}</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-2xl font-bold text-foreground">
-                    {currentPlanInfo.price}
-                    <span className="text-xs text-muted font-normal">{t("settings.perMonth")}</span>
-                  </span>
-                  <p className="text-[11px] font-semibold text-purple-300 mt-0.5">{currentPlanInfo.tokens}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-purple-500/10 mt-2">
-                {currentPlanInfo.features.map((f) => (
-                  <div key={f} className="flex items-center gap-1.5 text-[11px] text-secondary">
-                    <Check size={10} className="text-purple-400 shrink-0" />
-                    {f}
+            {/* Trial & Subscription Status Header Card */}
+            {hasActiveSubscription ? (
+              <div
+                className="rounded-2xl p-5 border space-y-4 relative overflow-hidden"
+                style={{
+                  background: isTrial
+                    ? "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(124,106,247,0.08) 100%)"
+                    : "linear-gradient(135deg, rgba(124,106,247,0.12) 0%, rgba(168,85,247,0.06) 100%)",
+                  borderColor: isTrial ? "rgba(16,185,129,0.3)" : "rgba(124,106,247,0.25)",
+                }}
+              >
+                <div className="flex items-start justify-between flex-wrap gap-3">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      {isTrial ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold border border-emerald-500/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          3 GÜNLÜK ÜCRETSİZ DENEME AKTİF
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-bold border border-purple-500/30">
+                          <CheckCircle2 size={10} className="text-purple-400" />
+                          ABONELİK AKTİF
+                        </span>
+                      )}
+                    </div>
+                    <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                      <Zap size={18} className={isTrial ? "text-emerald-400" : "text-purple-400"} />
+                      {currentPlanInfo.name}
+                    </h2>
+                    <p className="text-xs text-secondary mt-0.5">{currentPlanInfo.desc}</p>
                   </div>
-                ))}
+                  <div className="text-right">
+                    <span className="text-2xl font-bold text-foreground">
+                      {currentPlanInfo.price}
+                      <span className="text-xs text-muted font-normal"> / ay</span>
+                    </span>
+                    <p className="text-[11px] font-semibold text-purple-300 mt-0.5">{currentPlanInfo.tokens}</p>
+                  </div>
+                </div>
+
+                {/* Trial breakdown details */}
+                <div className="bg-black/20 border border-white/5 rounded-xl p-3 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div>
+                    <span className="text-muted text-[10px] block font-medium">Durum</span>
+                    <span className={`font-semibold ${isTrial ? "text-emerald-400" : "text-purple-300"}`}>
+                      {isTrial ? "Ücretsiz Deneme (0 ₺ Tahsil Edildi)" : "Aylık Yinelenen"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted text-[10px] block font-medium">
+                      {isTrial ? "Deneme Bitiş & İlk Çekim" : "Gelecek Yenilenme"}
+                    </span>
+                    <span className="font-semibold text-foreground flex items-center gap-1">
+                      <Calendar size={12} className="text-purple-400" />
+                      {nextDate}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted text-[10px] block font-medium">Tanımlı Kart</span>
+                    <span className="font-semibold text-foreground flex items-center gap-1 font-mono">
+                      <CreditCard size={12} className="text-muted" />
+                      •••• {subscriptionInfo?.cardLast4 || user?.cardLast4 || "4242"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Features & Cancel Action */}
+                <div className="flex items-center justify-between pt-2 border-t border-white/5 flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-3">
+                    {currentPlanInfo.features.map((f) => (
+                      <span key={f} className="flex items-center gap-1 text-[11px] text-secondary">
+                        <Check size={10} className="text-emerald-400 shrink-0" />
+                        {f}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Cancel Button */}
+                  <button
+                    onClick={() => setCancelModalOpen(true)}
+                    className="px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+                  >
+                    <AlertTriangle size={13} />
+                    <span>{isTrial ? "Denemeyi İptal Et" : "Planı İptal Et"}</span>
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              /* No Active Plan / Cancelled Notice */
+              <div className="bg-white/[0.02] border border-border rounded-2xl p-5 text-center space-y-3">
+                <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center mx-auto text-purple-400">
+                  <Zap size={20} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-foreground">Aktif Aboneliğiniz Bulunmuyor</h3>
+                  <p className="text-xs text-secondary mt-1 max-w-md mx-auto">
+                    Aşağıdaki planlardan birini seçerek <strong>3 gün boyunca tamamen ücretsiz</strong> deneyebilirsiniz. 3 gün dolana kadar kartınızdan 0 ₺ çekilir.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Plan Options */}
-            <div className="space-y-2">
+            <div className="space-y-2 pt-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted px-1">
+                {hasActiveSubscription ? "Planınızı Değiştirin" : "Kullanılabilir Planlar (3 Gün Ücretsiz)"}
+              </h3>
               {planList.map((plan) => (
                 <div
-                  key={plan.name}
+                  key={plan.id}
                   className={`bg-card border rounded-xl p-4 flex items-center justify-between transition-all ${
                     plan.current ? "border-purple-500/40 shadow-[0_0_20px_rgba(139,92,246,0.15)]" : "border-border hover:border-border"
                   }`}
@@ -572,8 +718,8 @@ function SettingsContent() {
                         {plan.tokens}
                       </span>
                       {plan.current && (
-                        <span className="text-[9px] font-bold bg-purple-500/20 border border-purple-500/30 text-purple-400 px-1.5 py-0.5 rounded-full">
-                          {t("settings.active")}
+                        <span className="text-[9px] font-bold bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full">
+                          Mevcut Planınız
                         </span>
                       )}
                     </div>
@@ -590,18 +736,19 @@ function SettingsContent() {
                   <div className="text-right shrink-0 ml-4">
                     <p className="text-base font-bold text-foreground">
                       {plan.price}
-                      <span className="text-[10px] text-muted font-normal">{t("settings.perMonth")}</span>
+                      <span className="text-[10px] text-muted font-normal"> / ay</span>
                     </p>
                     {!plan.current ? (
                       <Link
                         href={`/checkout?plan=${plan.id}`}
-                        className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-purple-500/20 border border-border hover:border-purple-500/30 text-[10px] font-bold text-secondary hover:text-foreground transition-all cursor-pointer"
+                        className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-[10px] font-bold text-white shadow-md transition-all cursor-pointer"
                       >
-                        {t("settings.upgrade")} <ChevronRight size={10} />
+                        <span>3 Gün Ücretsiz Dene</span>
+                        <ChevronRight size={10} />
                       </Link>
                     ) : (
-                      <span className="mt-2 inline-block text-[10px] font-bold text-purple-400">
-                        Mevcut Planınız
+                      <span className="mt-2 inline-block text-[10px] font-bold text-emerald-400">
+                        Aktif
                       </span>
                     )}
                   </div>
@@ -610,10 +757,98 @@ function SettingsContent() {
             </div>
 
             {/* Security badge */}
-            <div className="flex items-center gap-2 text-[10px] text-muted justify-center pt-1">
-              <Shield size={11} />
-              {t("settings.ssl")}
+            <div className="flex items-center gap-2 text-[10px] text-muted justify-center pt-2">
+              <Shield size={11} className="text-emerald-400" />
+              <span>3 gün ücretsiz deneme süresi içinde iptal ederseniz kartınızdan hiçbir ücret alınmaz.</span>
             </div>
+
+            {/* ── CANCELLATION MODAL ── */}
+            {cancelModalOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+                <div className="bg-card border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 relative">
+                  
+                  <button
+                    onClick={() => setCancelModalOpen(false)}
+                    disabled={cancelling}
+                    className="absolute top-4 right-4 text-muted hover:text-foreground transition-colors p-1"
+                  >
+                    <X size={18} />
+                  </button>
+
+                  {cancelSuccessMsg ? (
+                    <div className="text-center py-4 space-y-3">
+                      <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto animate-bounce">
+                        <CheckCircle2 size={32} />
+                      </div>
+                      <h3 className="text-lg font-bold text-foreground">İptal Başarılı</h3>
+                      <p className="text-xs text-secondary leading-relaxed">
+                        {cancelSuccessMsg}
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 shrink-0">
+                          <AlertTriangle size={20} />
+                        </div>
+                        <div>
+                          <h3 className="text-base font-bold text-foreground">
+                            {isTrial ? "Deneme Süresini İptal Et" : "Aboneliği İptal Et"}
+                          </h3>
+                          <p className="text-xs text-secondary">
+                            {isTrial ? "3 Günlük Ücretsiz Deneme" : currentPlanInfo.name}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 space-y-2 text-xs">
+                        <p className="font-semibold text-red-400 flex items-center gap-1.5">
+                          <Shield size={14} className="shrink-0" />
+                          0 ₺ Kesinti Güvencesi:
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed">
+                          {isTrial
+                            ? "3 günlük ücretsiz deneme süresi içinde olduğunuz için kartınızdan kesinlikle hiçbir ücret alınmayacaktır."
+                            : "Aboneliğinizi iptal ettiğinizde bir sonraki dönem için kartınızdan çekim yapılmayacaktır."}
+                        </p>
+                      </div>
+
+                      <p className="text-xs text-muted">
+                        İptal ettikten sonra dilediğiniz zaman tekrar bir plan seçip aboneliğinizi başlatabilirsiniz.
+                      </p>
+
+                      <div className="flex items-center justify-end gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => setCancelModalOpen(false)}
+                          disabled={cancelling}
+                          className="px-4 py-2 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-foreground border border-border transition-all cursor-pointer"
+                        >
+                          Vazgeç
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCancelSubscription}
+                          disabled={cancelling}
+                          className="px-4 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-500 text-white transition-all shadow-lg shadow-red-600/20 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                        >
+                          {cancelling ? (
+                            <>
+                              <Loader2 size={14} className="animate-spin" />
+                              <span>İptal Ediliyor...</span>
+                            </>
+                          ) : (
+                            <span>Evet, İptal Et</span>
+                          )}
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                </div>
+              </div>
+            )}
+
           </div>
         );
       })()}

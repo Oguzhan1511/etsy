@@ -103,8 +103,15 @@ export async function POST(req: Request) {
       }
     }
 
-    // Since we're using a custom auth setup on the frontend with localStorage (printysell-auth-user),
-    // we return the user object so the frontend can set the session just like a normal login.
+    // Calculate initials
+    const namePart = user.name || user.email.split("@")[0];
+    const initials = namePart
+      .split(/[._\- ]/)
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join("")
+      .toUpperCase();
+
     return NextResponse.json({ 
       success: true, 
       user: {
@@ -112,6 +119,13 @@ export async function POST(req: Request) {
         name: user.name,
         email: user.email,
         role: user.role,
+        plan: user.plan,
+        paymentStatus: user.paymentStatus,
+        subscriptionStatus: user.subscriptionStatus || (user.paymentStatus ? 'active' : 'none'),
+        trialEndsAt: user.trialEndsAt ? user.trialEndsAt.toISOString() : null,
+        nextBillingDate: user.nextBillingDate ? user.nextBillingDate.toISOString() : null,
+        cardLast4: user.cardLast4 || null,
+        initials,
         printifyToken: user.printifyToken
       }
     });

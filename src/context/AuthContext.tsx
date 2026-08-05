@@ -2,13 +2,17 @@
 
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
   plan: string;
   paymentStatus: boolean;
   initials: string;
+  subscriptionStatus?: string; // "trial", "active", "cancelled", "none"
+  trialEndsAt?: string | null;
+  nextBillingDate?: string | null;
+  cardLast4?: string | null;
 }
 
 interface AuthState {
@@ -22,12 +26,15 @@ interface AuthContextType {
   googleLogin: (credential: string) => Promise<{ success: boolean; error?: string; user?: User }>;
   registerUser: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
+  updateUser: (updatedUser: Partial<User>) => void;
+  refreshUser: () => Promise<void>;
   isLoading: boolean;
 }
 
 type AuthAction =
   | { type: "INIT"; payload: User | null }
   | { type: "LOGIN"; payload: User }
+  | { type: "UPDATE_USER"; payload: Partial<User> }
   | { type: "LOGOUT" };
 
 function authReducer(state: AuthState, action: AuthAction): AuthState {
@@ -36,6 +43,11 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
       return { user: action.payload, isLoading: false };
     case "LOGIN":
       return { user: action.payload, isLoading: false };
+    case "UPDATE_USER":
+      if (!state.user) return state;
+      const merged = { ...state.user, ...action.payload };
+      localStorage.setItem("printysell-auth-user", JSON.stringify(merged));
+      return { ...state, user: merged };
     case "LOGOUT":
       return { user: null, isLoading: false };
     default:
@@ -122,6 +134,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateUser = (updatedUser: Partial<User>) => {
+    dispatch({ type: "UPDATE_USER", payload: updatedUser });
+  };
+
+  const refreshUser = async () => {
+    if (!state.user?.id) return;
+    try {
+      const res = await fetch(`/api/auth/verify?userId=${state.user.id}`);
+      const data = await res.json();
+      if (res.ok && data.user) {
+        dispatch({ type: "UPDATE_USER", payload: data.user });
+      }
+    } catch {}
+  };
+
   const logout = () => {
     localStorage.removeItem("printysell-auth-user");
     dispatch({ type: "LOGOUT" });
@@ -129,7 +156,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user: state.user, login, googleLogin, registerUser, logout, isLoading: state.isLoading }}>
+    <AuthContext.Provider
+      value={{
+        user: state.user,
+        login,
+        googleLogin,
+        registerUser,
+        logout,
+        updateUser,
+        refreshUser,
+        isLoading: state.isLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

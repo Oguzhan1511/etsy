@@ -141,13 +141,13 @@ export default function PlansPage() {
                   <Loader2 size={18} className="animate-spin" />
                 ) : (
                   <>
-                    <span>Bu Planı Seç</span>
+                    <span>3 Gün Ücretsiz Dene</span>
                     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
               </button>
-              <p className="text-center text-xs text-foreground/40 mt-4 font-medium uppercase tracking-wider">
-                Her plan için 3 gün ücretsiz deneme hakkı var
+              <p className="text-center text-xs text-emerald-400/80 mt-4 font-medium tracking-wide">
+                ✨ 3 gün ücretsiz dene, istediğin an iptal et
               </p>
             </div>
           );

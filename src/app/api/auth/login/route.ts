@@ -51,6 +51,10 @@ export async function POST(req: Request) {
       initials,
       plan: user.plan,
       paymentStatus: user.paymentStatus,
+      subscriptionStatus: user.subscriptionStatus || (user.paymentStatus ? 'active' : 'none'),
+      trialEndsAt: user.trialEndsAt ? user.trialEndsAt.toISOString() : null,
+      nextBillingDate: user.nextBillingDate ? user.nextBillingDate.toISOString() : null,
+      cardLast4: user.cardLast4 || null,
     };
 
     // Generate JWT Token
