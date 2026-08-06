@@ -125,6 +125,7 @@ export default function MockupStudioPage() {
     { id: "oversized_tshirt", label: "Oversized Tişört", icon: "🛹", desc: "Streetwear Dropped Shoulder" },
     { id: "hoodie", label: "Kapüşonlu Hoodie", icon: "🧥", desc: "Heavyweight Pullover" },
     { id: "sweatshirt", label: "Sweatshirt", icon: "🧶", desc: "Cozy Crewneck Fleece" },
+    { id: "cap", label: "Cap Şapka", icon: "🧢", desc: "Vintage Dad Hat / Baseball Cap" },
     { id: "totebag", label: "Bez Çanta", icon: "👜", desc: "Eco Canvas Tote Bag" },
     { id: "mug", label: "Kupa Bardak", icon: "☕", desc: "11oz Seramik Kupa" },
     { id: "pillow", label: "Kırlent / Yastık", icon: "🛋️", desc: "Kare Dekoratif Yastık" },
@@ -476,7 +477,7 @@ export default function MockupStudioPage() {
                 <Shirt size={14} className="text-purple-400" />
                 {t("mockupStudio.productType")}
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {productOptions.map((p) => {
                   const isSelected = productType === p.id;
                   return (
