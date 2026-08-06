@@ -7,7 +7,7 @@ export async function GET(request: Request) {
 
   const token = await getValidEtsyToken(userId);
   const clientId = process.env.ETSY_API_KEY;
-  const clientSecret = process.env.ETSY_API_SECRET;
+  const clientSecret = process.env.ETSY_API_SECRET || process.env.ETSY_SHARED_SECRET;
   if (!clientId || !clientSecret) return NextResponse.json({ error: "Etsy store not connected (missing credentials)" }, { status: 401 });
   if (!token) return NextResponse.json({ error: "Etsy store not connected" }, { status: 401 });
 

@@ -6,8 +6,8 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const ETSY_API_KEY = process.env.ETSY_API_KEY!;
-const ETSY_API_SECRET = process.env.ETSY_API_SECRET!;
+const ETSY_API_KEY = process.env.ETSY_API_KEY || '';
+const ETSY_API_SECRET = process.env.ETSY_API_SECRET || process.env.ETSY_SHARED_SECRET || '';
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
 
 interface EtsyListing {

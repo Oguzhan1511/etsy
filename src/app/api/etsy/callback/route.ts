@@ -5,17 +5,19 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
+  const errorDescription = searchParams.get('error_description');
+  const state = searchParams.get('state');
 
   if (error) {
-    return NextResponse.redirect(new URL(`/dashboard?etsy_error=${error}`, request.url));
+    console.error("Etsy OAuth Error returned in callback:", { error, errorDescription });
+    return NextResponse.redirect(new URL(`/settings?etsy_error=${encodeURIComponent(errorDescription || error)}`, request.url));
   }
 
   if (!code) {
-    return NextResponse.json({ error: "No authorization code provided" }, { status: 400 });
+    return NextResponse.redirect(new URL('/settings?etsy_error=no_code', request.url));
   }
 
   const clientId = process.env.ETSY_API_KEY;
-  const redirectUri = process.env.ETSY_REDIRECT_URI;
 
   const cookieHeader = request.headers.get('cookie') || '';
   const getcookie = (name: string) => {
@@ -25,10 +27,25 @@ export async function GET(request: Request) {
 
   const codeVerifier = getcookie('etsy_code_verifier');
   const userId = getcookie('etsy_pending_user_id');
+  const savedState = getcookie('etsy_oauth_state');
+  const savedRedirectUri = getcookie('etsy_oauth_redirect_uri');
+
+  const redirectUri = savedRedirectUri || process.env.ETSY_REDIRECT_URI;
 
   if (!clientId || !redirectUri || !codeVerifier || !userId) {
-    console.error("Missing config:", { clientId: !!clientId, redirectUri: !!redirectUri, codeVerifier: !!codeVerifier, userId: !!userId });
-    return NextResponse.redirect(new URL('/dashboard?etsy_error=missing_config', request.url));
+    console.error("Missing config in Etsy callback:", {
+      clientId: !!clientId,
+      redirectUri: !!redirectUri,
+      codeVerifier: !!codeVerifier,
+      userId: !!userId,
+      savedState: !!savedState,
+    });
+    return NextResponse.redirect(new URL('/settings?etsy_error=missing_config', request.url));
+  }
+
+  if (savedState && state && savedState !== state) {
+    console.error("State mismatch in Etsy callback:", { savedState, state });
+    return NextResponse.redirect(new URL('/settings?etsy_error=state_mismatch', request.url));
   }
 
   try {
@@ -37,8 +54,8 @@ export async function GET(request: Request) {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: clientId,
-        redirect_uri: redirectUri,
+        client_id: clientId.trim(),
+        redirect_uri: redirectUri.trim(),
         code,
         code_verifier: codeVerifier,
       }),
@@ -47,11 +64,12 @@ export async function GET(request: Request) {
     const data = await tokenResponse.json();
 
     if (!tokenResponse.ok) {
-      console.error("Etsy OAuth Error:", data);
-      return NextResponse.redirect(new URL('/dashboard?etsy_error=oauth_failed', request.url));
+      console.error("Etsy OAuth Token Exchange Error:", data);
+      const errMsg = data.error_description || data.error || 'oauth_failed';
+      return NextResponse.redirect(new URL(`/settings?etsy_error=${encodeURIComponent(errMsg)}`, request.url));
     }
 
-    const expiresAt = new Date(Date.now() + data.expires_in * 1000);
+    const expiresAt = new Date(Date.now() + (data.expires_in || 3600) * 1000);
 
     await prisma.etsyToken.upsert({
       where: { userId },
@@ -68,13 +86,16 @@ export async function GET(request: Request) {
       },
     });
 
-    const response = NextResponse.redirect(new URL('/dashboard?etsy_connected=true', request.url));
+    const response = NextResponse.redirect(new URL('/settings?etsy_connected=true', request.url));
     response.cookies.set('etsy_code_verifier', '', { maxAge: 0, path: '/' });
     response.cookies.set('etsy_pending_user_id', '', { maxAge: 0, path: '/' });
+    response.cookies.set('etsy_oauth_state', '', { maxAge: 0, path: '/' });
+    response.cookies.set('etsy_oauth_redirect_uri', '', { maxAge: 0, path: '/' });
     return response;
 
   } catch (err) {
     console.error('Error exchanging Etsy token:', err);
-    return NextResponse.redirect(new URL('/dashboard?etsy_error=internal_error', request.url));
+    return NextResponse.redirect(new URL('/settings?etsy_error=internal_error', request.url));
   }
 }
+
