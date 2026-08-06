@@ -36,11 +36,44 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "User has no Etsy shop", shopData }, { status: 404 });
     }
 
+    let bannerUrl = (shopData.image_url_760x100 as string)
+      || (shopData.banner_url as string)
+      || (shopData.large_banner_url as string)
+      || (shopData.banner_url_fullxfull as string)
+      || null;
+
+    let iconUrl = (shopData.icon_url_fullxfull as string) || null;
+
+    if ((!bannerUrl || !iconUrl) && shopData.shop_id) {
+      try {
+        const directShopRes = await fetch(`https://api.etsy.com/v3/application/shops/${shopData.shop_id}`, {
+          headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': apiKeyWithSecret }
+        });
+        if (directShopRes.ok) {
+          const directShop = await directShopRes.json() as Record<string, unknown>;
+          if (!bannerUrl) {
+            bannerUrl = (directShop.image_url_760x100 as string)
+              || (directShop.banner_url as string)
+              || (directShop.large_banner_url as string)
+              || (directShop.banner_url_fullxfull as string)
+              || null;
+          }
+          if (!iconUrl) {
+            iconUrl = (directShop.icon_url_fullxfull as string) || null;
+          }
+        }
+      } catch (e) {
+        console.warn("Direct shop fetch fallback warning:", e);
+      }
+    }
+
     return NextResponse.json({
       shop_id: shopData.shop_id,
       shop_name: shopData.shop_name,
       title: shopData.title,
-      icon_url_fullxfull: shopData.icon_url_fullxfull,
+      icon_url_fullxfull: iconUrl,
+      image_url_760x100: shopData.image_url_760x100 || bannerUrl,
+      banner_url: bannerUrl,
       url: shopData.url,
       review_count: shopData.review_count,
       review_average: shopData.review_average,

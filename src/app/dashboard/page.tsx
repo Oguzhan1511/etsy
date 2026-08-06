@@ -73,6 +73,8 @@ interface ShopData {
   listing_active_count: number;
   transaction_sold_count: number;
   icon_url_fullxfull?: string;
+  image_url_760x100?: string;
+  banner_url?: string;
 }
 
 export default function SellerDashboard() {
@@ -380,14 +382,16 @@ export default function SellerDashboard() {
       <div className="relative rounded-2xl overflow-hidden border border-border bg-card shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
         {/* Banner Image */}
         <div 
-          className="h-24 w-full bg-cover bg-center relative"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80')" }}
+          className="h-28 sm:h-36 w-full bg-cover bg-center relative transition-all duration-500 bg-neutral-900"
+          style={{ 
+            backgroundImage: `url('${shopData?.banner_url || shopData?.image_url_760x100 || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80"}')` 
+          }}
         >
           {/* Tint Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#16161e] via-[#16161e]/40 to-transparent" />
           
           {/* Shop Tag Badge */}
-          <div className="absolute top-4 right-4 flex items-center gap-1 text-[10px] font-bold text-foreground bg-emerald-500/80 px-2.5 py-1 rounded-full border border-emerald-400/20 shadow-md">
+          <div className="absolute top-4 right-4 flex items-center gap-1 text-[10px] font-bold text-foreground bg-emerald-500/80 px-2.5 py-1 rounded-full border border-emerald-400/20 shadow-md backdrop-blur-sm">
             <Star size={11} className="fill-white animate-spin-slow" />
             <span>ETSY STAR SELLER</span>
           </div>
