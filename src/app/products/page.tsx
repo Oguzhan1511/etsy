@@ -237,7 +237,7 @@ export default function ProductsPage() {
     setEditImages(copiedImages);
     const firstActive = copiedImages.find(i => i.active);
     setLargePreviewUrl(firstActive ? firstActive.url : (copiedImages[0]?.url || ""));
-    setEditVariants(draft.variants ? JSON.parse(JSON.stringify(draft.variants)) : []);
+    setEditVariants(draft.variants ? JSON.parse(JSON.stringify(draft.variants)).map((v: any) => ({ ...v, _displayPrice: v.price ? (v.price / 100).toFixed(2) : "0.00" })) : []);
     setOpenDropdownId(null);
     setShowExitConfirm(false);
   };
@@ -933,15 +933,21 @@ export default function ProductsPage() {
                             step="0.01"
                             min="0"
                             disabled={!variant.is_enabled}
-                            value={variant.price ? (variant.price / 100).toFixed(2) : "0.00"}
+                            value={variant._displayPrice ?? (variant.price ? (variant.price / 100).toFixed(2) : "0.00")}
                             onChange={(e) => {
-                              const val = parseFloat(e.target.value);
-                              const newPrice = isNaN(val) ? 0 : Math.round(val * 100);
+                              const valStr = e.target.value;
                               setEditVariants(prev => prev.map(v => 
-                                v.id === variant.id ? { ...v, price: newPrice } : v
+                                v.id === variant.id ? { ...v, _displayPrice: valStr } : v
                               ));
                             }}
-                            className="w-16 sm:w-20 px-2 py-1 rounded bg-black/40 border border-border text-xs text-foreground focus:outline-none focus:border-purple-500/50 text-right disabled:opacity-50"
+                            onBlur={() => {
+                              const val = parseFloat(variant._displayPrice);
+                              const newPrice = isNaN(val) ? 0 : Math.round(val * 100);
+                              setEditVariants(prev => prev.map(v => 
+                                v.id === variant.id ? { ...v, price: newPrice, _displayPrice: (newPrice / 100).toFixed(2) } : v
+                              ));
+                            }}
+                            className="w-16 sm:w-20 px-2 py-1 rounded bg-black/40 border border-border text-xs text-foreground focus:outline-none focus:border-purple-500/50 text-right disabled:opacity-50 transition-colors focus:bg-black/60"
                           />
                         </div>
                       </div>
