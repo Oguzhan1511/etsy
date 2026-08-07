@@ -41,7 +41,7 @@ export const tr = {
   "sidebar.aiDesignStudio": "Ai Tasarım Stüdyo",
   "sidebar.designLibrary": "Tasarım Kitaplığı",
   "sidebar.mockupStudio": "Canlı Mockup Stüdyosu",
-  "sidebar.mockupPublish": "Mockup & Yayınlama",
+  "sidebar.mockupPublish": "Ürün Katalog",
   "sidebar.settings": "AYARLAR",
   "sidebar.accountSettings": "Hesap Ayarları",
   "sidebar.logout": "Çıkış Yap",
