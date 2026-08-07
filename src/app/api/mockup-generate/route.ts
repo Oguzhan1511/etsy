@@ -32,6 +32,7 @@ export async function POST(req: Request) {
       color = 'white', 
       environment = 'studio',
       customPrompt = '',
+      angleIndex,
       userId: bodyUserId
     } = body;
 
@@ -51,9 +52,10 @@ export async function POST(req: Request) {
       if (user) userId = user.id;
     }
 
-    if (!user || user.tokens < 3) {
+    const requiredTokens = angleIndex !== undefined ? 1 : 3;
+    if (!user || user.tokens < requiredTokens) {
       return NextResponse.json({ 
-        error: `Yetersiz token. 3 adet canlı mockup seti üretmek için en az 3 Token gereklidir. Mevcut: ${user?.tokens || 0}` 
+        error: `Yetersiz token. Bu işlem için en az ${requiredTokens} Token gereklidir. Mevcut: ${user?.tokens || 0}` 
       }, { status: 403 });
     }
 
@@ -218,7 +220,29 @@ export async function POST(req: Request) {
       throw new Error("Görsel üretilemedi");
     };
 
-    // Execute 3 generations in parallel
+    // If specific angleIndex is requested (0, 1, or 2), generate single mockup (takes ~3-4s, prevents Vercel timeout)
+    const prompts = [prompt1, prompt2, prompt3];
+
+    if (angleIndex !== undefined && angleIndex >= 0 && angleIndex < prompts.length) {
+      const targetPrompt = prompts[angleIndex];
+      const singleUrl = await generateSingleMockup(targetPrompt);
+
+      const tokenCost = 1;
+      await prisma.user.update({
+        where: { id: userId },
+        data: { tokens: { decrement: tokenCost } }
+      });
+
+      return NextResponse.json({
+        success: true,
+        mockup: singleUrl,
+        angleIndex,
+        tokensUsed: tokenCost,
+        remainingTokens: (user.tokens - tokenCost)
+      });
+    }
+
+    // Fallback: Execute 3 generations in parallel
     const results = await Promise.allSettled([
       generateSingleMockup(prompt1),
       generateSingleMockup(prompt2),
@@ -238,8 +262,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Görseller üretilemedi, lütfen tekrar deneyin.' }, { status: 500 });
     }
 
-    // Deduct 3 tokens upon successful generation
-    const tokenCost = 3;
+    // Deduct tokens upon successful generation
+    const tokenCost = generatedUrls.length;
     await prisma.user.update({
       where: { id: userId },
       data: { tokens: { decrement: tokenCost } }

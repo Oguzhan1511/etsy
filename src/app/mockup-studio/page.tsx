@@ -52,6 +52,7 @@ export default function MockupStudioPage() {
 
   // Generation & Result states
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState<string>("");
   const [generatedMockups, setGeneratedMockups] = useState<string[]>([]);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [savedIndex, setSavedIndex] = useState<number | null>(null);
@@ -231,6 +232,7 @@ const optimizeBase64Image = (dataUrl: string, maxDim = 1024): Promise<string> =>
     setErrorMessage(null);
     setIsGenerating(true);
     setGeneratedMockups([]);
+    setGenerationProgress("Canlı manken çekimleri hazırlanıyor...");
 
     try {
       let currentUserId = "";
@@ -246,49 +248,93 @@ const optimizeBase64Image = (dataUrl: string, maxDim = 1024): Promise<string> =>
 
       const optimizedImageUrl = await optimizeBase64Image(selectedDesign.url, 1024);
 
-      const res = await fetch("/api/mockup-generate", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          ...(currentUserId ? { "x-user-id": currentUserId } : {})
-        },
-        body: JSON.stringify({
-          designImage: optimizedImageUrl,
-          productType,
-          modelGender,
-          color: productColor,
-          environment,
-          customPrompt,
-          userId: currentUserId
+      // Fast single-angle requester (prevents serverless 504 timeout)
+      const fetchAngle = async (angleIdx: number, angleLabel: string): Promise<string> => {
+        const res = await fetch("/api/mockup-generate", {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            ...(currentUserId ? { "x-user-id": currentUserId } : {})
+          },
+          body: JSON.stringify({
+            designImage: optimizedImageUrl,
+            productType,
+            modelGender,
+            color: productColor,
+            environment,
+            customPrompt,
+            angleIndex: angleIdx,
+            userId: currentUserId
+          })
+        });
+
+        const resText = await res.text();
+        let data: any = {};
+        try {
+          data = JSON.parse(resText);
+        } catch {
+          if (res.status === 413 || resText.includes("Too Large") || resText.includes("Request En")) {
+            throw new Error("Yüklenen görsel boyutu sunucu sınırını aştı.");
+          }
+          if (res.status === 504 || resText.includes("TIMEOUT")) {
+            throw new Error(`${angleLabel} zaman aşımına uğradı, lütfen tekrar deneyin.`);
+          }
+          throw new Error(`Sunucu hatası (HTTP ${res.status}): ${resText.slice(0, 80)}`);
+        }
+
+        if (!res.ok) {
+          throw new Error(data.error || `${angleLabel} oluşturulurken hata meydana geldi.`);
+        }
+
+        const url = data.mockup || (data.mockups && data.mockups[0]);
+        if (!url) {
+          throw new Error(`${angleLabel} görseli alınamadı.`);
+        }
+
+        return url;
+      };
+
+      const angleLabels = [
+        "Açı 1 (Stüdyo Portresi)",
+        "Açı 2 (Lifestyle Çekim)",
+        "Açı 3 (Lookbook Yakın Plan)"
+      ];
+
+      // Run 3 angles concurrently
+      const promises = [0, 1, 2].map((idx) =>
+        fetchAngle(idx, angleLabels[idx]).then((url) => {
+          setGeneratedMockups((prev) => {
+            const next = [...prev];
+            next[idx] = url;
+            return next.filter(Boolean);
+          });
+          refreshTokens();
+          return url;
         })
+      );
+
+      const results = await Promise.allSettled(promises);
+      const successfulUrls: string[] = [];
+
+      results.forEach((r) => {
+        if (r.status === "fulfilled" && r.value) {
+          successfulUrls.push(r.value);
+        }
       });
 
-      const resText = await res.text();
-      let data: any = {};
-      try {
-        data = JSON.parse(resText);
-      } catch {
-        if (res.status === 413 || resText.includes("Too Large") || resText.includes("Request En")) {
-          throw new Error("Yüklenen görsel boyutu sunucu sınırını aştı (Request Entity Too Large). Lütfen daha küçük boyutlu bir görsel seçin.");
-        }
-        throw new Error(`Sunucu beklenmeyen bir yanıt verdi (HTTP ${res.status}): ${resText.slice(0, 100)}`);
+      if (successfulUrls.length === 0) {
+        const firstRejection = results.find((r) => r.status === "rejected") as PromiseRejectedResult | undefined;
+        throw new Error(firstRejection?.reason?.message || "Görseller üretilemedi, lütfen tekrar deneyin.");
       }
 
-      if (!res.ok) {
-        throw new Error(data.error || "Görseller oluşturulurken hata meydana geldi.");
-      }
-
-      if (data.mockups && Array.isArray(data.mockups)) {
-        setGeneratedMockups(data.mockups);
-        await refreshTokens(); // refresh token balance
-      } else {
-        throw new Error("API'den beklenmeyen görsel verisi döndü.");
-      }
+      setGeneratedMockups(successfulUrls);
+      await refreshTokens();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Bilinmeyen hata oluştu";
       setErrorMessage(msg);
     } finally {
       setIsGenerating(false);
+      setGenerationProgress("");
     }
   };
 
@@ -722,11 +768,15 @@ const optimizeBase64Image = (dataUrl: string, maxDim = 1024): Promise<string> =>
                     <Sparkles className="w-8 h-8 text-purple-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
                   </div>
                   <div className="space-y-1.5 max-w-sm">
-                    <h3 className="text-base font-bold text-foreground">{t("mockupStudio.generating")}</h3>
+                    <h3 className="text-base font-bold text-foreground">
+                      {generatedMockups.length > 0
+                        ? `Açı ${generatedMockups.length}/3 Hazırlandı...`
+                        : t("mockupStudio.generating")}
+                    </h3>
                     <p className="text-xs text-secondary leading-relaxed">{t("mockupStudio.generatingDesc")}</p>
                   </div>
                   <div className="flex items-center gap-2 pt-2 text-[11px] text-purple-300 bg-purple-500/10 px-4 py-1.5 rounded-full border border-purple-500/20 animate-pulse">
-                    <span>Stüdyo Portre + Lifestyle Sokak + Yakın Detay</span>
+                    <span>{generationProgress || "Stüdyo Portre + Lifestyle Sokak + Yakın Detay"}</span>
                   </div>
                 </div>
               ) : generatedMockups.length > 0 ? (
