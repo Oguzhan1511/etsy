@@ -167,6 +167,7 @@ export default function ProductResearchPage() {
 
   const handleAIAnalyze = (product: Product, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    saveToHistory(product);
     setAnalysisLoading(true);
     // Simulate detailed AI analytics extraction
     setTimeout(() => {
