@@ -125,7 +125,15 @@ export async function POST(req: Request) {
       .join("")
       .toUpperCase();
 
-    return NextResponse.json({ 
+    const { SignJWT } = await import('jose');
+    const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
+
+    const token = await new SignJWT({ id: user.id, email: user.email })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('7d')
+      .sign(JWT_SECRET);
+
+    const response = NextResponse.json({ 
       success: true, 
       user: {
         id: user.id,
@@ -142,6 +150,15 @@ export async function POST(req: Request) {
         printifyToken: user.printifyToken
       }
     });
+
+    response.cookies.set('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7 // 1 week
+    });
+
+    return response;
 
   } catch (error: any) {
     console.error('Google Auth Error:', error);
