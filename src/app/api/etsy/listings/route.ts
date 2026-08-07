@@ -38,9 +38,26 @@ export async function GET(request: Request) {
     );
     if (!listingsRes.ok) throw new Error("Failed to fetch listings");
     const data = await listingsRes.json() as Record<string, unknown>;
+    const rawResults = (data.results as any[]) || [];
+
+    // Fetch images manually for each listing since includes=Images seems unreliable
+    const resultsWithImages = await Promise.all(rawResults.map(async (item) => {
+      try {
+        const imgRes = await fetch(`https://api.etsy.com/v3/application/listings/${item.listing_id}/images`, {
+          headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': apiKeyWithSecret }
+        });
+        if (imgRes.ok) {
+          const imgData = await imgRes.json();
+          item.images = imgData.results || [];
+        }
+      } catch (e) {
+        console.error("Failed to fetch images for listing", item.listing_id, e);
+      }
+      return item;
+    }));
 
     return NextResponse.json({
-      results: (data.results as unknown[]) || [],
+      results: resultsWithImages,
       count: data.count,
     });
   } catch (err: unknown) {
