@@ -150,6 +150,12 @@ export async function POST(req: Request) {
       prompt3 = `Editorial lookbook close-up photograph: Detailed medium close-up of the ${selectedColor} ${selectedProduct} worn by the ${selectedGender}, showing the high-resolution printed graphic design centered on the chest, realistic woven cotton texture, aesthetic warm grading, stylish magazine quality.`;
     }
 
+    const sharedInstructions = `\nCRITICAL INSTRUCTION: You must strictly set the background and environment to: ${selectedEnv}. ${customPrompt ? `You must also strictly apply this user styling request: ${customPrompt}.` : ''}`;
+    
+    prompt1 += sharedInstructions;
+    prompt2 += sharedInstructions;
+    prompt3 += sharedInstructions;
+
     // Prepare image buffer
     let buffer: Buffer;
     let mimeType = 'image/png';
