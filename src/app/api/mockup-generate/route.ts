@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma';
 import { jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
+
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
 
 export async function POST(req: Request) {

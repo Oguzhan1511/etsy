@@ -100,18 +100,58 @@ export default function MockupStudioPage() {
     }
   }, [refreshTokens]);
 
+// Helper to optimize base64 images before network transmission
+const optimizeBase64Image = (dataUrl: string, maxDim = 1024): Promise<string> => {
+  return new Promise((resolve) => {
+    if (!dataUrl || typeof window === "undefined" || !dataUrl.startsWith("data:image")) {
+      resolve(dataUrl);
+      return;
+    }
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+      if (width <= maxDim && height <= maxDim) {
+        resolve(dataUrl);
+        return;
+      }
+      if (width > height) {
+        height = Math.round((height * maxDim) / width);
+        width = maxDim;
+      } else {
+        width = Math.round((width * maxDim) / height);
+        height = maxDim;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/png"));
+      } else {
+        resolve(dataUrl);
+      }
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+};
+
   // Handle local file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setCustomUploadUrl(base64);
+      reader.onloadend = async () => {
+        const rawBase64 = reader.result as string;
+        const optimizedBase64 = await optimizeBase64Image(rawBase64, 1024);
+        setCustomUploadUrl(optimizedBase64);
         setSelectedDesign({
           id: crypto.randomUUID(),
           name: file.name.replace(/\.[^/.]+$/, ""),
-          url: base64,
+          url: optimizedBase64,
           createdAt: Date.now()
         });
       };
@@ -204,6 +244,8 @@ export default function MockupStudioPage() {
         }
       }
 
+      const optimizedImageUrl = await optimizeBase64Image(selectedDesign.url, 1024);
+
       const res = await fetch("/api/mockup-generate", {
         method: "POST",
         headers: { 
@@ -211,7 +253,7 @@ export default function MockupStudioPage() {
           ...(currentUserId ? { "x-user-id": currentUserId } : {})
         },
         body: JSON.stringify({
-          designImage: selectedDesign.url,
+          designImage: optimizedImageUrl,
           productType,
           modelGender,
           color: productColor,
@@ -221,7 +263,16 @@ export default function MockupStudioPage() {
         })
       });
 
-      const data = await res.json();
+      const resText = await res.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(resText);
+      } catch {
+        if (res.status === 413 || resText.includes("Too Large") || resText.includes("Request En")) {
+          throw new Error("Yüklenen görsel boyutu sunucu sınırını aştı (Request Entity Too Large). Lütfen daha küçük boyutlu bir görsel seçin.");
+        }
+        throw new Error(`Sunucu beklenmeyen bir yanıt verdi (HTTP ${res.status}): ${resText.slice(0, 100)}`);
+      }
 
       if (!res.ok) {
         throw new Error(data.error || "Görseller oluşturulurken hata meydana geldi.");
