@@ -525,7 +525,7 @@ export async function PUT(req: Request) {
 
     if (action === "update-product") {
       const body = await req.json();
-      const { shopId, productId, title, description, tags, variants } = body;
+      const { shopId, productId, title, description, tags, variants, images } = body;
 
       if (!shopId || !productId) {
         return NextResponse.json({ error: "shopId and productId are required" }, { status: 400 });
@@ -534,6 +534,9 @@ export async function PUT(req: Request) {
       const payload: Record<string, any> = { title, description, tags };
       if (variants && Array.isArray(variants)) {
         payload.variants = variants;
+      }
+      if (images && Array.isArray(images)) {
+        payload.images = images;
       }
 
       const updateRes = await fetch(`https://api.printify.com/v1/shops/${shopId}/products/${productId}.json`, {

@@ -34,6 +34,7 @@ interface ProductImage {
   id: string;
   url: string;
   active: boolean;
+  _original?: any;
 }
 
 interface ListingProduct {
@@ -227,6 +228,15 @@ export default function ProductsPage() {
     setEditTitle(draft.title);
     setEditDescription(draft.description || "");
     setEditTags(draft.tags ? draft.tags.join(", ") : "");
+    const copiedImages = draft.images ? draft.images.map((img: any, i: number) => ({ 
+      id: img.src,
+      url: img.src,
+      active: img.is_default || i === 0,
+      _original: img
+    })) : [];
+    setEditImages(copiedImages);
+    const firstActive = copiedImages.find(i => i.active);
+    setLargePreviewUrl(firstActive ? firstActive.url : (copiedImages[0]?.url || ""));
     setEditVariants(draft.variants ? JSON.parse(JSON.stringify(draft.variants)) : []);
     setOpenDropdownId(null);
     setShowExitConfirm(false);
@@ -276,7 +286,12 @@ export default function ProductsPage() {
            title: editTitle,
            description: editDescription,
            tags: editTags ? editTags.split(",").map(t => t.trim()).filter(t => t !== "") : [],
-           variants: editVariants
+           variants: editVariants,
+           images: editImages.map((img, i) => ({
+             ...(img._original || {}),
+             is_default: img.active,
+             position: i + 1
+           }))
         })
       });
 
@@ -397,6 +412,18 @@ export default function ProductsPage() {
         i === index ? { ...img, active: !img.active } : img
       )
     );
+  };
+
+  const handleDeleteImage = (index: number) => {
+    setEditImages(prev => {
+      const next = prev.filter((_, i) => i !== index);
+      if (next.length > 0 && largePreviewUrl === prev[index].url) {
+        setLargePreviewUrl(next[0].url);
+      } else if (next.length === 0) {
+        setLargePreviewUrl("");
+      }
+      return next;
+    });
   };
 
   const filteredProducts = products.filter(p => {
@@ -786,6 +813,55 @@ export default function ProductsPage() {
             </div>
 
             <div className="space-y-4 pt-1">
+              <div className="space-y-2.5">
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider block">{t("products.productImagesDrag") || "GÖRSELLERİ DÜZENLE"}</label>
+                <div className="relative w-full h-56 rounded-xl overflow-hidden border border-border bg-neutral-950 flex items-center justify-center">
+                  {largePreviewUrl ? (
+                    <img src={largePreviewUrl} alt="Large preview" className="h-full object-contain" />
+                  ) : (
+                    <div className="text-secondary text-sm">Görsel Yok</div>
+                  )}
+                  <div className="absolute bottom-2 left-2 px-2.5 py-1 bg-black/75 rounded-lg text-[9px] text-foreground/80 font-medium">
+                    BÜYÜK ÖNİZLEME
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-4 gap-2.5 pt-1">
+                  {editImages.map((img, index) => {
+                    const isPrimary = index === 0;
+                    const isSelected = largePreviewUrl === img.url;
+                    return (
+                      <div
+                        key={img.id || index}
+                        className={`relative group rounded-xl overflow-hidden border transition-all duration-300 aspect-square bg-neutral-900 ${
+                          isSelected ? "border-purple-400 shadow-[0_0_10px_rgba(139,92,246,0.4)]" : img.active ? isPrimary ? "border-purple-500/50" : "border-border" : "border-border"
+                        }`}
+                      >
+                        <button type="button" onClick={() => setLargePreviewUrl(img.url)} className="absolute inset-0 w-full h-full cursor-pointer z-0">
+                          <img src={img.url} alt={`Thumbnail ${index}`} className={`w-full h-full object-cover transition-[filter,opacity] duration-300 ease-in-out ${img.active ? "grayscale-0 opacity-100" : "grayscale opacity-30"}`} />
+                        </button>
+                        <div className="absolute top-1 left-1.5 flex gap-1 z-20 pointer-events-none">
+                          {isPrimary && img.active && <span className="text-[8px] font-bold text-foreground bg-purple-500 px-1 py-0.5 rounded leading-none">{t("products.primary") || "ANA"}</span>}
+                          {!img.active && <span className="text-[8px] font-bold text-foreground/80 bg-black/60 px-1 py-0.5 rounded leading-none uppercase">{t("products.passive") || "PASİF"}</span>}
+                          {isSelected && <span className="text-[8px] font-bold text-foreground bg-purple-500/80 px-1 py-0.5 rounded leading-none">●</span>}
+                        </div>
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+                          <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+                          <div className="absolute top-1 right-1 flex gap-1 pointer-events-auto">
+                            <button type="button" onClick={(e) => { e.stopPropagation(); handleMoveImageLeft(index); }} disabled={index === 0} className="w-6 h-6 bg-black/60 hover:bg-black/90 rounded flex items-center justify-center text-foreground disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"><ChevronLeft size={14} /></button>
+                            <button type="button" onClick={(e) => { e.stopPropagation(); handleMoveImageRight(index); }} disabled={index === editImages.length - 1} className="w-6 h-6 bg-black/60 hover:bg-black/90 rounded flex items-center justify-center text-foreground disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"><ChevronRight size={14} /></button>
+                          </div>
+                          <div className="absolute bottom-1 right-1 flex gap-1 pointer-events-auto">
+                            {img.active && <button type="button" onClick={(e) => { e.stopPropagation(); handleMakePrimary(index); }} className={`w-6 h-6 rounded flex items-center justify-center cursor-pointer transition-colors ${isPrimary ? "bg-purple-500 text-foreground" : "bg-black/60 hover:bg-purple-500 text-foreground"}`}><Star size={13} className={isPrimary ? "fill-white" : ""} /></button>}
+                            <button type="button" onClick={(e) => { e.stopPropagation(); handleDeleteImage(index); }} className="w-6 h-6 rounded flex items-center justify-center cursor-pointer transition-colors bg-red-500/80 hover:bg-red-500 text-white"><Trash2 size={13} /></button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="flex justify-between items-center bg-purple-500/10 border border-purple-500/20 p-3 rounded-xl mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
