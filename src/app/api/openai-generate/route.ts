@@ -94,6 +94,9 @@ Kullanıcı talimatı: ${prompt}`;
         const parsed = JSON.parse(errorData);
         errMsg = parsed.error?.message || errMsg;
       } catch {}
+      if (/safety system|content policy|rejected by/i.test(errMsg)) {
+        errMsg = "Görsel veya açıklama OpenAI içerik güvenlik sistemine takıldı. Lütfen telif hakkı, marka veya hassas öğe içermeyen bir tasarım ile tekrar deneyin.";
+      }
       return NextResponse.json({ error: errMsg }, { status: response.status });
     }
 

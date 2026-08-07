@@ -77,9 +77,9 @@ export async function POST(req: Request) {
     };
 
     const genderLabels: Record<string, string> = {
-      female: 'beautiful young female model',
-      male: 'handsome young male model',
-      unisex: 'stylish modern unisex fashion model'
+      female: 'professional adult female model',
+      male: 'professional adult male model',
+      unisex: 'stylish modern adult fashion model'
     };
 
     const envLabels: Record<string, string> = {
@@ -190,7 +190,16 @@ export async function POST(req: Request) {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("OpenAI Mockup Error:", errorText);
-        throw new Error(`OpenAI API Hatası: ${response.status}`);
+        let parsedMessage = errorText;
+        try {
+          const jsonErr = JSON.parse(errorText);
+          parsedMessage = jsonErr.error?.message || errorText;
+        } catch {}
+
+        if (/safety system|content policy|rejected by/i.test(parsedMessage)) {
+          throw new Error("Görsel veya açıklama OpenAI güvenlik filtresine takıldı. Lütfen telif hakkı, marka veya hassas öğe içermeyen bir tasarım/açıklama deneyin.");
+        }
+        throw new Error(parsedMessage || `OpenAI API Hatası: ${response.status}`);
       }
 
       const data = await response.json();
