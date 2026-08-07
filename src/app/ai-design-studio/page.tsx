@@ -19,7 +19,7 @@ interface DesignItem {
 export default function AIDesignStudioPage() {
   const { t } = useLanguage();
   const { availableTokens, useToken: consumeToken } = useTokens();
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState("(ürün tipi) üzerindeki baskının tasarımının bir benzerini üret.");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
@@ -269,7 +269,7 @@ export default function AIDesignStudioPage() {
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder={t("aiDesign.promptPlaceholder")}
+                  placeholder="(ürün tipi) üzerindeki baskının tasarımının bir benzerini üret."
                   className="w-full h-24 bg-black/40 border border-border text-sm text-foreground rounded-xl p-4 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all resize-none placeholder:text-muted"
                   required
                 />
