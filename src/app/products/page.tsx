@@ -110,16 +110,20 @@ export default function ProductsPage() {
         setEtsyConnected(true);
         const results = Array.isArray(data.results) ? data.results : [];
         if (results.length > 0) {
-          const etsyFormatted: ListingProduct[] = results.map((item: any) => ({
+          const etsyFormatted: ListingProduct[] = results.map((item: any) => {
+            const imgs = item.images || item.Images || [];
+            const primaryImg = imgs[0] || {};
+            const imgUrl = primaryImg.url_fullxfull || primaryImg.url_570xN || primaryImg.url_170x135 || primaryImg.url_75x75 || "";
+            return {
             id: `etsy-${item.listing_id}`, title: String(item.title || ""),
             status: item.state === "active" ? "Active" as "Active" : "Inactive" as "Inactive",
             sku: `ETSY-${item.listing_id}`,
-            image: item.images?.[0]?.url_fullxfull || item.images?.[0]?.url_570xN || "",
+            image: imgUrl,
             salesCount: item.stats?.total_sales || 0, cartCount: item.stats?.total_views || 0,
             favoritesCount: item.num_favorers || 0, revenue: 0, profit: 0,
             description: String(item.description || ""), tags: (item.tags as string[]) || [],
-            images: item.images?.map((img: any, idx: number) => ({ id: String(idx), url: img.url_fullxfull || img.url_570xN || "", active: idx === 0 })) || [],
-          }));
+            images: imgs.map((img: any, idx: number) => ({ id: String(idx), url: img.url_fullxfull || img.url_570xN || img.url_170x135 || img.url_75x75 || "", active: idx === 0 })),
+          }});
           setProducts(prev => { const ids = new Set(prev.map(p => p.id)); return [...etsyFormatted.filter(p => !ids.has(p.id)), ...prev]; });
         }
       })

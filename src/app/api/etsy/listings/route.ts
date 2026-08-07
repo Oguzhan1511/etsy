@@ -33,7 +33,7 @@ export async function GET(request: Request) {
     const offset = searchParams.get('offset') || '0';
 
     const listingsRes = await fetch(
-      `https://api.etsy.com/v3/application/shops/${shopId}/listings/active?limit=${limit}&offset=${offset}&includes=Images,Stats`,
+      `https://api.etsy.com/v3/application/shops/${shopId}/listings/active?limit=${limit}&offset=${offset}&includes=Images`,
       { headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': apiKeyWithSecret } }
     );
     if (!listingsRes.ok) throw new Error("Failed to fetch listings");
