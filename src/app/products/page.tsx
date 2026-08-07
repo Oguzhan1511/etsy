@@ -92,14 +92,7 @@ export default function ProductsPage() {
         else if (Array.isArray(data)) allProducts = data;
         if (allProducts.length > 0) {
           const isPublished = (p: any) => p.external && p.external.id && p.external.id !== "";
-          const formatted = allProducts.filter(isPublished).map((item: any) => ({
-            id: String(item.id), title: String(item.title), status: "Active" as "Active",
-            sku: "PRINTIFY-" + item.id, image: item.images?.[0]?.src || "",
-            salesCount: 0, cartCount: 0, favoritesCount: 0, revenue: 0, profit: 0,
-            description: String(item.description || ""), tags: (item.tags as string[]) || [],
-            images: item.images?.map((img: any, idx: number) => ({ id: String(idx), url: img.src, active: idx === 0 })) || []
-          }));
-          setProducts(prev => { const ids = new Set(prev.map(p => p.id)); return [...prev, ...formatted.filter((p: any) => !ids.has(p.id))]; });
+          // Only show UNPUBLISHED Printify products in the Drafts tab
           setPrintifyDrafts(allProducts.filter((p: any) => !isPublished(p)));
         } else { showToast(t("products.fetchPrintifyDraftsError"), "error"); }
       })
