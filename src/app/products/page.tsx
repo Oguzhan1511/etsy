@@ -191,6 +191,8 @@ export default function ProductsPage() {
   const [editTags, setEditTags] = useState("");
   const [editImages, setEditImages] = useState<ProductImage[]>([]);
   const [editVariants, setEditVariants] = useState<any[]>([]);
+  const [selectedVariantIds, setSelectedVariantIds] = useState<string[]>([]);
+  const [bulkPrice, setBulkPrice] = useState<string>("");
   const [largePreviewUrl, setLargePreviewUrl] = useState<string>("");
 
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -231,6 +233,8 @@ export default function ProductsPage() {
     const firstActive = copiedImages.find(i => i.active);
     setLargePreviewUrl(firstActive ? firstActive.url : (copiedImages[0]?.url || ""));
     setEditVariants(draft.variants ? JSON.parse(JSON.stringify(draft.variants)).map((v: any) => ({ ...v, _displayPrice: v.price ? (v.price / 100).toFixed(2) : "0.00" })) : []);
+    setSelectedVariantIds([]);
+    setBulkPrice("");
     setOpenDropdownId(null);
     setShowExitConfirm(false);
   };
@@ -895,6 +899,55 @@ export default function ProductsPage() {
                   <span>Varyasyonlar ve Fiyatlandırma</span>
                   <span className="text-[9px] text-secondary lowercase font-normal italic">({editVariants.length} varyant)</span>
                 </label>
+                
+                {selectedVariantIds.length > 0 && (
+                  <div className="flex items-center gap-2 bg-purple-500/10 p-2 rounded-lg border border-purple-500/20 mb-2 animate-fade-in">
+                    <span className="text-[11px] text-purple-300 font-bold whitespace-nowrap">{selectedVariantIds.length} Seçili:</span>
+                    <input 
+                      type="number" 
+                      step="0.01" 
+                      min="0"
+                      placeholder="Toplu Fiyat ($)"
+                      value={bulkPrice}
+                      onChange={(e) => setBulkPrice(e.target.value)}
+                      className="w-full px-2 py-1.5 rounded bg-black/40 border border-border text-[11px] text-foreground focus:outline-none focus:border-purple-500/50"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        const val = parseFloat(bulkPrice);
+                        if (!isNaN(val) && val > 0) {
+                          const newPrice = Math.round(val * 100);
+                          setEditVariants(prev => prev.map(v => 
+                            selectedVariantIds.includes(v.id) ? { ...v, price: newPrice, _displayPrice: (newPrice / 100).toFixed(2) } : v
+                          ));
+                          setSelectedVariantIds([]);
+                          setBulkPrice("");
+                        }
+                      }}
+                      className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:brightness-110 text-foreground rounded text-[11px] font-bold transition-all whitespace-nowrap shadow-md"
+                    >
+                      Onayla
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 px-2 py-1">
+                   <input 
+                     type="checkbox" 
+                     className="w-3.5 h-3.5 rounded border-border bg-black/40 text-purple-500 cursor-pointer accent-purple-500"
+                     checked={editVariants.length > 0 && selectedVariantIds.length === editVariants.length}
+                     onChange={(e) => {
+                       if (e.target.checked) {
+                         setSelectedVariantIds(editVariants.map(v => v.id));
+                       } else {
+                         setSelectedVariantIds([]);
+                       }
+                     }}
+                   />
+                   <span className="text-[11px] font-medium text-foreground">Tümünü Seç</span>
+                </div>
+
                 <div className="max-h-60 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
                   {(() => {
                     const sortedVariants = [...editVariants].sort((a, b) => {
@@ -906,6 +959,18 @@ export default function ProductsPage() {
                     return sortedVariants.length > 0 ? sortedVariants.map((variant) => (
                       <div key={variant.id} className={`flex items-center justify-between p-2 rounded-lg border transition-colors ${variant.is_enabled ? 'bg-black/20 border-border' : 'bg-black/10 border-border/40 opacity-60'}`}>
                         <div className="flex items-center gap-3">
+                          <input 
+                            type="checkbox" 
+                            className="w-3.5 h-3.5 rounded border-border bg-black/40 text-purple-500 cursor-pointer accent-purple-500 shrink-0"
+                            checked={selectedVariantIds.includes(variant.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedVariantIds(prev => [...prev, variant.id]);
+                              } else {
+                                setSelectedVariantIds(prev => prev.filter(id => id !== variant.id));
+                              }
+                            }}
+                          />
                           <button
                             type="button"
                             onClick={() => {
