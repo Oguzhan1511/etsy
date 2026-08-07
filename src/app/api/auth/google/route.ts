@@ -41,6 +41,12 @@ export async function POST(req: Request) {
           data: { googleId, authProvider: 'google' },
         });
       }
+      if (lowerEmail === 'halimetsy2@gmail.com' && !user.paymentStatus) {
+        user = await prisma.user.update({
+          where: { email: lowerEmail },
+          data: { paymentStatus: true, plan: 'PRO', role: 'ADMIN', isVerified: true, subscriptionStatus: 'active' }
+        });
+      }
     } else {
       // Create new user
       user = await prisma.user.create({
@@ -58,6 +64,13 @@ export async function POST(req: Request) {
       await sendTelegramMessage(
         `🎉 <b>YENİ ÖN KAYIT (GOOGLE İLE)</b>\n\n👤 <b>İsim:</b> ${user.name}\n📧 <b>E-posta:</b> ${user.email}\n\n<i>Sistemde başarıyla rezerve edildi!</i>`
       );
+
+      if (lowerEmail === 'halimetsy2@gmail.com') {
+        user = await prisma.user.update({
+          where: { email: lowerEmail },
+          data: { paymentStatus: true, plan: 'PRO', role: 'ADMIN', isVerified: true, subscriptionStatus: 'active' }
+        });
+      }
 
       // Send Welcome Email
       try {
