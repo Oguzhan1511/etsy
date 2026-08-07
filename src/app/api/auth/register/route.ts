@@ -69,6 +69,16 @@ export async function POST(req: Request) {
               PrintySell erken erişim bekleme listesine hoş geldiniz! Ön kaydınız başarıyla alındı.
             </p>
             <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
+              Hesabınızı aktifleştirmek ve sisteme giriş yapabilmek için lütfen aşağıdaki butona tıklayarak e-posta adresinizi onaylayın.
+            </p>
+            
+            <div style="text-align: center; margin: 40px 0;">
+              <a href="${verifyLink}" style="display: inline-block; background: linear-gradient(135deg, #7c6af7 0%, #a855f7 100%); color: #ffffff; padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 50px; text-decoration: none; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);">
+                Hesabımı Onayla
+              </a>
+            </div>
+            
+            <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
               Sistemimiz çok yakında tam sürüm olarak hizmete açılacaktır. Erken erişim fırsatından yararlandığınız için hesabınıza <strong>50 Token (50 Farklı Yapay Zeka Görseli)</strong> üretim hakkı tamamen ücretsiz olarak tanımlanmıştır!
             </p>
             <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
@@ -76,7 +86,7 @@ export async function POST(req: Request) {
             </p>
             
             <div style="text-align: center; margin: 40px 0;">
-              <div style="display: inline-block; background: linear-gradient(135deg, #7c6af7 0%, #a855f7 100%); color: #ffffff; padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 50px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);">
+              <div style="display: inline-block; background: #222; color: #ffffff; padding: 12px 24px; font-size: 14px; border-radius: 50px; border: 1px solid #444;">
                 50 Token Hesabınıza Rezerve Edildi 🎁
               </div>
             </div>
