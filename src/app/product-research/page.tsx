@@ -434,7 +434,10 @@ export default function ProductResearchPage() {
                             href={product.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              saveToHistory(product);
+                            }}
                           >
                             {product.shopName}
                           </a>
@@ -447,7 +450,10 @@ export default function ProductResearchPage() {
                           href={product.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            saveToHistory(product);
+                          }}
                           className="text-muted hover:text-purple-400 transition-colors cursor-pointer"
                           title="View on Etsy"
                         >
