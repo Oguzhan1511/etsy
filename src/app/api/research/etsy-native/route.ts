@@ -74,8 +74,9 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
     const favVelocity = favs / daysAlive;
 
     // Etsy "Bestseller" veya "Popular Now" kartı alma potansiyeli olan ürünler:
-    // Günde en az 3 görüntülenme veya günde en az 0.5 favori veya 500+ toplam görüntülenme
-    const hasEtsyBadgePotential = viewVelocity >= 3 || favVelocity >= 0.5 || views > 500;
+    // Filtreyi genişlettik ki spesifik aramalarda daha fazla ürün çıksın
+    // Günde en az 0.2 görüntülenme veya günde en az 0.05 favori veya 20+ toplam görüntülenme
+    const hasEtsyBadgePotential = viewVelocity >= 0.2 || favVelocity >= 0.05 || views > 20;
     
     return hasEtsyBadgePotential;
   });
@@ -109,7 +110,7 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
     };
     return getScore(b) - getScore(a);
   });
-  rawListings = rawListings.slice(0, 10);
+  rawListings = rawListings.slice(0, 24);
 
 
   const fetchPromises = rawListings.map(async (item) => {
