@@ -91,6 +91,7 @@ export async function GET(req: NextRequest) {
         iyzicoFees,
         aiCost,
         netProfit,
+        totalTokensSpent,
         tokensSpentToday,
         chartData
       }

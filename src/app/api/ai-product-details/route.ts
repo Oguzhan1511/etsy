@@ -65,7 +65,7 @@ Please generate the optimized Title, Description, and Tags (as a single comma-se
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userMessage }
@@ -94,11 +94,20 @@ Please generate the optimized Title, Description, and Tags (as a single comma-se
     try {
       const parsedResult = JSON.parse(resultText);
 
-      // 3. Deduct token after successful generation
-      await prisma.user.update({
-        where: { id: userId },
-        data: { tokens: { decrement: 1 } }
-      });
+      // 3. Deduct token and record usage after successful generation
+      await prisma.$transaction([
+        prisma.user.update({
+          where: { id: userId },
+          data: { tokens: { decrement: 1 } }
+        }),
+        prisma.tokenUsage.create({
+          data: {
+            userId,
+            amount: 1,
+            actionType: 'ai_product_details'
+          }
+        })
+      ]);
 
       return NextResponse.json({
         title: parsedResult.title || '',

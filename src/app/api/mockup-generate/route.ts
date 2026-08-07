@@ -234,10 +234,19 @@ export async function POST(req: Request) {
       const singleUrl = await generateSingleMockup(targetPrompt);
 
       const tokenCost = 1;
-      await prisma.user.update({
-        where: { id: userId },
-        data: { tokens: { decrement: tokenCost } }
-      });
+      await prisma.$transaction([
+        prisma.user.update({
+          where: { id: userId },
+          data: { tokens: { decrement: tokenCost } }
+        }),
+        prisma.tokenUsage.create({
+          data: {
+            userId,
+            amount: tokenCost,
+            actionType: 'mockup_generation'
+          }
+        })
+      ]);
 
       return NextResponse.json({
         success: true,
@@ -268,12 +277,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Görseller üretilemedi, lütfen tekrar deneyin.' }, { status: 500 });
     }
 
-    // Deduct tokens upon successful generation
+    // Deduct tokens and record token usage upon successful generation
     const tokenCost = generatedUrls.length;
-    await prisma.user.update({
-      where: { id: userId },
-      data: { tokens: { decrement: tokenCost } }
-    });
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: userId },
+        data: { tokens: { decrement: tokenCost } }
+      }),
+      prisma.tokenUsage.create({
+        data: {
+          userId,
+          amount: tokenCost,
+          actionType: 'mockup_generation'
+        }
+      })
+    ]);
 
     // Return the generated mockups array
     return NextResponse.json({

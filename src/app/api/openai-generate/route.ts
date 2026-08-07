@@ -102,11 +102,20 @@ Kullanıcı talimatı: ${prompt}`;
 
     const data = await response.json();
     
-    // 3. Deduct token after successful generation
-    await prisma.user.update({
-      where: { id: userId },
-      data: { tokens: { decrement: 1 } }
-    });
+    // 3. Deduct token and record usage after successful generation
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: userId },
+        data: { tokens: { decrement: 1 } }
+      }),
+      prisma.tokenUsage.create({
+        data: {
+          userId,
+          amount: 1,
+          actionType: 'ai_design_studio'
+        }
+      })
+    ]);
 
     // gpt-image-1 usually returns b64_json
     if (data.data && data.data[0]) {

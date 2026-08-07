@@ -27,6 +27,7 @@ interface StatsData {
   iyzicoFees: number;
   aiCost: number;
   netProfit: number;
+  totalTokensSpent?: number;
   tokensSpentToday: number;
   chartData: any[];
 }
@@ -91,9 +92,9 @@ export default function AdminDashboardPage() {
       bgClass: isProfitable ? "bg-emerald-500/10 border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.15)]" : "bg-rose-500/10 border-rose-500/20 shadow-[0_0_30px_rgba(225,29,72,0.15)]"
     },
     {
-      title: "Toplam Kullanıcı",
+      title: "Toplam Kullanıcı & Token",
       value: stats.totalUsers.toLocaleString("tr-TR"),
-      subValue: `${stats.premiumUsers} Premium | ${stats.tokensSpentToday} Token (Bugün)`,
+      subValue: `Toplam Yakılan: ${stats.totalTokensSpent ?? 0} Token | Bugün: ${stats.tokensSpentToday} Token`,
       icon: Users,
       color: "from-purple-600 to-fuchsia-400",
       iconColor: "text-purple-400",
