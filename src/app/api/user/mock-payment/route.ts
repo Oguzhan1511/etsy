@@ -51,7 +51,7 @@ export async function POST(req: Request) {
         nextBillingDate: nextBillingDate,
         cardLast4: cardLast4,
         tokens: grantedTokens,
-        ...(discountCodeId && { discountCodeId }),
+        ...(discountCodeId && { discountCode: { connect: { id: discountCodeId } } }),
       }
     });
 
