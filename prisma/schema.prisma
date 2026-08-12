@@ -47,6 +47,8 @@ model User {
   etsyToken    EtsyToken?
   supportTickets SupportTicket[]
   supportMessages SupportMessage[]
+  discountCodeId  String?
+  discountCode    DiscountCode? @relation(fields: [discountCodeId], references: [id])
 }
 
 model Transaction {
@@ -128,4 +130,15 @@ model SupportMessage {
   message   String
   isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model DiscountCode {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  discountPct Int      @default(20)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       User[]
 }

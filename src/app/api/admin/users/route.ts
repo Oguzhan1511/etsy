@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
         paymentStatus: true,
         isVerified: true,
         createdAt: true,
+        discountCode: true,
         tokenUsages: {
           select: {
             id: true,
@@ -66,6 +67,7 @@ export async function GET(req: NextRequest) {
         paymentStatus: u.paymentStatus,
         isVerified: u.isVerified,
         createdAt: u.createdAt,
+        discountCode: (u as any).discountCode ? (u as any).discountCode.code : null,
       };
     });
 

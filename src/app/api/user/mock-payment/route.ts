@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
-    const { userId, planId, cardNumber, cardHolder } = await req.json();
+    const { userId, planId, cardNumber, cardHolder, discountCode } = await req.json();
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
@@ -32,6 +32,14 @@ export async function POST(req: Request) {
     const trialEndsAt = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
     const nextBillingDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
 
+    let discountCodeId = null;
+    if (discountCode) {
+      const dbDiscount = await prisma.discountCode.findUnique({ where: { code: discountCode.trim().toUpperCase() } });
+      if (dbDiscount && dbDiscount.isActive) {
+        discountCodeId = dbDiscount.id;
+      }
+    }
+
     // 3-Day Free Trial initiated: Update user plan, trial status, and tokens
     const updatedUser = await prisma.user.update({
       where: { id: userId },
@@ -42,7 +50,8 @@ export async function POST(req: Request) {
         trialEndsAt: trialEndsAt,
         nextBillingDate: nextBillingDate,
         cardLast4: cardLast4,
-        tokens: grantedTokens
+        tokens: grantedTokens,
+        ...(discountCodeId && { discountCodeId }),
       }
     });
 

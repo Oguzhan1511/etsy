@@ -41,6 +41,12 @@ function SettingsContent() {
   const [cancelSuccessMsg, setCancelSuccessMsg] = useState("");
   const [subscriptionInfo, setSubscriptionInfo] = useState<any>(null);
 
+  // Discount state
+  const [discountCodeInput, setDiscountCodeInput] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<{code: string; pct: number} | null>(null);
+  const [discountError, setDiscountError] = useState("");
+  const [verifyingDiscount, setVerifyingDiscount] = useState(false);
+
   // Profile form state
   const [name, setName] = useState(user?.name ?? "");
   const [email] = useState(user?.email ?? "");
@@ -130,6 +136,30 @@ function SettingsContent() {
       alert("Sunucuya bağlanılamadı.");
     } finally {
       setCancelling(false);
+    }
+  };
+
+  const handleApplyDiscount = async () => {
+    if (!discountCodeInput.trim()) return;
+    setVerifyingDiscount(true);
+    setDiscountError("");
+    try {
+      const res = await fetch("/api/discounts/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: discountCodeInput.trim() }),
+      });
+      const data = await res.json();
+      if (data.discount) {
+        setAppliedDiscount({ code: data.discount.code, pct: data.discount.discountPct });
+        setDiscountCodeInput("");
+      } else {
+        setDiscountError(data.error || "Geçersiz kod");
+      }
+    } catch (e) {
+      setDiscountError("Bağlantı hatası");
+    } finally {
+      setVerifyingDiscount(false);
     }
   };
 
@@ -526,7 +556,8 @@ function SettingsContent() {
         const currentPlanInfo = isStandart
           ? {
               name: "Standart Plan",
-              price: "₺260",
+              price: appliedDiscount ? `₺${Math.floor(260 * (1 - appliedDiscount.pct/100))}` : "₺260",
+              originalPrice: appliedDiscount ? "₺260" : null,
               priceNum: 260,
               desc: "Yeni başlayan satıcılar için temel araçlar.",
               tokens: "10 Token / ay",
@@ -535,7 +566,8 @@ function SettingsContent() {
           : isPremium
           ? {
               name: "Premium Plan",
-              price: "₺710",
+              price: appliedDiscount ? `₺${Math.floor(710 * (1 - appliedDiscount.pct/100))}` : "₺710",
+              originalPrice: appliedDiscount ? "₺710" : null,
               priceNum: 710,
               desc: "Sınırları zorlayan devasa mağazalar için maksimum güç.",
               tokens: "100 Token / ay",
@@ -544,7 +576,8 @@ function SettingsContent() {
           : isPro
           ? {
               name: "Pro Plan",
-              price: "₺480",
+              price: appliedDiscount ? `₺${Math.floor(480 * (1 - appliedDiscount.pct/100))}` : "₺480",
+              originalPrice: appliedDiscount ? "₺480" : null,
               priceNum: 480,
               desc: "Büyümek isteyen profesyonel satıcılar için en popüler plan.",
               tokens: "50 Token / ay",
@@ -563,7 +596,8 @@ function SettingsContent() {
           {
             id: "standart",
             name: "Standart",
-            price: "₺260",
+            price: appliedDiscount ? `₺${Math.floor(260 * (1 - appliedDiscount.pct/100))}` : "₺260",
+            originalPrice: appliedDiscount ? "₺260" : null,
             tokens: "10 Token / ay",
             desc: "Yeni başlayan satıcılar için",
             features: ["10 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "Sipariş Takibi", "Canlı Mockup Stüdyosu"],
@@ -572,7 +606,8 @@ function SettingsContent() {
           {
             id: "pro",
             name: "Pro",
-            price: "₺480",
+            price: appliedDiscount ? `₺${Math.floor(480 * (1 - appliedDiscount.pct/100))}` : "₺480",
+            originalPrice: appliedDiscount ? "₺480" : null,
             tokens: "50 Token / ay",
             desc: "Büyüyen satıcılar için (En Popüler)",
             features: ["50 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "Öncelikli Destek", "Canlı Mockup Stüdyosu"],
@@ -581,7 +616,8 @@ function SettingsContent() {
           {
             id: "premium",
             name: "Premium",
-            price: "₺710",
+            price: appliedDiscount ? `₺${Math.floor(710 * (1 - appliedDiscount.pct/100))}` : "₺710",
+            originalPrice: appliedDiscount ? "₺710" : null,
             tokens: "100 Token / ay",
             desc: "Ekipler ve profesyoneller için maksimum kapasite",
             features: ["100 Yapay Zeka Tasarımı", "Etsy Mağaza Analizi", "VIP Hızlı Üretim", "Canlı Mockup Stüdyosu"],
@@ -630,6 +666,7 @@ function SettingsContent() {
                   </div>
                   <div className="text-right">
                     <span className="text-2xl font-bold text-foreground">
+                      {currentPlanInfo.originalPrice && <span className="text-sm text-secondary line-through mr-2">{currentPlanInfo.originalPrice}</span>}
                       {currentPlanInfo.price}
                       <span className="text-xs text-muted font-normal"> / ay</span>
                     </span>
@@ -699,6 +736,47 @@ function SettingsContent() {
               </div>
             )}
 
+            {/* Discount Code Input */}
+            <div className="bg-card border border-border rounded-xl p-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted mb-3 flex items-center gap-2">
+                <Tag size={14} className="text-purple-400" /> İndirim Kodu Uygula
+              </h3>
+              {appliedDiscount ? (
+                <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={16} className="text-emerald-400" />
+                    <div>
+                      <p className="text-sm font-bold text-emerald-400">%{(appliedDiscount as any).pct} İndirim Uygulandı!</p>
+                      <p className="text-[10px] text-emerald-400/70">Kod: {(appliedDiscount as any).code}</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setAppliedDiscount(null)} className="p-1 text-emerald-400/50 hover:text-emerald-400 transition-colors">
+                    <X size={14} />
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={discountCodeInput}
+                      onChange={(e) => setDiscountCodeInput(e.target.value.toUpperCase())}
+                      placeholder="Kodunuzu girin"
+                      className="flex-1 px-3 py-2 rounded-lg border border-border bg-black/20 text-sm text-foreground focus:outline-none focus:border-purple-500/50 uppercase transition-colors"
+                    />
+                    <button
+                      onClick={handleApplyDiscount}
+                      disabled={verifyingDiscount || !discountCodeInput.trim()}
+                      className="px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-sm font-bold rounded-lg transition-colors"
+                    >
+                      {verifyingDiscount ? <Loader2 size={16} className="animate-spin" /> : "Uygula"}
+                    </button>
+                  </div>
+                  {discountError && <p className="text-xs text-red-400 mt-2">{discountError}</p>}
+                </div>
+              )}
+            </div>
+
             {/* Plan Options */}
             <div className="space-y-2 pt-2">
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted px-1">
@@ -735,12 +813,13 @@ function SettingsContent() {
                   </div>
                   <div className="text-right shrink-0 ml-4">
                     <p className="text-base font-bold text-foreground">
+                      {plan.originalPrice && <span className="text-xs text-secondary line-through mr-1">{plan.originalPrice}</span>}
                       {plan.price}
                       <span className="text-[10px] text-muted font-normal"> / ay</span>
                     </p>
                     {!plan.current ? (
                       <Link
-                        href={`/checkout?plan=${plan.id}`}
+                        href={`/checkout?plan=${plan.id}${appliedDiscount ? `&discountCode=${(appliedDiscount as any).code}` : ""}`}
                         className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-[10px] font-bold text-white shadow-md transition-all cursor-pointer"
                       >
                         <span>3 Gün Ücretsiz Dene</span>

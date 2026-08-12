@@ -11,7 +11,8 @@ import {
   Settings,
   LogOut,
   Zap,
-  MessageCircle
+  MessageCircle,
+  Tag
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -23,6 +24,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "İşlemler (Gelir)", href: "/admin/transactions", icon: CreditCard },
     { name: "Sistem Hataları", href: "/admin/errors", icon: AlertTriangle },
     { name: "Destek Talepleri", href: "/admin/support", icon: MessageCircle },
+    { name: "İndirim Kodları", href: "/admin/discounts", icon: Tag },
   ];
 
   if (pathname === "/admin/login") {

@@ -41,6 +41,7 @@ interface User {
   paymentStatus: boolean;
   isVerified: boolean;
   createdAt: string;
+  discountCode?: string | null;
 }
 
 interface SummaryData {
@@ -92,7 +93,8 @@ export default function AdminUsersPage() {
 
   const filteredUsers = users.filter(u => 
     u.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    u.name.toLowerCase().includes(searchTerm.toLowerCase())
+    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (u.discountCode && u.discountCode.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleAddTokens = async () => {
@@ -247,6 +249,7 @@ export default function AdminUsersPage() {
               <tr>
                 <th className="px-6 py-4 font-semibold">Kullanıcı</th>
                 <th className="px-6 py-4 font-semibold">Paket Durumu</th>
+                <th className="px-6 py-4 font-semibold">Kullanılan Kod</th>
                 <th className="px-6 py-4 font-semibold">Harcanan Token</th>
                 <th className="px-6 py-4 font-semibold">Kalan Cüzdan</th>
                 <th className="px-6 py-4 font-semibold">Kayıt Tarihi</th>
@@ -291,6 +294,17 @@ export default function AdminUsersPage() {
                         <Crown className="w-3.5 h-3.5" />
                         {user.plan.toUpperCase()}
                       </span>
+                    )}
+                  </td>
+
+                  {/* Discount Code */}
+                  <td className="px-6 py-4">
+                    {user.discountCode ? (
+                      <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">
+                        {user.discountCode}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-white/20">-</span>
                     )}
                   </td>
 

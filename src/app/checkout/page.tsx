@@ -9,10 +9,12 @@ function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planId = searchParams.get("plan");
+  const discountCode = searchParams.get("discountCode");
   const { user } = useAuth();
   
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [discountPct, setDiscountPct] = useState(0);
   
   // Card form state
   const [cardHolder, setCardHolder] = useState(user?.name || "");
@@ -59,6 +61,7 @@ function CheckoutContent() {
           planId: planId === "plus" ? "premium" : (planId || "pro"),
           cardNumber,
           cardHolder,
+          discountCode,
         }),
       });
       const data = await res.json();
@@ -79,6 +82,23 @@ function CheckoutContent() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (discountCode) {
+      fetch("/api/discounts/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: discountCode })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.discount) {
+            setDiscountPct(data.discount.discountPct);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [discountCode]);
 
   useEffect(() => {
     if (!user) {
