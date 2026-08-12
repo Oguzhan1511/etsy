@@ -9,7 +9,10 @@ function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planId = searchParams.get("plan");
-  const discountCode = searchParams.get("discountCode");
+  const initialDiscountCode = searchParams.get("discountCode");
+  const [activeDiscountCode, setActiveDiscountCode] = useState<string | null>(initialDiscountCode);
+  const [discountInput, setDiscountInput] = useState(initialDiscountCode || "");
+  const [discountLoading, setDiscountLoading] = useState(false);
   const { user } = useAuth();
   
   const [loading, setLoading] = useState(false);
@@ -61,7 +64,7 @@ function CheckoutContent() {
           planId: planId === "plus" ? "premium" : (planId || "pro"),
           cardNumber,
           cardHolder,
-          discountCode,
+          discountCode: activeDiscountCode,
         }),
       });
       const data = await res.json();
@@ -84,11 +87,11 @@ function CheckoutContent() {
   };
 
   useEffect(() => {
-    if (discountCode) {
+    if (activeDiscountCode) {
       fetch("/api/discounts/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: discountCode })
+        body: JSON.stringify({ code: activeDiscountCode })
       })
         .then(res => res.json())
         .then(data => {
@@ -98,7 +101,32 @@ function CheckoutContent() {
         })
         .catch(() => {});
     }
-  }, [discountCode]);
+  }, [activeDiscountCode]);
+
+  const handleApplyDiscount = async () => {
+    if (!discountInput.trim()) return;
+    setDiscountLoading(true);
+    try {
+      const res = await fetch("/api/discounts/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: discountInput }),
+      });
+      const data = await res.json();
+      if (data.discount) {
+        setActiveDiscountCode(data.discount.code);
+        setDiscountPct(data.discount.discountPct);
+      } else {
+        alert(data.error || "Geçersiz kod");
+        setActiveDiscountCode(null);
+        setDiscountPct(0);
+      }
+    } catch (e) {
+      alert("Bağlantı hatası");
+    } finally {
+      setDiscountLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!user) {
@@ -177,7 +205,16 @@ function CheckoutContent() {
             <div className="border-t border-border pt-3 space-y-2">
               <div className="flex justify-between items-center text-xs text-foreground/60">
                 <span>3 gün sonra (İptal edilmezse):</span>
-                <span className="font-semibold text-foreground">{selectedPlan.price} / ay</span>
+                <span className="font-semibold text-foreground">
+                  {discountPct > 0 ? (
+                    <>
+                      <span className="line-through mr-2 opacity-50">{selectedPlan.priceNumber} TL</span>
+                      <span className="text-emerald-400 font-bold">{Math.floor(selectedPlan.priceNumber * (1 - discountPct / 100))} TL / ay</span>
+                    </>
+                  ) : (
+                    `${selectedPlan.price} / ay`
+                  )}
+                </span>
               </div>
               <div className="flex justify-between items-center text-xs text-foreground/60">
                 <span>İptal Koşulu:</span>
@@ -189,6 +226,44 @@ function CheckoutContent() {
               <Lock size={14} className="shrink-0 text-violet-400 mt-0.5" />
               <span>Kartınız güvenle doğrulanır ancak deneme süresi bitene kadar hiçbir ücret tahsil edilmez.</span>
             </p>
+          </div>
+
+          {/* Discount Box */}
+          <div className="bg-white/[0.02] border border-border rounded-2xl p-5 backdrop-blur-xl">
+            <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+              <Lock size={16} className="text-violet-400" /> İndirim Kodu
+            </h3>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Kodunuzu girin"
+                value={discountInput}
+                onChange={(e) => setDiscountInput(e.target.value.toUpperCase())}
+                className="flex-1 px-3.5 py-2.5 rounded-xl border border-border bg-black/20 text-sm text-foreground focus:outline-none focus:border-violet-500/60 uppercase"
+              />
+              <button
+                onClick={handleApplyDiscount}
+                disabled={discountLoading || !discountInput}
+                className="px-4 py-2.5 bg-violet-500 hover:bg-violet-600 text-white font-semibold rounded-xl text-sm transition-all disabled:opacity-50 flex items-center gap-2"
+              >
+                {discountLoading ? <Loader2 size={16} className="animate-spin" /> : "Uygula"}
+              </button>
+            </div>
+            {activeDiscountCode && discountPct > 0 && (
+              <div className="mt-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs px-3 py-2 rounded-lg flex items-center justify-between">
+                <span className="font-semibold">%{discountPct} İndirim Aktif! ({activeDiscountCode})</span>
+                <button
+                  onClick={() => {
+                    setActiveDiscountCode(null);
+                    setDiscountPct(0);
+                    setDiscountInput("");
+                  }}
+                  className="text-emerald-400 hover:text-emerald-300 underline font-semibold"
+                >
+                  İptal
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
