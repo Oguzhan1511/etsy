@@ -3,10 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const ticket = await prisma.supportTicket.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         user: {
           select: { name: true, email: true }
@@ -30,8 +31,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const body = await req.json();
     const { status } = body;
 
@@ -40,7 +42,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 
     const ticket = await prisma.supportTicket.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
     });
 

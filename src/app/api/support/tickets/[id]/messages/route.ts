@@ -3,10 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const ticket = await prisma.supportTicket.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         messages: {
           orderBy: { createdAt: "asc" },
@@ -24,8 +25,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const body = await req.json();
     const { userId, message, isAdmin } = body;
 
@@ -35,7 +37,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     const newMessage = await prisma.supportMessage.create({
       data: {
-        ticketId: params.id,
+        ticketId: id,
         userId,
         message,
         isAdmin: isAdmin || false,
@@ -43,7 +45,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     });
 
     await prisma.supportTicket.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         updatedAt: new Date(),
         status: !isAdmin ? "OPEN" : undefined
