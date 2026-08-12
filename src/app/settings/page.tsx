@@ -25,6 +25,7 @@ import {
   X,
   Loader2,
   Calendar,
+  Tag,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 

@@ -129,6 +129,8 @@ export default function SupportWidget() {
     e.preventDefault();
     if (!user || !selectedTicket || !newMessage.trim() || isSending) return;
 
+    const originalMessage = newMessage;
+    setNewMessage("");
     setIsSending(true);
     try {
       const res = await fetch(`/api/support/tickets/${selectedTicket.id}/messages`, {
@@ -136,7 +138,7 @@ export default function SupportWidget() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: user.id,
-          message: newMessage,
+          message: originalMessage,
           isAdmin: false,
         }),
       });
@@ -213,11 +215,11 @@ export default function SupportWidget() {
                   <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
                     {tickets.length > 0 ? (
                       <div className="flex flex-col gap-2">
-                        {tickets.map((t) => (
+                        {tickets.map((t: any) => (
                           <button
                             key={t.id}
                             onClick={() => {
-                              if (selectedTicket?.id !== t.id) {
+                              if ((selectedTicket as any)?.id !== t.id) {
                                 setMessages(t.messages || []); // Load instantly from cached data
                                 setSelectedTicket(t);
                               }
