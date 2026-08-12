@@ -13,6 +13,7 @@ export default function AdminSupportPage() {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -52,13 +53,13 @@ export default function AdminSupportPage() {
   }, []);
 
   useEffect(() => {
-    if (selectedTicket) {
+    if (selectedTicket?.id) {
       fetchMessages(selectedTicket.id);
       const interval = setInterval(() => fetchMessages(selectedTicket.id), 10000);
       return () => clearInterval(interval);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTicket]);
+  }, [selectedTicket?.id]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -83,10 +84,11 @@ export default function AdminSupportPage() {
     }
   };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent | React.KeyboardEvent) => {
     e.preventDefault();
-    if (!user || !selectedTicket || !newMessage.trim()) return;
+    if (!user || !selectedTicket || !newMessage.trim() || isSending) return;
 
+    setIsSending(true);
     try {
       const res = await fetch(`/api/support/tickets/${selectedTicket.id}/messages`, {
         method: "POST",
@@ -105,6 +107,8 @@ export default function AdminSupportPage() {
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -244,7 +248,7 @@ export default function AdminSupportPage() {
                     />
                     <button
                       type="submit"
-                      disabled={!newMessage.trim()}
+                      disabled={!newMessage.trim() || isSending}
                       className="bg-purple-600 hover:bg-purple-500 text-white px-5 rounded-xl disabled:opacity-50 transition-colors flex items-center justify-center"
                     >
                       <Send className="w-5 h-5" />

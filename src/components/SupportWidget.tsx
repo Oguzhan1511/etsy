@@ -18,6 +18,7 @@ export default function SupportWidget() {
   const [newMessage, setNewMessage] = useState("");
   const [subject, setSubject] = useState("");
   const [activeTab, setActiveTab] = useState<'create' | 'list'>('list');
+  const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchTickets = async () => {
@@ -53,13 +54,13 @@ export default function SupportWidget() {
   }, [user, isOpen]);
 
   useEffect(() => {
-    if (selectedTicket) {
+    if (selectedTicket?.id) {
       fetchMessages(selectedTicket.id);
       const interval = setInterval(() => fetchMessages(selectedTicket.id), 10000);
       return () => clearInterval(interval);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTicket]);
+  }, [selectedTicket?.id]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -68,8 +69,9 @@ export default function SupportWidget() {
 
   const handleCreateTicket = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !subject.trim() || !newMessage.trim()) return;
+    if (!user || !subject.trim() || !newMessage.trim() || isSending) return;
 
+    setIsSending(true);
     try {
       const res = await fetch("/api/support/tickets", {
         method: "POST",
@@ -93,13 +95,16 @@ export default function SupportWidget() {
     } catch (e) {
       console.error(e);
       alert("Bağlantı hatası.");
+    } finally {
+      setIsSending(false);
     }
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !selectedTicket || !newMessage.trim()) return;
+    if (!user || !selectedTicket || !newMessage.trim() || isSending) return;
 
+    setIsSending(true);
     try {
       const res = await fetch(`/api/support/tickets/${selectedTicket.id}/messages`, {
         method: "POST",
@@ -120,6 +125,8 @@ export default function SupportWidget() {
     } catch (e) {
       console.error(e);
       alert("Bağlantı hatası.");
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -229,6 +236,7 @@ export default function SupportWidget() {
                     </div>
                     <button
                       type="submit"
+                      disabled={isSending}
                       className="w-full py-2.5 mt-2 text-sm font-semibold bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg active:scale-[0.98]"
                     >
                       Talebi Gönder
@@ -270,7 +278,7 @@ export default function SupportWidget() {
                 />
                 <button
                   type="submit"
-                  disabled={!newMessage.trim()}
+                  disabled={!newMessage.trim() || isSending}
                   className="p-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 hover:bg-blue-700 transition-colors"
                 >
                   <Send size={18} />
