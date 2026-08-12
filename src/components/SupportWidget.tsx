@@ -20,6 +20,11 @@ export default function SupportWidget() {
   const [activeTab, setActiveTab] = useState<'create' | 'list'>('list');
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const activeTicketIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    activeTicketIdRef.current = selectedTicket?.id || null;
+  }, [selectedTicket?.id]);
 
   const fetchTickets = async () => {
     if (!user) return;
@@ -38,7 +43,7 @@ export default function SupportWidget() {
     try {
       const res = await fetch(`/api/support/tickets/${ticketId}/messages`);
       const data = await res.json();
-      if (data.ticket && data.ticket.messages) {
+      if (data.ticket && data.ticket.messages && activeTicketIdRef.current === ticketId) {
         setMessages(data.ticket.messages);
       }
     } catch (e) {

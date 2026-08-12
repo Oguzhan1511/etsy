@@ -17,6 +17,11 @@ export default function AdminSupportPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const activeTicketIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    activeTicketIdRef.current = selectedTicket?.id || null;
+  }, [selectedTicket?.id]);
 
   const fetchTickets = async () => {
     try {
@@ -36,7 +41,7 @@ export default function AdminSupportPage() {
     try {
       const res = await fetch(`/api/admin/support/${id}`);
       const data = await res.json();
-      if (data.ticket && data.ticket.messages) {
+      if (data.ticket && data.ticket.messages && activeTicketIdRef.current === id) {
         setMessages(data.ticket.messages);
         setSelectedTicket(data.ticket);
       }
