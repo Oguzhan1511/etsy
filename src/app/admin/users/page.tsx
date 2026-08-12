@@ -37,7 +37,6 @@ interface User {
   estimatedCostTL: number;
   estimatedCostUSD: number;
   usageBreakdown: Record<string, number>;
-  discountCode: string | null;
   recentUsages: TokenUsageRecord[];
   paymentStatus: boolean;
   isVerified: boolean;
