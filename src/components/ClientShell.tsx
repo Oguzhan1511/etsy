@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import { useLanguage } from "@/context/LanguageContext";
 import { Globe } from "lucide-react";
+import SupportWidget from "./SupportWidget";
 
 export default function ClientShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -39,6 +40,7 @@ export default function ClientShell({ children }: { children: React.ReactNode })
             {children}
           </main>
         )}
+        {showGlobalLayout && <SupportWidget />}
       </div>
     </>
   );

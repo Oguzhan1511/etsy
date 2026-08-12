@@ -10,7 +10,8 @@ import {
   AlertTriangle,
   Settings,
   LogOut,
-  Zap
+  Zap,
+  MessageCircle
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -21,6 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Kullanıcılar", href: "/admin/users", icon: Users },
     { name: "İşlemler (Gelir)", href: "/admin/transactions", icon: CreditCard },
     { name: "Sistem Hataları", href: "/admin/errors", icon: AlertTriangle },
+    { name: "Destek Talepleri", href: "/admin/support", icon: MessageCircle },
   ];
 
   if (pathname === "/admin/login") {
