@@ -17,7 +17,7 @@ export default function SupportWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [subject, setSubject] = useState("");
-  const [isCreating, setIsCreating] = useState(false);
+  const [activeTab, setActiveTab] = useState<'create' | 'list'>('list');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchTickets = async () => {
@@ -84,12 +84,15 @@ export default function SupportWidget() {
       if (data.ticket) {
         setSubject("");
         setNewMessage("");
-        setIsCreating(false);
+        setActiveTab('list');
         fetchTickets();
         setSelectedTicket(data.ticket);
+      } else {
+        alert("Hata: " + (data.error || "Talep oluşturulamadı. Veritabanı güncellenmemiş olabilir."));
       }
     } catch (e) {
       console.error(e);
+      alert("Bağlantı hatası.");
     }
   };
 
@@ -111,9 +114,12 @@ export default function SupportWidget() {
       if (data.message) {
         setNewMessage("");
         fetchMessages(selectedTicket.id);
+      } else {
+        alert("Hata: " + (data.error || "Mesaj gönderilemedi."));
       }
     } catch (e) {
       console.error(e);
+      alert("Bağlantı hatası.");
     }
   };
 
@@ -151,77 +157,85 @@ export default function SupportWidget() {
 
           {/* Body */}
           <div className="flex-1 overflow-y-auto p-4 bg-background/50">
-            {!selectedTicket && !isCreating && (
-              <div className="flex flex-col gap-3">
-                <button
-                  onClick={() => setIsCreating(true)}
-                  className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Yeni Talep Aç
-                </button>
-                {tickets.length > 0 ? (
-                  <div className="flex flex-col gap-2 mt-4">
-                    <h4 className="text-sm font-semibold text-secondary px-1">Geçmiş Talepler</h4>
-                    {tickets.map((t) => (
-                      <button
-                        key={t.id}
-                        onClick={() => setSelectedTicket(t)}
-                        className="text-left p-3 rounded-lg border border-border bg-surface hover:border-blue-500 transition-colors"
-                      >
-                        <div className="font-medium truncate">{t.subject}</div>
-                        <div className="text-xs flex justify-between mt-1 text-secondary">
-                          <span>{t.status === "OPEN" ? "Açık" : "Kapalı"}</span>
-                          <span>{new Date(t.updatedAt).toLocaleDateString()}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center text-secondary text-sm mt-8">
-                    Henüz bir destek talebiniz bulunmuyor.
+            {!selectedTicket && (
+              <div className="flex flex-col h-full">
+                <div className="flex border-b border-border mb-4">
+                  <button
+                    onClick={() => setActiveTab('list')}
+                    className={`flex-1 py-2 text-sm font-medium transition-colors ${activeTab === 'list' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-secondary hover:text-foreground'}`}
+                  >
+                    Destek Taleplerim
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('create')}
+                    className={`flex-1 py-2 text-sm font-medium transition-colors ${activeTab === 'create' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-secondary hover:text-foreground'}`}
+                  >
+                    Yeni Talep Aç
+                  </button>
+                </div>
+
+                {activeTab === 'list' && (
+                  <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+                    {tickets.length > 0 ? (
+                      <div className="flex flex-col gap-2">
+                        {tickets.map((t) => (
+                          <button
+                            key={t.id}
+                            onClick={() => setSelectedTicket(t)}
+                            className="text-left p-3 rounded-xl border border-border bg-surface hover:border-blue-500 transition-colors group"
+                          >
+                            <div className="font-medium truncate text-sm group-hover:text-blue-600 transition-colors">{t.subject}</div>
+                            <div className="text-xs flex justify-between items-center mt-2">
+                              <span className={`px-2 py-0.5 rounded-full font-semibold ${t.status === 'OPEN' ? 'bg-green-100 text-green-700' : t.status === 'IN_PROGRESS' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}`}>
+                                {t.status === 'OPEN' ? 'Aktif' : t.status === 'IN_PROGRESS' ? 'İşlemde' : 'Cevaplanmış / Kapalı'}
+                              </span>
+                              <span className="text-secondary">{new Date(t.updatedAt).toLocaleDateString()}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center text-secondary text-sm mt-8 flex flex-col items-center justify-center h-40">
+                        <MessageCircle className="w-10 h-10 mb-3 opacity-20" />
+                        Henüz bir destek talebiniz bulunmuyor.
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
 
-            {isCreating && (
-              <form onSubmit={handleCreateTicket} className="flex flex-col gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-secondary mb-1">Konu</label>
-                  <input
-                    type="text"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    className="w-full p-2 text-sm border border-border rounded bg-surface focus:outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-secondary mb-1">Mesaj</label>
-                  <textarea
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    rows={4}
-                    className="w-full p-2 text-sm border border-border rounded bg-surface focus:outline-none focus:border-blue-500 resize-none"
-                    required
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsCreating(false)}
-                    className="flex-1 py-2 text-sm border border-border rounded hover:bg-hover transition-colors"
-                  >
-                    İptal
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                  >
-                    Gönder
-                  </button>
-                </div>
-              </form>
+                {activeTab === 'create' && (
+                  <form onSubmit={handleCreateTicket} className="flex flex-col gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-secondary mb-1">Konu</label>
+                      <input
+                        type="text"
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                        className="w-full p-2.5 text-sm border border-border rounded-xl bg-background focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                        placeholder="Hangi konuda yardıma ihtiyacınız var?"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-secondary mb-1">Mesaj</label>
+                      <textarea
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        rows={5}
+                        className="w-full p-2.5 text-sm border border-border rounded-xl bg-background focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none transition-all"
+                        placeholder="Detayları buraya yazabilirsiniz..."
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full py-2.5 mt-2 text-sm font-semibold bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg active:scale-[0.98]"
+                    >
+                      Talebi Gönder
+                    </button>
+                  </form>
+                )}
+              </div>
             )}
 
             {selectedTicket && (
