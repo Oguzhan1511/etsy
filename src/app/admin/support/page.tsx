@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { MessageCircle, CheckCircle, Clock, XCircle, Send, Search, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-interface Ticket { id: string; subject: string; status: string; createdAt: string; updatedAt: string; user?: { name: string, email: string } }
+interface Ticket { id: string; subject: string; status: string; createdAt: string; updatedAt: string; user?: { name: string, email: string }; messages?: Message[] }
 interface Message { id: string; message: string; isAdmin: boolean; createdAt: string; user?: { name: string } }
 
 export default function AdminSupportPage() {
@@ -167,7 +167,7 @@ export default function AdminSupportPage() {
                 key={t.id}
                 onClick={() => {
                   if (selectedTicket?.id !== t.id) {
-                    setMessages([]); // Clear instantly for fast UI feedback
+                    setMessages(t.messages || []); // Load instantly from cached data
                     setSelectedTicket(t);
                   }
                 }}

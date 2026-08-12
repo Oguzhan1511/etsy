@@ -9,6 +9,10 @@ export async function GET(req: Request) {
       include: {
         user: {
           select: { name: true, email: true }
+        },
+        messages: {
+          orderBy: { createdAt: "asc" },
+          include: { user: { select: { name: true } } }
         }
       },
       orderBy: { updatedAt: "desc" },

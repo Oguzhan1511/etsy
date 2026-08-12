@@ -5,7 +5,7 @@ import { MessageCircle, X, Send, ChevronDown } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 
-interface Ticket { id: string; subject: string; status: string; updatedAt: string; }
+interface Ticket { id: string; subject: string; status: string; updatedAt: string; messages?: Message[] }
 interface Message { id: string; message: string; isAdmin: boolean; createdAt: string; user?: { name: string } }
 
 export default function SupportWidget() {
@@ -77,14 +77,32 @@ export default function SupportWidget() {
     if (!user || !subject.trim() || !newMessage.trim() || isSending) return;
 
     setIsSending(true);
+    const tempId = "temp-" + Date.now();
+    const tempTicket: Ticket = {
+      id: tempId,
+      subject,
+      status: "OPEN",
+      updatedAt: new Date().toISOString(),
+      messages: [{ id: "m-" + tempId, message: newMessage, isAdmin: false, createdAt: new Date().toISOString() }]
+    };
+    setTickets(prev => [tempTicket, ...prev]);
+    setActiveTab('list');
+    setSelectedTicket(tempTicket);
+    setMessages(tempTicket.messages || []);
+
+    const originalSubject = subject;
+    const originalMessage = newMessage;
+    setSubject("");
+    setNewMessage("");
+
     try {
       const res = await fetch("/api/support/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: user.id,
-          subject,
-          initialMessage: newMessage,
+          subject: originalSubject,
+          initialMessage: originalMessage,
         }),
       });
       const data = await res.json();
@@ -200,7 +218,7 @@ export default function SupportWidget() {
                             key={t.id}
                             onClick={() => {
                               if (selectedTicket?.id !== t.id) {
-                                setMessages([]); // Clear instantly for fast UI feedback
+                                setMessages(t.messages || []); // Load instantly from cached data
                                 setSelectedTicket(t);
                               }
                             }}
