@@ -89,16 +89,18 @@ export default function SupportWidget() {
       });
       const data = await res.json();
       if (data.ticket) {
-        setSubject("");
-        setNewMessage("");
         setActiveTab('list');
         fetchTickets();
         setSelectedTicket(data.ticket);
       } else {
+        setSubject(originalSubject);
+        setNewMessage(originalMessage);
         alert("Hata: " + (data.error || "Talep oluşturulamadı. Veritabanı güncellenmemiş olabilir."));
       }
     } catch (e) {
       console.error(e);
+      setSubject(originalSubject);
+      setNewMessage(originalMessage);
       alert("Bağlantı hatası.");
     } finally {
       setIsSending(false);
@@ -122,13 +124,16 @@ export default function SupportWidget() {
       });
       const data = await res.json();
       if (data.message) {
-        setNewMessage("");
         fetchMessages(selectedTicket.id);
       } else {
+        setNewMessage(originalMessage);
+        fetchMessages(selectedTicket.id);
         alert("Hata: " + (data.error || "Mesaj gönderilemedi."));
       }
     } catch (e) {
       console.error(e);
+      setNewMessage(originalMessage);
+      fetchMessages(selectedTicket.id);
       alert("Bağlantı hatası.");
     } finally {
       setIsSending(false);
@@ -193,7 +198,12 @@ export default function SupportWidget() {
                         {tickets.map((t) => (
                           <button
                             key={t.id}
-                            onClick={() => setSelectedTicket(t)}
+                            onClick={() => {
+                              if (selectedTicket?.id !== t.id) {
+                                setMessages([]); // Clear instantly for fast UI feedback
+                                setSelectedTicket(t);
+                              }
+                            }}
                             className="text-left p-3 rounded-xl border border-border bg-surface hover:border-blue-500 transition-colors group"
                           >
                             <div className="font-medium truncate text-sm group-hover:text-blue-600 transition-colors">{t.subject}</div>
@@ -242,9 +252,10 @@ export default function SupportWidget() {
                     <button
                       type="submit"
                       disabled={isSending}
-                      className="w-full py-2.5 mt-2 text-sm font-semibold bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg active:scale-[0.98]"
+                      className="w-full py-2.5 mt-2 text-sm font-semibold bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2"
                     >
-                      Talebi Gönder
+                      {isSending && <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>}
+                      {isSending ? "Gönderiliyor..." : "Talebi Gönder"}
                     </button>
                   </form>
                 )}
@@ -286,7 +297,7 @@ export default function SupportWidget() {
                   disabled={!newMessage.trim() || isSending}
                   className="p-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 hover:bg-blue-700 transition-colors"
                 >
-                  <Send size={18} />
+                  {isSending ? <span className="block w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span> : <Send size={18} />}
                 </button>
               </form>
             </div>

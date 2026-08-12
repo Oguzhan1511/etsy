@@ -94,6 +94,18 @@ export default function AdminSupportPage() {
     if (!user || !selectedTicket || !newMessage.trim() || isSending) return;
 
     setIsSending(true);
+    // Optimistic update
+    const optimisticMessage = {
+      id: "temp-" + Date.now(),
+      message: newMessage,
+      isAdmin: true,
+      createdAt: new Date().toISOString(),
+      user: { name: user.name }
+    };
+    setMessages((prev) => [...prev, optimisticMessage]);
+    const originalMessage = newMessage;
+    setNewMessage("");
+
     try {
       const res = await fetch(`/api/support/tickets/${selectedTicket.id}/messages`, {
         method: "POST",
@@ -106,7 +118,6 @@ export default function AdminSupportPage() {
       });
       const data = await res.json();
       if (data.message) {
-        setNewMessage("");
         fetchMessages(selectedTicket.id);
         fetchTickets();
       }
@@ -154,7 +165,12 @@ export default function AdminSupportPage() {
             {filteredTickets.map(t => (
               <button
                 key={t.id}
-                onClick={() => setSelectedTicket(t)}
+                onClick={() => {
+                  if (selectedTicket?.id !== t.id) {
+                    setMessages([]); // Clear instantly for fast UI feedback
+                    setSelectedTicket(t);
+                  }
+                }}
                 className={`w-full text-left p-4 rounded-xl border transition-all ${selectedTicket?.id === t.id ? "bg-purple-500/10 border-purple-500/30" : "bg-black/20 border-white/5 hover:bg-white/5"}`}
               >
                 <div className="flex justify-between items-start mb-2">
@@ -256,7 +272,7 @@ export default function AdminSupportPage() {
                       disabled={!newMessage.trim() || isSending}
                       className="bg-purple-600 hover:bg-purple-500 text-white px-5 rounded-xl disabled:opacity-50 transition-colors flex items-center justify-center"
                     >
-                      <Send className="w-5 h-5" />
+                      {isSending ? <span className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span> : <Send className="w-5 h-5" />}
                     </button>
                   </form>
                 )}
