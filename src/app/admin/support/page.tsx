@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { MessageCircle, CheckCircle, Clock, XCircle, Send, Search, User } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface Ticket { id: string; subject: string; status: string; createdAt: string; updatedAt: string; user?: { name: string, email: string } }
 interface Message { id: string; message: string; isAdmin: boolean; createdAt: string; user?: { name: string } }
 
 export default function AdminSupportPage() {
+  const { user } = useAuth();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -83,14 +85,14 @@ export default function AdminSupportPage() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTicket || !newMessage.trim()) return;
+    if (!user || !selectedTicket || !newMessage.trim()) return;
 
     try {
       const res = await fetch(`/api/support/tickets/${selectedTicket.id}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: "admin", // Not strictly necessary since we flag isAdmin: true
+          userId: user.id,
           message: newMessage,
           isAdmin: true,
         }),

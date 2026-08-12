@@ -53,7 +53,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     });
 
     return NextResponse.json({ message: newMessage });
-  } catch (error) {
-    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+  } catch (error: any) {
+    console.error("POST message error:", error);
+    return NextResponse.json({ error: "Sunucu hatası: " + (error?.message || "Bilinmeyen hata") }, { status: 500 });
   }
 }

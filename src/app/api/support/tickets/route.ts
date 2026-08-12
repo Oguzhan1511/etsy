@@ -18,8 +18,9 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ tickets });
-  } catch (error) {
-    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+  } catch (error: any) {
+    console.error("GET tickets error:", error);
+    return NextResponse.json({ error: "Sunucu hatası: " + (error?.message || "Bilinmeyen hata") }, { status: 500 });
   }
 }
 
@@ -49,7 +50,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ticket });
-  } catch (error) {
-    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+  } catch (error: any) {
+    console.error("POST ticket error:", error);
+    return NextResponse.json({ error: "Sunucu hatası: " + (error?.message || "Bilinmeyen hata") }, { status: 500 });
   }
 }
