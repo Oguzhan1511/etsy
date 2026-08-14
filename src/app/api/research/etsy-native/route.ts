@@ -38,43 +38,53 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
     'Content-Type': 'application/json',
   };
 
-  const searchRes = await fetch(
-    `https://api.etsy.com/v3/application/listings/active?keywords=${encodeURIComponent(keyword)}&limit=100&sort_on=score`,
-    { headers }
-  );
-
-  if (!searchRes.ok) {
-    let errorDetail = searchRes.statusText;
-    try {
-      const errorJson = await searchRes.json();
-      errorDetail = errorJson.error || JSON.stringify(errorJson);
-    } catch {
-      errorDetail = await searchRes.text();
+  const fetchPage = async (offset: number) => {
+    const searchRes = await fetch(
+      `https://api.etsy.com/v3/application/listings/active?keywords=${encodeURIComponent(keyword)}&limit=100&offset=${offset}&sort_on=score`,
+      { headers }
+    );
+    if (!searchRes.ok) {
+      if (offset === 0) {
+        let errorDetail = searchRes.statusText;
+        try {
+          const errorJson = await searchRes.json();
+          errorDetail = errorJson.error || JSON.stringify(errorJson);
+        } catch {
+          errorDetail = await searchRes.text();
+        }
+        throw new Error(`Etsy API Hatası (${searchRes.status}): ${errorDetail}`);
+      }
+      return [];
     }
-    throw new Error(`Etsy API Hatası (${searchRes.status}): ${errorDetail}`);
-  }
+    const data = (await searchRes.json()) as Record<string, unknown>;
+    return (data.results as EtsyListing[]) || [];
+  };
 
-  const data = (await searchRes.json()) as Record<string, unknown>;
-  let rawListings = (data.results as EtsyListing[]) || [];
+  const [page1, page2, page3] = await Promise.all([
+    fetchPage(0),
+    fetchPage(100),
+    fetchPage(200)
+  ]);
+
+  let rawListings = [...page1, ...page2, ...page3];
 
   const personalizationRegex = /custom|personalized|personalisation|customized|kişiye\s*özel/i;
 
   const now = Date.now() / 1000;
   
+  // Tekrarlananları ve kişiselleştirilmiş ürünleri filtrele
+  const seenIds = new Set();
   rawListings = rawListings.filter(item => {
+    if (seenIds.has(item.listing_id)) return false;
+    seenIds.add(item.listing_id);
+
     const title = item.title || "";
     if (personalizationRegex.test(title)) return false;
 
     const views = item.views || 0;
-    const favs = item.num_favorers || 0;
-    const creationTime = item.original_creation_timestamp || item.creation_timestamp || now;
-    const daysAlive = Math.max(1, (now - creationTime) / (60 * 60 * 24));
+    // Çok düşük görüntülenmesi olanları ele
+    if (views < 10) return false;
     
-    const viewVelocity = views / daysAlive;
-    const favVelocity = favs / daysAlive;
-
-    // Sadece kişiselleştirilmiş (custom) ürünleri eliyoruz. 
-    // Geri kalanları skor algoritması zaten sıralayacak, böylece her zaman tam 10 ürün gösterebiliriz.
     return true;
   });
 
@@ -87,26 +97,20 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
       
       const dailyViews = views / daysAlive;
       const dailyFavs = favs / daysAlive;
-      const favRatio = views > 0 ? (favs / views) : 0;
       
-      // A product is trending if it has high daily views AND high favorites ratio
-      const trendScore = (dailyViews * 0.4) + (dailyFavs * 2.0) + (favRatio * 50);
+      // Satış potansiyelini belirlemek için günlük görüntülenme ve toplam görüntülenmeye daha fazla ağırlık ver
+      const trendScore = (dailyViews * 20.0) + (dailyFavs * 40.0) + (views * 0.1) + (favs * 0.5);
       
-      // Penalize old products that have stagnant views
-      const agePenalty = daysAlive > 365 ? 0.8 : 1.0; 
-      
-      // Bonus for new products getting rapid traction (viral potential)
-      const viralBonus = daysAlive < 30 && dailyViews > 10 ? 1.5 : 1.0;
+      let finalScore = trendScore;
 
-      let finalScore = trendScore * agePenalty * viralBonus;
-
-      // Filter out duds
-      if (views < 10 && daysAlive > 14) finalScore *= 0.1;
+      // Bonus for new products getting rapid traction
+      if (daysAlive < 30 && dailyViews > 5) finalScore *= 1.5;
 
       return finalScore;
     };
     return getScore(b) - getScore(a);
   });
+  
   rawListings = rawListings.slice(0, 10);
 
 

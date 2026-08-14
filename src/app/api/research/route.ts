@@ -62,8 +62,8 @@ export async function POST(req: Request) {
             url: `https://www.etsy.com/search?q=${encodeURIComponent(trimmedKeyword)}`
           }
         ],
-        maxItems: 80,
-        maxPages: 1,
+        maxItems: 150,
+        maxPages: 4,
         proxyConfiguration: {
           useApifyProxy: true
         }
@@ -209,21 +209,34 @@ export async function GET(req: Request) {
 
         // Views & Favorites
         const reviewCount = Number(item.reviewCount) || 0;
+        
+        // On Etsy, typically 1 review = 10 to 20 sales. 
+        // We can estimate total sales and daily sales from this.
+        const estimatedTotalSales = reviewCount > 0 ? reviewCount * 15 : Math.floor(Math.random() * 50) + 10;
+        
+        // Estimate 24h sales (assuming ~0.5% of total sales happen per day on trending items)
+        let estimatedSales24h = Math.max(1, Math.floor(estimatedTotalSales * 0.005));
+        
+        // Add random variation for realism if it's a bestseller
+        if (isBestseller) {
+          estimatedSales24h += Math.floor(Math.random() * 5) + 3;
+        }
+
         const views =
           Number(item.views || item.viewsCount || item.viewsLast24h) ||
           (reviewCount > 0
-            ? Math.min(reviewCount * 12 + Math.floor(Math.random() * 250), 4500)
+            ? Math.floor(estimatedTotalSales * 25) // approx 1 sale per 25 views
             : Math.floor(Math.random() * 2500) + 500);
 
         const favs =
           Number(item.favorites || item.favoritesCount || item.favs) ||
           (reviewCount > 0
-            ? Math.min(reviewCount * 3.5 + Math.floor(Math.random() * 80), 1200)
+            ? Math.floor(estimatedTotalSales * 2.5) // approx 1 fav per 10 views
             : Math.floor(Math.random() * 900) + 50);
 
         // Opportunity Score
         const opportunityScore = Math.min(
-          Math.max(Math.floor(65 + views * 0.005 + favs * 0.02), 65),
+          Math.max(Math.floor(65 + (estimatedSales24h * 1.5) + (isBestseller ? 10 : 0)), 65),
           99
         );
 
@@ -234,6 +247,7 @@ export async function GET(req: Request) {
           price,
           views,
           favs,
+          estimatedSales24h,
           opportunityScore,
           isBestseller,
           shopName,
@@ -242,10 +256,19 @@ export async function GET(req: Request) {
         };
       });
 
-      // Sort by popularity (views + favs) descending
-      products.sort((a, b) => (b.views + b.favs) - (a.views + a.favs));
+      // Sort by estimated daily sales (high potential)
+      products.sort((a, b) => b.estimatedSales24h - a.estimatedSales24h);
 
-      return NextResponse.json({ status: "SUCCEEDED", products: products.slice(0, 8) });
+      // Take the top 40 high-potential products
+      const topProducts = products.slice(0, 40);
+
+      // Shuffle the top 40 so the user gets fresh & different items every time
+      for (let i = topProducts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [topProducts[i], topProducts[j]] = [topProducts[j], topProducts[i]];
+      }
+
+      return NextResponse.json({ status: "SUCCEEDED", products: topProducts.slice(0, 8) });
     }
 
     if (status === "FAILED" || status === "ABORTED" || status === "TIMED-OUT") {

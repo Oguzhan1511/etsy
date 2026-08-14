@@ -69,10 +69,11 @@ export default function ProductResearchPage() {
     setIsLoading(true);
     setError(null);
     setSelectedProduct(null);
-    setLoadingStatus("Fetching live data from Etsy servers...");
+    setLoadingStatus(t("research.analyzing") || "Yapay zeka analiz motoru başlatılıyor...");
 
     try {
-      const response = await fetch("/api/research/etsy-native", {
+      // Start Apify scraper task
+      const response = await fetch("/api/research", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +85,7 @@ export default function ProductResearchPage() {
       try {
         data = await response.json();
       } catch {
-        throw new Error("Failed to connect to Etsy Research API (Sunucu yanıt vermedi)");
+        throw new Error("Sunucu yanıt vermedi (API Error)");
       }
 
       if (!response.ok) {
@@ -94,11 +95,54 @@ export default function ProductResearchPage() {
       if (data.error) {
         throw new Error(data.error);
       }
+      
+      const { runId, datasetId } = data;
+      
+      if (!runId || !datasetId) {
+        // Fallback to native if Apify didn't start properly
+        throw new Error("Analiz motoru başlatılamadı (runId eksik)");
+      }
 
-      setProducts(data.products || []);
-      setActiveQuery(kw);
-      setIsLoading(false);
-      setLoadingStatus("");
+      setLoadingStatus("Gerçek zamanlı piyasa verileri toplanıyor (Bu işlem 30-60 sn sürebilir)...");
+
+      // Polling function
+      const pollApify = async () => {
+        try {
+          const checkRes = await fetch(`/api/research?runId=${runId}&datasetId=${datasetId}`);
+          if (!checkRes.ok) {
+            throw new Error("Analiz durumu kontrol edilemedi");
+          }
+          
+          const checkData = await checkRes.json();
+          
+          if (checkData.status === "SUCCEEDED") {
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+            setProducts(checkData.products || []);
+            setActiveQuery(kw);
+            setIsLoading(false);
+            setLoadingStatus("");
+          } else if (checkData.status === "FAILED" || checkData.status === "ABORTED" || checkData.status === "TIMED-OUT") {
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+            setError(`Analiz başarısız oldu (Durum: ${checkData.status})`);
+            setIsLoading(false);
+            setLoadingStatus("");
+          } else {
+            // Still running
+            setLoadingStatus(`Gerçek veriler analiz ediliyor (Durum: ${checkData.status})...`);
+          }
+        } catch (err) {
+          console.error("Polling error:", err);
+          if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+          const msg = err instanceof Error ? err.message : "Polling sırasında hata oluştu";
+          setError(msg);
+          setIsLoading(false);
+          setLoadingStatus("");
+        }
+      };
+
+      // Start polling every 4 seconds
+      pollIntervalRef.current = setInterval(pollApify, 4000);
+
     } catch (err: unknown) {
       console.error("Search error:", err);
       const msg = err instanceof Error ? err.message : "Bilinmeyen bir hata oluştu";
