@@ -105,14 +105,21 @@ export default function ProductResearchPage() {
 
       setLoadingStatus("Gerçek zamanlı piyasa verileri toplanıyor (Bu işlem 30-60 sn sürebilir)...");
 
+      let consecutiveErrors = 0;
+
       // Polling function
       const pollApify = async () => {
         try {
-          const checkRes = await fetch(`/api/research?runId=${runId}&datasetId=${datasetId}`);
+          const checkRes = await fetch(`/api/research?runId=${runId}&datasetId=${datasetId}&t=${Date.now()}`);
           if (!checkRes.ok) {
-            throw new Error("Analiz durumu kontrol edilemedi");
+            consecutiveErrors++;
+            if (consecutiveErrors >= 3) {
+              throw new Error("Analiz durumu kontrol edilemedi (Sunucu yanıt vermiyor)");
+            }
+            return; // Skip this poll and try again next time
           }
           
+          consecutiveErrors = 0; // Reset on success
           const checkData = await checkRes.json();
           
           if (checkData.status === "SUCCEEDED") {
@@ -132,11 +139,14 @@ export default function ProductResearchPage() {
           }
         } catch (err) {
           console.error("Polling error:", err);
-          if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-          const msg = err instanceof Error ? err.message : "Polling sırasında hata oluştu";
-          setError(msg);
-          setIsLoading(false);
-          setLoadingStatus("");
+          consecutiveErrors++;
+          if (consecutiveErrors >= 3) {
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+            const msg = err instanceof Error ? err.message : "Polling sırasında hata oluştu";
+            setError(msg);
+            setIsLoading(false);
+            setLoadingStatus("");
+          }
         }
       };
 

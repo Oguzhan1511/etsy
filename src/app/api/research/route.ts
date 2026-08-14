@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
 
 interface ApifyItem {
@@ -62,8 +63,8 @@ export async function POST(req: Request) {
             url: `https://www.etsy.com/search?q=${encodeURIComponent(trimmedKeyword)}`
           }
         ],
-        maxItems: 150,
-        maxPages: 4,
+        maxItems: 100,
+        maxPages: 2,
         proxyConfiguration: {
           useApifyProxy: true
         }
