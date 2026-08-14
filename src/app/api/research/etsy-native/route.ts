@@ -38,13 +38,13 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
     'Content-Type': 'application/json',
   };
 
-  const fetchPage = async (offset: number) => {
+  const fetchPage = async (offset: number, sortMode: string = 'score') => {
     const searchRes = await fetch(
-      `https://api.etsy.com/v3/application/listings/active?keywords=${encodeURIComponent(keyword)}&limit=100&offset=${offset}&sort_on=score`,
+      `https://api.etsy.com/v3/application/listings/active?keywords=${encodeURIComponent(keyword)}&limit=100&offset=${offset}&sort_on=${sortMode}`,
       { headers }
     );
     if (!searchRes.ok) {
-      if (offset === 0) {
+      if (offset === 0 && sortMode === 'score') {
         let errorDetail = searchRes.statusText;
         try {
           const errorJson = await searchRes.json();
@@ -60,13 +60,17 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
     return (data.results as EtsyListing[]) || [];
   };
 
-  const [page1, page2, page3] = await Promise.all([
-    fetchPage(0),
-    fetchPage(100),
-    fetchPage(200)
+  // Yeni (24-48 saatlik) trendleri yakalamak için "created" ile sıralı 3 sayfa çekiyoruz.
+  // Garanti olması için 1 sayfa da "score" (relevancy) çekiyoruz.
+  const [recent1, recent2, recent3, recent4, score1] = await Promise.all([
+    fetchPage(0, 'created'),
+    fetchPage(100, 'created'),
+    fetchPage(200, 'created'),
+    fetchPage(300, 'created'),
+    fetchPage(0, 'score')
   ]);
 
-  let rawListings = [...page1, ...page2, ...page3];
+  let rawListings = [...recent1, ...recent2, ...recent3, ...recent4, ...score1];
 
   const personalizationRegex = /custom|personalized|personalisation|customized|kişiye\s*özel/i;
 
@@ -81,7 +85,7 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
     const title = item.title || "";
     if (personalizationRegex.test(title)) return false;
     
-    // Yüksek potansiyel için en azından 1 favorisi olmalı
+    // Potansiyel olması için en az 1 favori şart
     if ((item.num_favorers || 0) < 1) return false;
     
     return true;
@@ -90,16 +94,21 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
   rawListings.sort((a, b) => {
     const getScore = (item: EtsyListing) => {
       const creation = item.original_creation_timestamp || item.creation_timestamp || now;
-      const daysAlive = Math.max(1, (now - creation) / (60 * 60 * 24));
+      const daysAlive = Math.max(0.1, (now - creation) / (60 * 60 * 24)); // 0.1 gün minimum (birkaç saat)
       const favs = item.num_favorers || 0;
       
       const dailyFavs = favs / daysAlive;
       
-      // Sadece favori hızına göre sırala (Etsy API view sayısını genelde 0 döndürür)
       let finalScore = (dailyFavs * 100.0) + (favs * 0.5);
 
-      // Yeni ve hızlı favori alan ürünlere bonus
-      if (daysAlive < 45 && dailyFavs > 0.5) finalScore *= 1.5;
+      // 24-48 saat içinde yüklenmiş ve favori almaya başlamış ürünlere DEVASA BİR ÇARPAN (Kullanıcı talebi)
+      if (daysAlive <= 2.5) {
+         finalScore *= 50.0; // 48 saatlik yeni patlayan ürünler her şeyin üstüne çıksın
+      } else if (daysAlive <= 7) {
+         finalScore *= 10.0; // İlk hafta ürünleri
+      } else if (daysAlive <= 30) {
+         finalScore *= 2.0;  // 1 aylık ürünler
+      }
 
       return finalScore;
     };
