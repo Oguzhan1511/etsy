@@ -82,17 +82,30 @@ export async function POST(req: Request) {
     const data = await listingResponse.json();
     console.log('Listing data keys:', Object.keys(data));
 
-    // Gerçek veriler (Etsy bu iki alanı listing endpoint'inde doğrudan veriyor)
     const totalFavs: number = data.num_favorers || 0;
-    // views bazen 0 gelir (Etsy gizlemiş olabilir), o zaman null göster
     const totalViews: number = data.views || 0;
-
-    // Etsy hiçbir public listing'de gerçek satış sayısını vermez.
-    // Endüstri standardı tahmin: 1 favori ≈ 3-5 satış
     const totalSales: number = totalFavs > 0 ? Math.floor(totalFavs * 3.5) : 0;
+
+    // Ürün görselini Etsy API'sinden çek
+    let imageUrl = '';
+    try {
+      const imagesRes = await fetch(
+        `https://api.etsy.com/v3/application/listings/${listing_id}/images`,
+        { headers }
+      );
+      if (imagesRes.ok) {
+        const imagesData = await imagesRes.json();
+        const firstImage = imagesData.results?.[0];
+        // En yüksek çözünürlüklü URL'yi seç (url_fullxfull > url_570xN > url_340x270)
+        imageUrl = firstImage?.url_fullxfull || firstImage?.url_570xN || firstImage?.url_340x270 || '';
+      }
+    } catch (e) {
+      console.error('Image fetch error:', e);
+    }
 
     return NextResponse.json({
       tags: data.tags || [],
+      imageUrl,
       stats: {
         views: totalViews,
         sales: totalSales,

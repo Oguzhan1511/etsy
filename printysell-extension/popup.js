@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentListingId = null;
   let currentTags = [];
+  let currentImageUrl = '';  // Analiz API'sinden gelen görsel URL'si
   let authToken = null;
 
   // Canlıya alırken IS_DEV = false yapın.
@@ -78,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         currentTags = data.tags || [];
+        currentImageUrl = data.imageUrl || '';  // Görsel URL'yi sakla
         displayTags(currentTags);
         
         // İstatistikleri ekrana bas
@@ -103,19 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const activeTab = tabs[0];
       if (!activeTab) return;
 
-      // Sayfadan görsel ve başlık al
+      // Sayfa başlığını al (prompt için)
       chrome.tabs.sendMessage(activeTab.id, { action: 'getPageInfo' }, (pageInfo) => {
-        let imageUrl = '';
-        let pageTitle = '';
-        if (chrome.runtime.lastError) {
-          console.warn('getPageInfo error:', chrome.runtime.lastError.message);
-        }
-        if (pageInfo) {
-          imageUrl = pageInfo.imageUrl || '';
-          pageTitle = pageInfo.title || '';
-        }
-
-        console.log('[PrintySell] Found imageUrl:', imageUrl);
+        const pageTitle = (pageInfo && pageInfo.title) ? pageInfo.title : '';
+        if (chrome.runtime.lastError) console.warn(chrome.runtime.lastError.message);
 
         // Prompt öneri
         const shortTitle = pageTitle.split(',')[0].trim().slice(0, 80);
@@ -123,10 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
           ? `"${shortTitle}" tasarımının benzerini, ürün görseli üzerinden, yüksek kaliteli ve Etsy marka stilinde üret.`
           : 'Bu Etsy ürününün görsel tasarımının bir benzerini üret.';
 
-        // URL oluştur - image parametresi encode edilmiş olarak geç
+        // API'den gelen görsel URL'sini kullan (sayfa scrape'e gerek yok)
         let studioUrl = `${API_BASE}/ai-design-studio?source=extension&prompt=${encodeURIComponent(prompt)}`;
-        if (imageUrl) {
-          studioUrl += `&image=${encodeURIComponent(imageUrl)}`;
+        if (currentImageUrl) {
+          studioUrl += `&image=${encodeURIComponent(currentImageUrl)}`;
         }
         chrome.tabs.create({ url: studioUrl });
       });
