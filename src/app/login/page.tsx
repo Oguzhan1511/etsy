@@ -7,7 +7,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, Globe, User, ArrowLeft, C
 import { useLanguage } from "@/context/LanguageContext";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
-type Mode = "login" | "register" | "forgot_password" | "reset_sent";
+type Mode = "login" | "register" | "forgot_password" | "reset_sent" | "register_success";
 
 export default function LoginPage() {
   const { login, googleLogin, registerUser, user, isLoading } = useAuth();
@@ -79,13 +79,7 @@ export default function LoginPage() {
       const res = await registerUser(name, email, password);
       setSubmitting(false);
       if (res.success) {
-        // Automatically log them in after registration to smooth the onboarding
-        const loginRes = await login(email, password);
-        if (loginRes.success) {
-           router.replace("/dashboard");
-        } else {
-           setError("Kayıt başarılı ancak giriş yapılamadı.");
-        }
+        setMode("register_success");
       } else {
         setError(res.error || "Kayıt başarısız.");
       }
@@ -158,6 +152,7 @@ export default function LoginPage() {
               {mode === "login" && (t("login.welcome") || "Hoş Geldiniz")}
               {mode === "register" && (t("login.createAccount") || "Yeni Hesap Oluşturun")}
               {(mode === "forgot_password" || mode === "reset_sent") && (t("login.forgotPassword") || "Şifremi Unuttum")}
+              {mode === "register_success" && "Kayıt Başarılı"}
             </p>
           </div>
         </div>
@@ -198,14 +193,16 @@ export default function LoginPage() {
             </p>
           )}
 
-          {/* Reset Sent Success Message */}
-          {mode === "reset_sent" ? (
+          {/* Reset Sent / Register Success Message */}
+          {(mode === "reset_sent" || mode === "register_success") ? (
             <div className="flex flex-col items-center justify-center space-y-6 py-4 animate-in fade-in zoom-in duration-500">
               <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
                 <CheckCircle2 size={32} className="text-green-400" />
               </div>
               <p className="text-sm text-center text-foreground/80 leading-relaxed px-4">
-                {t("login.resetSent") || "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi."}
+                {mode === "reset_sent" 
+                  ? (t("login.resetSent") || "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.")
+                  : "Kayıt başarılı! Lütfen giriş yapmadan önce e-posta adresinize gelen bağlantıya tıklayarak hesabınızı onaylayın."}
               </p>
               <button
                 type="button"

@@ -40,10 +40,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Hatalı şifre.' }, { status: 401 });
     }
 
-    // Check if verified (Disabled for Demo Mode)
-    // if (!user.isVerified) {
-    //   return NextResponse.json({ error: 'Lütfen giriş yapmadan önce e-posta adresinize gelen linke tıklayarak hesabınızı onaylayın.' }, { status: 403 });
-    // }
+    // Check if verified
+    if (!user.isVerified) {
+      return NextResponse.json({ error: 'Lütfen giriş yapmadan önce e-posta adresinize gelen linke tıklayarak hesabınızı onaylayın.' }, { status: 403 });
+    }
 
     // Calculate initials
     const namePart = user.name || user.email.split("@")[0];
