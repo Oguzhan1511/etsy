@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrintySell Extension</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">P</div>
+        <span class="logo-text">PrintySell</span>
+      </div>
+    </div>
+
+    <!-- Giriş Yapmamış Kullanıcı Görünümü -->
+    <div id="loginView" class="view">
+      <p class="desc">Sistemi kullanmak için PrintySell'e kayıt olun ve Etsy mağazanızı bağlayın.</p>
+      <button id="loginBtn" class="btn btn-primary">PrintySell'e Git & Kayıt Ol</button>
+    </div>
+
+    <!-- Giriş Yapmış Kullanıcı Görünümü -->
+    <div id="mainView" class="view hidden">
+      <div class="status-box">
+        <span class="status-dot online"></span>
+        <span class="status-text">Bağlı</span>
+        <button id="logoutBtn" class="btn btn-text btn-small" style="margin-left: auto;">Çıkış</button>
+      </div>
+      
+      <p class="desc" id="pageContextText">Etsy ürün sayfasında değilsiniz.</p>
+      
+      <button id="analyzeBtn" class="btn btn-primary hidden">
+        <span class="btn-icon">✨</span> Analiz Et
+      </button>
+      
+      <!-- Sonuç Ekranı -->
+      <div id="resultsBox" class="results hidden">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">7G Görüntülenme</div>
+            <div class="stat-value" id="statViews">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">7G Satış</div>
+            <div class="stat-value" id="statSales">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">7G Favori</div>
+            <div class="stat-value" id="statFavs">0</div>
+          </div>
+        </div>
+
+        <h4 style="margin-top: 16px;">Etiketler (Tags)</h4>
+        <div id="tagsContainer" class="tags"></div>
+        <button id="copyTagsBtn" class="btn btn-secondary btn-small mt-2">Tagleri Kopyala</button>
+      </div>
+      
+      <!-- Yükleniyor Göstergesi -->
+      <div id="loadingSpinner" class="loading hidden">
+        <div class="spinner"></div>
+        <span>Analiz ediliyor...</span>
+      </div>
+      <div id="errorMsg" class="error-msg hidden"></div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

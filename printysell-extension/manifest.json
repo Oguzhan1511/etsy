@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "PrintySell - Etsy Analyzer",
+  "version": "1.0.0",
+  "description": "Analyze Etsy listings and extract SEO tags using PrintySell AI.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "PrintySell"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "cookies"
+  ],
+  "host_permissions": [
+    "*://*.etsy.com/listing/*",
+    "*://localhost:*/*",
+    "*://*.printysell.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.etsy.com/listing/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
