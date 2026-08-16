@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const copyTagsBtn = document.getElementById('copyTagsBtn');
   const loadingSpinner = document.getElementById('loadingSpinner');
   const errorMsg = document.getElementById('errorMsg');
+  const generateBtn = document.getElementById('generateBtn');
 
   let currentListingId = null;
   let currentTags = [];
@@ -94,6 +95,37 @@ document.addEventListener('DOMContentLoaded', () => {
       } finally {
         showLoading(false);
       }
+  });
+
+  // Benzerini Üret Butonu
+  generateBtn.addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const activeTab = tabs[0];
+      if (!activeTab) return;
+
+      // Önce sayfadan görsel ve başlık al
+      chrome.tabs.sendMessage(activeTab.id, { action: 'getPageInfo' }, (pageInfo) => {
+        let imageUrl = '';
+        let pageTitle = '';
+        if (pageInfo) {
+          imageUrl = pageInfo.imageUrl || '';
+          pageTitle = pageInfo.title || '';
+        }
+
+        // Prompt öneri: başlıktan kısa bir özet yap
+        const shortTitle = pageTitle.split(',')[0].trim().slice(0, 80);
+        const prompt = shortTitle
+          ? `"${shortTitle}" tasarımının benzerini, ürün görseli üzerinden, yüksek kaliteli ve Etsy marka stilinde üret.`
+          : 'Bu Etsy ürününün görsel tasarımının bir benzerini üret.';
+
+        // URL oluştur
+        const params = new URLSearchParams({ prompt });
+        if (imageUrl) params.set('image', imageUrl);
+
+        const studioUrl = `${API_BASE}/ai-design-studio?${params.toString()}`;
+        chrome.tabs.create({ url: studioUrl });
+      });
+    });
   });
 
   // Tagleri Kopyala

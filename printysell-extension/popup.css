@@ -246,3 +246,21 @@ body {
   margin-top: 8px;
   border: 1px solid rgba(239, 68, 68, 0.2);
 }
+
+.btn-generate {
+  background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25);
+  font-size: 13px;
+}
+
+.btn-generate:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.btn-small {
+  padding: 8px 12px;
+  font-size: 12px;
+}
