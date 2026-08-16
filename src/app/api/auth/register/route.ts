@@ -37,6 +37,8 @@ export async function POST(req: Request) {
         email: email.toLowerCase(),
         password: hashedPassword,
         verificationToken,
+        isVerified: true,
+        tokens: 50,
       },
     });
 
