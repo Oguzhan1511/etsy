@@ -31,10 +31,23 @@ export default function AIDesignStudioPage() {
       const params = new URLSearchParams(window.location.search);
       const imgUrl = params.get("image");
       const initPrompt = params.get("prompt");
-      setTimeout(() => {
-        if (imgUrl) setReferenceImage(imgUrl);
-        if (initPrompt) setPrompt(initPrompt);
-      }, 0);
+      
+      if (initPrompt) setPrompt(initPrompt);
+      
+      if (imgUrl) {
+        // Etsy görselini proxy üzerinden base64'e çevirip yükle
+        fetch(`/api/proxy-image?url=${encodeURIComponent(imgUrl)}`)
+          .then(res => res.blob())
+          .then(blob => {
+            const reader = new FileReader();
+            reader.onloadend = () => setReferenceImage(reader.result as string);
+            reader.readAsDataURL(blob);
+          })
+          .catch(() => {
+            // Proxy başarısız olursa direkt URL'yi dene
+            setReferenceImage(imgUrl);
+          });
+      }
     }
   }, []);
 
