@@ -24,6 +24,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
@@ -405,7 +406,7 @@ export default function LoginPage() {
                     <CheckCircle2 size={14} className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" />
                   </div>
                   <label htmlFor="terms" className="text-xs text-foreground/70 leading-relaxed cursor-pointer select-none">
-                    <Link href="/terms" target="_blank" className="text-violet-400 hover:text-violet-300 hover:underline">Kullanıcı ve Abonelik Sözleşmesi</Link>'ni okudum ve kabul ediyorum.
+                    <button type="button" onClick={(e) => { e.preventDefault(); setIsTermsModalOpen(true); }} className="text-violet-400 hover:text-violet-300 hover:underline inline-block">Kullanıcı ve Abonelik Sözleşmesi</button>'ni okudum ve kabul ediyorum.
                   </label>
                 </div>
               </div>
@@ -506,6 +507,140 @@ export default function LoginPage() {
           © {new Date().getFullYear()} PRINTYSELL — {t("login.rights")}
         </p>
       </div>
+
+      {/* Terms of Service Modal */}
+      {isTermsModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsTermsModalOpen(false)} />
+          <div className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-5 border-b border-white/10 bg-white/5">
+              <h2 className="text-lg font-bold text-white">Kullanıcı ve Abonelik Sözleşmesi</h2>
+              <button 
+                onClick={() => setIsTermsModalOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto space-y-6 text-sm text-white/70 leading-relaxed font-sans custom-scrollbar">
+              <p className="text-xs text-white/40 italic">
+                Not: Köşeli parantezli alanlar şirketin gerçek bilgileriyle doldurulmalı; bu doküman ayrıca Ön Bilgilendirme Formu ve KVKK Aydınlatma Metni ile birlikte kullanılmalıdır. Yayına almadan önce bir hukuk danışmanına onaylatılması önerilir.
+              </p>
+
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">1. Taraflar</h3>
+                <p className="mb-2">
+                  İşbu Kullanıcı ve Abonelik Sözleşmesi ("Sözleşme"), PrintySell platformunu ("Platform") işleten [Şirket Unvanı / Ticaret Sicil No / MERSİS No / Adres] ("Şirket") ile Platform'a üye olan veya Platform'u kullanan gerçek veya tüzel kişi ("Kullanıcı") arasında, Kullanıcı'nın Platform'a kayıt olması ve işbu Sözleşme'yi elektronik ortamda onaylaması anında akdedilmiş ve yürürlüğe girmiştir.
+                </p>
+                <p>
+                  <strong>1.1 Ehliyet ve Yaş Sınırı:</strong> Kullanıcı, işbu Sözleşme'yi onaylayarak on sekiz (18) yaşını doldurduğunu ve/veya Platform'u bir tüzel kişi adına kullanıyorsa o tüzel kişiyi temsile yetkili olduğunu beyan ve taahhüt eder. Reşit olmayan kişilerin Platform'u kullanması yasaktır; bu durumun tespiti halinde Şirket ilgili hesabı askıya alabilir.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">2. Hizmetin Tanımı</h3>
+                <p>
+                  PrintySell, Kullanıcılarına yapay zekâ destekli görsel tasarım oluşturma, mockup (örnek ürün görseli) üretme, Etsy ve benzeri pazar yerleri ile entegrasyon sağlama ve ürün listeleme gibi e-ticaret ve tasarım süreçlerini kolaylaştıran bir hizmet yazılımı (SaaS) sunar.
+                </p>
+              </section>
+              
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">3. Ön Bilgilendirme ve Mesafeli Sözleşme İlişkisi</h3>
+                <p>
+                  Kullanıcı, ücretli bir Paket veya kredi (token) satın almadan önce, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği uyarınca hazırlanan Ön Bilgilendirme Formu'nu ayrıca onaylar. İşbu Sözleşme, Ön Bilgilendirme Formu ile birlikte bütün oluşturur; hükümler arasında çelişki olması halinde Ön Bilgilendirme Formu'nda yer alan tüketici lehine hükümler esas alınır.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">4. Üyelik ve Abonelik Koşulları</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Kullanıcı, kayıt olurken verdiği tüm bilgilerin doğru, güncel ve eksiksiz olduğunu kabul eder.</li>
+                  <li>Platform üzerindeki hizmetler, farklı özelliklere sahip aylık veya yıllık abonelik paketleri ("Paketler") şeklinde ve/veya kredi (token) sistemi ile sunulabilir.</li>
+                  <li>Abonelikler, Kullanıcı iptal etmediği sürece seçilen faturalandırma dönemi sonunda otomatik olarak yenilenir. Şirket, yenilemeden makul bir süre (en az 3 gün) önce Kullanıcı'yı kayıtlı e-posta adresi üzerinden bilgilendirir.</li>
+                  <li>Kullanıcı, aboneliğini dilediği zaman hesap ayarları üzerinden, ek bir işleme gerek kalmaksızın iptal edebilir. İptal işlemi bir sonraki faturalandırma dönemi itibarıyla geçerli olur; mevcut ödenmiş döneme ait hizmet, dönem sonuna kadar kesintisiz sunulmaya devam eder.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">5. Ücretlendirme, Faturalandırma ve İade Koşulları</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Hizmet bedelleri ve ödeme koşulları Platform üzerinde açıkça belirtilir. Şirket, paket içeriklerinde ve fiyatlarda değişiklik yapma hakkını saklı tutar; ancak fiyat artışları mevcut abonelik döneminin sonunda ve Kullanıcı'ya en az 15 gün önceden e-posta ile bildirilmek suretiyle uygulanır.</li>
+                  <li>Her satış işlemi için Kullanıcı'ya, ilgili mevzuata uygun şekilde (e-arşiv fatura/fatura) belge düzenlenir ve Kullanıcı'nın kayıtlı e-posta adresine iletilir.</li>
+                  <li><strong>Cayma Hakkı:</strong> Dijital hizmetlerin anlık ifası (yapay zekâ model tüketimi, sunucu kaynak kullanımı) nedeniyle, Kullanıcı'nın açıkça onay verdiği ve ifasına başlanmış hizmetler bakımından Mesafeli Sözleşmeler Yönetmeliği m.15 kapsamında cayma hakkı bulunmamaktadır. Şu kadar ki, henüz hiç kullanılmamış (tüketilmemiş) token/kredi bakiyeleri için, satın alma tarihinden itibaren 14 gün içinde destek talebi oluşturulması halinde Şirket, kısmi veya tam iade talebini değerlendirme hakkını saklı tutar.</li>
+                  <li>Sistemsel bir hata nedeniyle mükerrer çekim yapılması durumunda Kullanıcı destek talebi oluşturabilir; tespit edilen mükerrer tahsilatlar 10 iş günü içinde iade edilir.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">6. Fikri Mülkiyet ve Lisans</h3>
+                <p className="mb-2">
+                  Kullanıcı'nın PrintySell üzerinden kendi komutları (prompt) ile ürettiği görsellerin telif ve ticari kullanım hakları Kullanıcı'ya aittir. Kullanıcı, ürettiği görselleri Etsy gibi platformlarda dilediği gibi satabilir.
+                </p>
+                <p>
+                  Kullanıcı, ürettiği içeriklerin üçüncü şahısların telif, marka veya diğer fikri mülkiyet haklarını ihlal etmemesinden bizzat sorumludur. Şirket, açıkça tespit edilebilir hak ihlali bildirimleri (ör. yasal bir hak sahibi bildirimi) üzerine makul ölçüde içerik moderasyonu yapma hakkını saklı tutar; ancak bu, Şirket'e önleyici bir denetim yükümlülüğü doğurmaz. PrintySell, Kullanıcı tarafından üretilen içeriklerden doğacak hukuki ihtilaflarda taraf değildir ve sorumluluk kabul etmez.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">7. Kullanım Sınırlandırmaları ve Yasaklar</h3>
+                <p className="mb-2">
+                  Kullanıcı, Platform'u hukuka ve ahlaka aykırı amaçlarla, üçüncü şahıslara zarar verecek veya Platform'un teknik altyapısını tehdit edecek şekilde (tersine mühendislik, siber saldırı, yetkisiz erişim vb.) kullanamaz.
+                </p>
+                <p>
+                  Platform'un kötüye kullanıldığının makul şüphe ile tespiti halinde Şirket, durumun ciddiyetiyle orantılı olarak önce Kullanıcı'yı uyarabilir veya hesabı geçici olarak askıya alabilir; hukuka aykırılığın açık ve ağır olduğu hallerde (dolandırıcılık, siber saldırı, üçüncü taraf hakların ağır ihlali vb.) hesabı bildirimsiz ve ücret iadesiz olarak kalıcı olarak kapatabilir. Kullanıcı, hesabının askıya alınması/kapatılmasına itiraz etme ve destek kanalı üzerinden açıklama talep etme hakkına sahiptir.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">8. Sorumluluk Reddi (Disclaimer) ve Mücbir Sebep</h3>
+                <p className="mb-2">
+                  Platform "olduğu gibi" (as is) sunulmaktadır. Şirket; Platform'un kesintisiz veya hatasız çalışacağını ya da üretilen görsellerin ticari başarısını garanti etmez. Etsy veya benzeri üçüncü taraf entegrasyonlarında yaşanacak politika değişiklikleri, API kesintileri veya Kullanıcı mağazasının ilgili pazar yeri tarafından kapatılması gibi durumlardan PrintySell sorumlu tutulamaz.
+                </p>
+                <p className="mb-2">
+                  <strong>Mücbir Sebep:</strong> Doğal afet, savaş, seferberlik, salgın hastalık, altyapı sağlayıcılarından (bulut/sunucu, ödeme kuruluşu, yapay zekâ model sağlayıcısı) kaynaklanan genel kesintiler, mevzuat değişiklikleri ve makul kontrol dışındaki benzeri haller mücbir sebep sayılır. Mücbir sebep süresince tarafların edim yükümlülükleri askıya alınır; durum 3 iş günü içinde karşı tarafa bildirilir.
+                </p>
+                <p>
+                  İşbu madde, Şirket'in kasıt veya ağır ihmalinden doğan sorumluluğunu ortadan kaldırmaz.
+                </p>
+              </section>
+              
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">9. Kişisel Verilerin Korunması (KVKK)</h3>
+                <p>
+                  Şirket, Kullanıcı'ya ait kişisel verileri (ad-soyad, e-posta, ödeme/fatura bilgileri, kullanım verileri vb.) 6698 sayılı Kişisel Verilerin Korunması Kanunu ve ilgili mevzuata uygun olarak işler. Veri işleme amaçları, hukuki sebepleri, aktarım halleri ve Kullanıcı'nın KVKK m.11 kapsamındaki hakları, Platform'da ayrıca yayımlanan Aydınlatma Metni ve Gizlilik Politikası'nda düzenlenmiştir. Kullanıcı, kayıt sırasında bu metinleri okuduğunu ve anladığını beyan eder. İşbu Sözleşme, ilgili Aydınlatma Metni'nin ayrılmaz bir parçasıdır.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">10. Sözleşme Değişiklikleri</h3>
+                <p>
+                  Şirket, işbu Sözleşme şartlarını, ilgili mevzuata uygun olmak ve Kullanıcı aleyhine esaslı değişiklikleri en az 15 gün önceden e-posta ve/veya Platform içi bildirim yoluyla duyurmak kaydıyla değiştirme hakkını saklı tutar. Kullanıcı'nın değişiklik sonrasında Platform'u kullanmaya devam etmesi, güncel Sözleşme'yi kabul ettiği anlamına gelir; esaslı değişikliklere itiraz eden Kullanıcı, aboneliğini iptal etme ve/veya hesabını kapatma hakkına sahiptir.
+                </p>
+              </section>
+              
+              <section>
+                <h3 className="text-base font-semibold text-white mb-2">11. Uyuşmazlıkların Çözümü</h3>
+                <p>
+                  İşbu Sözleşme'den doğabilecek uyuşmazlıklarda Türkiye Cumhuriyeti kanunları uygulanır. Tüketici sıfatını haiz Kullanıcılar bakımından, 6502 sayılı Kanun'un ilgili maddeleri uyarınca parasal sınırlar dahilinde Kullanıcı'nın veya Şirket'in yerleşim yerindeki Tüketici Hakem Heyetleri ve Tüketici Mahkemeleri yetkilidir. Tüketici sıfatını haiz olmayan Kullanıcılar (tacir/tüzel kişi) ile aradaki uyuşmazlıklarda İstanbul (Merkez) Mahkemeleri ve İcra Daireleri münhasıran yetkilidir.
+                </p>
+              </section>
+            </div>
+            
+            <div className="p-5 border-t border-white/10 bg-white/5 flex justify-end">
+              <button 
+                onClick={() => {
+                  setTermsAccepted(true);
+                  setIsTermsModalOpen(false);
+                }}
+                className="px-6 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-medium transition-colors"
+              >
+                Kabul Et ve Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx global>{`
         @keyframes blob {
