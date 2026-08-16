@@ -17,6 +17,7 @@ import {
   LogOut,
   Loader2,
   Coins,
+  Lock,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -29,27 +30,27 @@ export default function Sidebar() {
   const { t } = useLanguage();
   const { availableTokens, planType } = useTokens();
 
+  const isAdmin = (user as any)?.role === 'admin';
+
   const navItems = [
     {
       label: t("sidebar.corePlatform"),
       items: [
-        { icon: LayoutDashboard, label: t("sidebar.sellerDashboard"), href: "/dashboard" },
-        { icon: LayoutDashboard, label: t("sidebar.producerDashboard"), href: "/producer-dashboard" },
-        { icon: ShoppingBag, label: t("sidebar.orders"), href: "/orders" },
-        { icon: Package, label: t("sidebar.products"), href: "/products" },
-        { icon: Search, label: t("sidebar.productResearch"), href: "/product-research" },
-        ...(user?.plan === 'none' ? [] : [
-          { icon: Sparkles, label: t("sidebar.aiDesignStudio"), href: "/ai-design-studio" },
-          { icon: Library, label: t("sidebar.designLibrary"), href: "/design-library" },
-          { icon: Camera, label: t("sidebar.mockupStudio"), href: "/mockup-studio" },
-          { icon: Layers, label: t("sidebar.mockupPublish"), href: "/mockup-publish" },
-        ])
+        { icon: LayoutDashboard, label: t("sidebar.sellerDashboard"), href: "/dashboard", isLocked: false },
+        { icon: LayoutDashboard, label: t("sidebar.producerDashboard"), href: "/producer-dashboard", isLocked: false },
+        { icon: ShoppingBag, label: t("sidebar.orders"), href: "/orders", isLocked: false },
+        { icon: Package, label: t("sidebar.products"), href: "/products", isLocked: false },
+        { icon: Search, label: t("sidebar.productResearch"), href: "/product-research", isLocked: false },
+        { icon: Sparkles, label: t("sidebar.aiDesignStudio"), href: "/ai-design-studio", isLocked: !isAdmin },
+        { icon: Library, label: t("sidebar.designLibrary"), href: "/design-library", isLocked: !isAdmin },
+        { icon: Camera, label: t("sidebar.mockupStudio"), href: "/mockup-studio", isLocked: !isAdmin },
+        { icon: Layers, label: t("sidebar.mockupPublish"), href: "/mockup-publish", isLocked: !isAdmin },
       ],
     },
     {
       label: "Hesap",
       items: [
-        { icon: Coins, label: "Token Yönetimi", href: "/token-management" },
+        { icon: Coins, label: "Token Yönetimi", href: "/token-management", isLocked: false },
       ],
     },
   ];
@@ -109,44 +110,59 @@ export default function Sidebar() {
               {group.label}
             </p>
             <ul className="space-y-0.5">
-              {group.items.map(({ icon: Icon, label, href }) => {
+              {group.items.map(({ icon: Icon, label, href, isLocked }) => {
                 const active = pathname === href;
                 return (
                   <li key={href}>
-                    <Link
-                      href={href}
-                      className="group flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm font-medium transition-all duration-150"
-                      style={{
-                        color: active ? "var(--text-primary)" : "var(--text-secondary)",
-                        background: active ? "var(--bg-elevated)" : "transparent",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!active) {
-                          (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
-                          (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!active) {
-                          (e.currentTarget as HTMLElement).style.background = "transparent";
-                          (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
-                        }
-                      }}
-                    >
-                      <Icon
-                        size={16}
-                        strokeWidth={active ? 2.2 : 1.8}
-                        style={{ color: active ? "var(--accent)" : "inherit" }}
-                      />
-                      {label}
-                      {active && (
-                        <ChevronRight
-                          size={12}
-                          className="ml-auto opacity-50"
-                          style={{ color: "var(--accent)" }}
+                    {isLocked ? (
+                      <div
+                        className="group flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm font-medium cursor-not-allowed opacity-50 select-none"
+                        style={{
+                          color: "var(--text-secondary)",
+                          background: "transparent",
+                        }}
+                        title="Bu özellik şu an demo sürümünde kapalıdır."
+                      >
+                        <Icon size={16} strokeWidth={1.8} style={{ color: "inherit" }} />
+                        {label}
+                        <Lock size={12} className="ml-auto opacity-70" style={{ color: "inherit" }} />
+                      </div>
+                    ) : (
+                      <Link
+                        href={href}
+                        className="group flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm font-medium transition-all duration-150"
+                        style={{
+                          color: active ? "var(--text-primary)" : "var(--text-secondary)",
+                          background: active ? "var(--bg-elevated)" : "transparent",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!active) {
+                            (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+                            (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!active) {
+                            (e.currentTarget as HTMLElement).style.background = "transparent";
+                            (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                          }
+                        }}
+                      >
+                        <Icon
+                          size={16}
+                          strokeWidth={active ? 2.2 : 1.8}
+                          style={{ color: active ? "var(--accent)" : "inherit" }}
                         />
-                      )}
-                    </Link>
+                        {label}
+                        {active && (
+                          <ChevronRight
+                            size={12}
+                            className="ml-auto opacity-50"
+                            style={{ color: "var(--accent)" }}
+                          />
+                        )}
+                      </Link>
+                    )}
                   </li>
                 );
               })}
