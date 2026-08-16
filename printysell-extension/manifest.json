@@ -1,11 +1,23 @@
 {
   "manifest_version": 3,
-  "name": "PrintySell - Etsy Analyzer",
+  "name": "PrintySell - Etsy SEO Analyzer",
   "version": "1.0.0",
-  "description": "Analyze Etsy listings and extract SEO tags using PrintySell AI.",
+  "description": "Analyze Etsy listings instantly. See SEO tags, stats, and generate similar designs with AI — powered by PrintySell.",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "PrintySell"
+    "default_title": "PrintySell Etsy Analyzer",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "permissions": [
     "activeTab",
@@ -14,8 +26,7 @@
     "cookies"
   ],
   "host_permissions": [
-    "*://*.etsy.com/listing/*",
-    "*://localhost:*/*",
+    "*://*.etsy.com/*",
     "*://*.printysell.com/*"
   ],
   "background": {
