@@ -9,6 +9,8 @@ export default function PlansPage() {
   const router = useRouter();
   const { user } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  
+  const hasActivePlan = user?.plan && user.plan.toLowerCase() !== "none" && user.plan.toLowerCase() !== "free";
 
   const plans = [
     {
@@ -141,13 +143,13 @@ export default function PlansPage() {
                   <Loader2 size={18} className="animate-spin" />
                 ) : (
                   <>
-                    <span>3 Gün Ücretsiz Dene</span>
+                    <span>{hasActivePlan ? 'Planı Seç' : '3 Gün Ücretsiz Dene'}</span>
                     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
               </button>
               <p className="text-center text-xs text-emerald-400/80 mt-4 font-medium tracking-wide">
-                ✨ 3 gün ücretsiz dene, istediğin an iptal et
+                {hasActivePlan ? '✨ Mevcut planınız anında güncellenir' : '✨ 3 gün ücretsiz dene, istediğin an iptal et'}
               </p>
             </div>
           );

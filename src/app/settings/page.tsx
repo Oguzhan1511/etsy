@@ -823,7 +823,7 @@ function SettingsContent() {
                         href={`/checkout?plan=${plan.id}${appliedDiscount ? `&discountCode=${(appliedDiscount as any).code}` : ""}`}
                         className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-[10px] font-bold text-white shadow-md transition-all cursor-pointer"
                       >
-                        <span>3 Gün Ücretsiz Dene</span>
+                        <span>{hasActiveSubscription ? "Geçiş Yap" : "3 Gün Ücretsiz Dene"}</span>
                         <ChevronRight size={10} />
                       </Link>
                     ) : (

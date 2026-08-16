@@ -15,6 +15,8 @@ function CheckoutContent() {
   const [discountLoading, setDiscountLoading] = useState(false);
   const { user } = useAuth();
   
+  const hasActivePlan = user?.plan && user.plan.toLowerCase() !== "none" && user.plan.toLowerCase() !== "free";
+  
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [discountPct, setDiscountPct] = useState(0);
@@ -65,6 +67,7 @@ function CheckoutContent() {
           cardNumber,
           cardHolder,
           discountCode: activeDiscountCode,
+          skipTrial: !!hasActivePlan,
         }),
       });
       const data = await res.json();
@@ -131,10 +134,10 @@ function CheckoutContent() {
   useEffect(() => {
     if (!user) {
       router.replace("/login");
-    } else if (user.paymentStatus) {
+    } else if (user.paymentStatus && !planId && user.plan.toLowerCase() !== "none") {
       router.replace("/dashboard");
     }
-  }, [user, router]);
+  }, [user, router, planId]);
 
   if (!user) return null;
 
@@ -144,7 +147,9 @@ function CheckoutContent() {
         <div className="w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center mb-6 animate-pulse">
           <CheckCircle2 size={48} className="text-green-500" />
         </div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">3 Günlük Ücretsiz Denemeniz Başladı!</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          {hasActivePlan ? 'Ödemeniz Başarılı! Planınız Güncellendi.' : '3 Günlük Ücretsiz Denemeniz Başladı!'}
+        </h1>
         <p className="text-foreground/60">Panele yönlendiriliyorsunuz, dilediğiniz an Ayarlar sayfasından iptal edebilirsiniz...</p>
       </div>
     );
@@ -167,17 +172,21 @@ function CheckoutContent() {
         <div className="space-y-6">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              3 Gün Ücretsiz Deneme Fırsatı
+              {!hasActivePlan && <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />}
+              {hasActivePlan ? 'Plan Değişikliği' : '3 Gün Ücretsiz Deneme Fırsatı'}
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Abonelik & Deneme</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              {hasActivePlan ? 'Sipariş Özeti' : 'Abonelik & Deneme'}
+            </h1>
             <p className="text-foreground/60 text-sm">
-              İlk 3 gün tamamen ücretsiz kullanın. Deneme süresi boyunca istediğiniz an iptal edebilirsiniz.
+              {hasActivePlan ? 'Plan değişikliğiniz anında onaylanacaktır.' : 'İlk 3 gün tamamen ücretsiz kullanın. Deneme süresi boyunca istediğiniz an iptal edebilirsiniz.'}
             </p>
           </div>
 
           <div className="bg-white/[0.02] border border-border rounded-2xl p-6 backdrop-blur-xl space-y-4">
-            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-3">Sipariş & Deneme Özeti</h2>
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-3">
+              {hasActivePlan ? 'Sipariş Özeti' : 'Sipariş & Deneme Özeti'}
+            </h2>
             
             <div className="flex justify-between items-center text-sm">
               <span className="text-foreground/80">{selectedPlan.name}</span>
@@ -189,42 +198,52 @@ function CheckoutContent() {
               <span className="text-violet-400 font-bold">{selectedPlan.tokens} Token / ay</span>
             </div>
 
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-foreground/60">Deneme Bitiş Tarihi</span>
-              <span className="text-foreground font-medium">{trialEndDate}</span>
-            </div>
+            {!hasActivePlan && (
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-foreground/60">Deneme Bitiş Tarihi</span>
+                <span className="text-foreground font-medium">{trialEndDate}</span>
+              </div>
+            )}
 
             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex justify-between items-center">
               <div>
                 <p className="text-xs font-bold text-emerald-400">Bugün Çekilecek Tutar</p>
-                <p className="text-[11px] text-emerald-400/80">3 gün boyunca sıfır risk</p>
+                <p className="text-[11px] text-emerald-400/80">{hasActivePlan ? "Plan değişimi hemen yansır" : "3 gün boyunca sıfır risk"}</p>
               </div>
-              <span className="text-2xl font-black text-emerald-400">0.00 ₺</span>
+              <span className="text-2xl font-black text-emerald-400">
+                {hasActivePlan ? (
+                  discountPct > 0 
+                    ? `${Math.floor(selectedPlan.priceNumber * (1 - discountPct / 100))}.00 ₺` 
+                    : `${selectedPlan.price}`
+                ) : "0.00 ₺"}
+              </span>
             </div>
 
-            <div className="border-t border-border pt-3 space-y-2">
-              <div className="flex justify-between items-center text-xs text-foreground/60">
-                <span>3 gün sonra (İptal edilmezse):</span>
-                <span className="font-semibold text-foreground">
-                  {discountPct > 0 ? (
-                    <>
-                      <span className="line-through mr-2 opacity-50">{selectedPlan.priceNumber} TL</span>
-                      <span className="text-emerald-400 font-bold">{Math.floor(selectedPlan.priceNumber * (1 - discountPct / 100))} TL / ay</span>
-                    </>
-                  ) : (
-                    `${selectedPlan.price} / ay`
-                  )}
-                </span>
+            {!hasActivePlan && (
+              <div className="border-t border-border pt-3 space-y-2">
+                <div className="flex justify-between items-center text-xs text-foreground/60">
+                  <span>3 gün sonra (İptal edilmezse):</span>
+                  <span className="font-semibold text-foreground">
+                    {discountPct > 0 ? (
+                      <>
+                        <span className="line-through mr-2 opacity-50">{selectedPlan.priceNumber} TL</span>
+                        <span className="text-emerald-400 font-bold">{Math.floor(selectedPlan.priceNumber * (1 - discountPct / 100))} TL / ay</span>
+                      </>
+                    ) : (
+                      `${selectedPlan.price} / ay`
+                    )}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-xs text-foreground/60">
+                  <span>İptal Koşulu:</span>
+                  <span className="text-emerald-400 font-semibold">İstediğiniz an 1 tıkla iptal</span>
+                </div>
               </div>
-              <div className="flex justify-between items-center text-xs text-foreground/60">
-                <span>İptal Koşulu:</span>
-                <span className="text-emerald-400 font-semibold">İstediğiniz an 1 tıkla iptal</span>
-              </div>
-            </div>
+            )}
 
             <p className="text-xs text-foreground/40 mt-4 flex items-start gap-2 pt-2 border-t border-border/50">
               <Lock size={14} className="shrink-0 text-violet-400 mt-0.5" />
-              <span>Kartınız güvenle doğrulanır ancak deneme süresi bitene kadar hiçbir ücret tahsil edilmez.</span>
+              <span>{hasActivePlan ? "Ödemeniz güvenle alınır ve aboneliğiniz anında başlatılır." : "Kartınız güvenle doğrulanır ancak deneme süresi bitene kadar hiçbir ücret tahsil edilmez."}</span>
             </p>
           </div>
 
@@ -349,10 +368,14 @@ function CheckoutContent() {
                   {loading ? (
                     <>
                       <Loader2 size={18} className="animate-spin" />
-                      <span>Doğrulanıyor...</span>
+                      <span>İşleniyor...</span>
                     </>
                   ) : (
-                    <span>3 Gün Ücretsiz Denemeyi Başlat (0.00 ₺)</span>
+                    <span>
+                      {hasActivePlan 
+                        ? `Ödemeyi Tamamla (${discountPct > 0 ? Math.floor(selectedPlan.priceNumber * (1 - discountPct / 100)) : selectedPlan.priceNumber} ₺)` 
+                        : "3 Gün Ücretsiz Denemeyi Başlat (0.00 ₺)"}
+                    </span>
                   )}
                 </button>
               </div>
