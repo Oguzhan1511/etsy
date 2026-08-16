@@ -21,6 +21,7 @@ interface EtsyListing {
   taxonomy_id?: number;
   price?: { amount: number; divisor: number };
   url: string;
+  tags?: string[];
 }
 
 interface EtsyImage {
@@ -192,6 +193,7 @@ async function fetchRealEtsyProducts(keyword: string, accessToken: string) {
         shopName,
         imageUrl,
         url: item.url,
+        tags: item.tags || [],
         isReal: true,
       };
     } catch {

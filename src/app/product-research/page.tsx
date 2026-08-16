@@ -12,6 +12,8 @@ import {
   ArrowRight,
   HelpCircle,
   ExternalLink,
+  Copy,
+  Tags,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -30,6 +32,7 @@ interface Product {
   shopName: string;
   imageUrl: string;
   url?: string;
+  tags?: string[];
 }
 
 export default function ProductResearchPage() {
@@ -489,6 +492,37 @@ export default function ProductResearchPage() {
                           {t("Score:") || "Skor:"} <span className="font-semibold text-purple-400">{product.opportunityScore}</span>
                         </span>
                       </div>
+                    </div>
+
+                    {/* Copy Buttons */}
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(product.title);
+                        }}
+                        className="py-1.5 px-2 rounded-lg text-[10px] font-semibold text-blue-300 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                        title="Başlığı Kopyala"
+                      >
+                        <Copy className="w-3 h-3" />
+                        <span>Başlık Kopyala</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (product.tags && product.tags.length > 0) {
+                            navigator.clipboard.writeText(product.tags.join(', '));
+                          }
+                        }}
+                        disabled={!product.tags || product.tags.length === 0}
+                        className="py-1.5 px-2 rounded-lg text-[10px] font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors flex items-center justify-center gap-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Tagleri Kopyala"
+                      >
+                        <Tags className="w-3 h-3" />
+                        <span>Tag Kopyala</span>
+                      </button>
                     </div>
 
                     {/* AI Button */}
