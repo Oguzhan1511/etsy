@@ -524,9 +524,6 @@ export default function LoginPage() {
             </div>
             
             <div className="p-6 overflow-y-auto space-y-6 text-sm text-white/70 leading-relaxed font-sans custom-scrollbar">
-              <p className="text-xs text-white/40 italic">
-                Not: Köşeli parantezli alanlar şirketin gerçek bilgileriyle doldurulmalı; bu doküman ayrıca Ön Bilgilendirme Formu ve KVKK Aydınlatma Metni ile birlikte kullanılmalıdır. Yayına almadan önce bir hukuk danışmanına onaylatılması önerilir.
-              </p>
 
               <section>
                 <h3 className="text-base font-semibold text-white mb-2">1. Taraflar</h3>

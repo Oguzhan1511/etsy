@@ -17,10 +17,6 @@ export default function TermsPage() {
         <h1 className="text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400">
           Kullanıcı ve Abonelik Sözleşmesi
         </h1>
-        
-        <p className="text-xs text-foreground/50 mb-8 italic">
-          Not: Köşeli parantezli alanlar şirketin gerçek bilgileriyle doldurulmalı; bu doküman ayrıca Ön Bilgilendirme Formu ve KVKK Aydınlatma Metni ile birlikte kullanılmalıdır. Yayına almadan önce bir hukuk danışmanına onaylatılması önerilir.
-        </p>
 
         <div className="space-y-8 text-foreground/80 leading-relaxed text-sm">
           
