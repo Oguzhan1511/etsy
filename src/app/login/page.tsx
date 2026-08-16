@@ -4,9 +4,10 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, Globe, User, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, Globe, User, ArrowLeft, CheckCircle2, X } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import TermsContent from "@/components/TermsContent";
 
 type Mode = "login" | "register" | "forgot_password" | "reset_sent" | "verify_code";
 
@@ -24,6 +25,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
@@ -405,7 +407,7 @@ export default function LoginPage() {
                     <CheckCircle2 size={14} className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" />
                   </div>
                   <label htmlFor="terms" className="text-xs text-foreground/70 leading-relaxed cursor-pointer select-none">
-                    <Link href="/terms" target="_blank" className="text-violet-400 hover:text-violet-300 hover:underline inline-block">Kullanıcı ve Abonelik Sözleşmesi</Link>'ni okudum ve kabul ediyorum.
+                    <button type="button" onClick={() => setShowTermsModal(true)} className="text-violet-400 hover:text-violet-300 hover:underline inline-block">Kullanıcı ve Abonelik Sözleşmesi</button>'ni okudum ve kabul ediyorum.
                   </label>
                 </div>
               </div>
@@ -506,6 +508,35 @@ export default function LoginPage() {
           © {new Date().getFullYear()} PRINTYSELL — {t("login.rights")}
         </p>
       </div>
+
+      {/* Terms Modal */}
+      {showTermsModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowTermsModal(false)} />
+          <div className="relative bg-[#12121a] border border-border w-full max-w-3xl max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-5 border-b border-border bg-white/[0.02]">
+              <h2 className="text-lg font-bold text-foreground">Kullanıcı ve Abonelik Sözleşmesi</h2>
+              <button onClick={() => setShowTermsModal(false)} className="p-2 hover:bg-white/10 rounded-lg transition-colors cursor-pointer">
+                <X size={20} className="text-foreground/70 hover:text-foreground" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
+              <TermsContent />
+            </div>
+            <div className="p-5 border-t border-border bg-white/[0.02] flex justify-end">
+              <button
+                onClick={() => {
+                  setTermsAccepted(true);
+                  setShowTermsModal(false);
+                }}
+                className="px-6 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-sm font-bold rounded-xl transition-colors cursor-pointer"
+              >
+                Okudum, Kabul Ediyorum
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
 
