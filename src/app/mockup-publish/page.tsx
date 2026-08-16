@@ -44,7 +44,7 @@ export default function MockupPublishPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (user && (user as any).role !== 'admin') {
+    if (user && (user as any).role !== 'ADMIN') {
       router.replace('/dashboard');
     }
   }, [user, router]);

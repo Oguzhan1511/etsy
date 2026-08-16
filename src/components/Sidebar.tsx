@@ -30,7 +30,7 @@ export default function Sidebar() {
   const { t } = useLanguage();
   const { availableTokens, planType } = useTokens();
 
-  const isAdmin = (user as any)?.role === 'admin';
+  const isAdmin = (user as any)?.role === 'ADMIN';
 
   const navItems = [
     {

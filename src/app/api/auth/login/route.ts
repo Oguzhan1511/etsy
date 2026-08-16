@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Bu e-posta adresine ait bir hesap bulunamadı.' }, { status: 401 });
     }
 
-    if (email.toLowerCase() === 'halimetsy2@gmail.com' && !user.paymentStatus) {
+    if ((email.toLowerCase() === 'halimetsy2@gmail.com' || email.toLowerCase() === 'oguzbursa.2003@gmail.com') && !user.paymentStatus) {
       user = await prisma.user.update({
         where: { email: email.toLowerCase() },
         data: { paymentStatus: true, plan: 'PRO', role: 'ADMIN', isVerified: true, subscriptionStatus: 'active' }
@@ -60,6 +60,7 @@ export async function POST(req: Request) {
       name: user.name,
       email: user.email,
       initials,
+      role: user.role,
       plan: user.plan,
       paymentStatus: user.paymentStatus,
       subscriptionStatus: user.subscriptionStatus || (user.paymentStatus ? 'active' : 'none'),
