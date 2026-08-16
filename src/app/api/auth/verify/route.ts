@@ -3,15 +3,18 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
-    const { token } = await req.json();
+    const { email, token } = await req.json();
 
-    if (!token) {
-      return NextResponse.json({ error: 'Doğrulama kodu (token) eksik.' }, { status: 400 });
+    if (!token || !email) {
+      return NextResponse.json({ error: 'E-posta veya doğrulama kodu eksik.' }, { status: 400 });
     }
 
     // Find the user with this token
     const user = await prisma.user.findFirst({
-      where: { verificationToken: token },
+      where: { 
+        email: email.toLowerCase(),
+        verificationToken: token 
+      },
     });
 
     if (!user) {

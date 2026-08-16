@@ -27,8 +27,8 @@ export async function POST(req: Request) {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Generate a secure random verification token
-    const verificationToken = crypto.randomBytes(32).toString('hex');
+    // Generate a secure 4-digit random verification token
+    const verificationToken = Math.floor(1000 + Math.random() * 9000).toString();
 
     // Save the user to the database
     const user = await prisma.user.create({
@@ -47,11 +47,6 @@ export async function POST(req: Request) {
     );
 
     // Send the verification email using Resend
-    // We construct the verification link based on the request origin (works for both local and prod)
-    const url = new URL(req.url);
-    const origin = `${url.protocol}//${url.host}`;
-    const verifyLink = `${origin}/verify?token=${verificationToken}`;
-
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { error: emailError } = await resend.emails.send({
       from: 'PrintySell <destek@printysell.com>',
@@ -70,13 +65,13 @@ export async function POST(req: Request) {
               PrintySell erken erişim bekleme listesine hoş geldiniz! Ön kaydınız başarıyla alındı.
             </p>
             <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-              Hesabınızı aktifleştirmek ve sisteme giriş yapabilmek için lütfen aşağıdaki butona tıklayarak e-posta adresinizi onaylayın.
+              Hesabınızı aktifleştirmek ve sisteme giriş yapabilmek için lütfen ekrandaki alana aşağıdaki 4 haneli onay kodunu girin.
             </p>
             
             <div style="text-align: center; margin: 40px 0;">
-              <a href="${verifyLink}" style="display: inline-block; background: linear-gradient(135deg, #7c6af7 0%, #a855f7 100%); color: #ffffff; padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 50px; text-decoration: none; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);">
-                Hesabımı Onayla
-              </a>
+              <div style="display: inline-block; background: linear-gradient(135deg, #7c6af7 0%, #a855f7 100%); color: #ffffff; padding: 16px 40px; font-size: 32px; font-weight: bold; letter-spacing: 8px; border-radius: 12px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);">
+                ${verificationToken}
+              </div>
             </div>
             
             <p style="color: #ccc; font-size: 16px; line-height: 1.6;">

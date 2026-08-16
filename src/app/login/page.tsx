@@ -7,7 +7,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, Globe, User, ArrowLeft, C
 import { useLanguage } from "@/context/LanguageContext";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
-type Mode = "login" | "register" | "forgot_password" | "reset_sent" | "register_success";
+type Mode = "login" | "register" | "forgot_password" | "reset_sent" | "verify_code";
 
 export default function LoginPage() {
   const { login, googleLogin, registerUser, user, isLoading } = useAuth();
@@ -19,6 +19,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
@@ -79,9 +80,39 @@ export default function LoginPage() {
       const res = await registerUser(name, email, password);
       setSubmitting(false);
       if (res.success) {
-        setMode("register_success");
+        setMode("verify_code");
       } else {
         setError(res.error || "Kayıt başarısız.");
+      }
+      return;
+    }
+
+    if (mode === "verify_code") {
+      try {
+        const verifyRes = await fetch("/api/auth/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, token: verificationCode }),
+        });
+        const verifyData = await verifyRes.json();
+        
+        if (verifyRes.ok && verifyData.success) {
+          // If verified successfully, log them in!
+          const loginRes = await login(email, password);
+          setSubmitting(false);
+          if (loginRes.success) {
+             router.replace("/dashboard");
+          } else {
+             setError("Onaylandı ancak otomatik giriş yapılamadı. Lütfen giriş yapın.");
+             setMode("login");
+          }
+        } else {
+          setSubmitting(false);
+          setError(verifyData.error || "Geçersiz veya hatalı kod.");
+        }
+      } catch {
+        setSubmitting(false);
+        setError("Sunucu hatası, lütfen tekrar deneyin.");
       }
       return;
     }
@@ -152,7 +183,7 @@ export default function LoginPage() {
               {mode === "login" && (t("login.welcome") || "Hoş Geldiniz")}
               {mode === "register" && (t("login.createAccount") || "Yeni Hesap Oluşturun")}
               {(mode === "forgot_password" || mode === "reset_sent") && (t("login.forgotPassword") || "Şifremi Unuttum")}
-              {mode === "register_success" && "Kayıt Başarılı"}
+              {mode === "verify_code" && "Hesabınızı Onaylayın"}
             </p>
           </div>
         </div>
@@ -193,16 +224,14 @@ export default function LoginPage() {
             </p>
           )}
 
-          {/* Reset Sent / Register Success Message */}
-          {(mode === "reset_sent" || mode === "register_success") ? (
+          {/* Reset Sent Message */}
+          {(mode === "reset_sent") ? (
             <div className="flex flex-col items-center justify-center space-y-6 py-4 animate-in fade-in zoom-in duration-500">
               <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
                 <CheckCircle2 size={32} className="text-green-400" />
               </div>
               <p className="text-sm text-center text-foreground/80 leading-relaxed px-4">
-                {mode === "reset_sent" 
-                  ? (t("login.resetSent") || "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.")
-                  : "Kayıt başarılı! Lütfen giriş yapmadan önce e-posta adresinize gelen bağlantıya tıklayarak hesabınızı onaylayın."}
+                {t("login.resetSent") || "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi."}
               </p>
               <button
                 type="button"
@@ -213,6 +242,67 @@ export default function LoginPage() {
                 {t("login.backToLogin") || "Giriş Ekranına Dön"}
               </button>
             </div>
+          ) : mode === "verify_code" ? (
+            <form onSubmit={handleSubmit} className="space-y-5 animate-in fade-in zoom-in duration-500">
+              <div className="flex flex-col items-center justify-center space-y-4 mb-4">
+                <div className="w-16 h-16 rounded-full bg-violet-500/10 flex items-center justify-center border border-violet-500/20 shadow-[0_0_30px_rgba(139,92,246,0.2)]">
+                  <Mail size={32} className="text-violet-400" />
+                </div>
+                <h2 className="text-xl font-bold text-foreground">E-posta Doğrulama</h2>
+                <p className="text-sm text-center text-foreground/70 px-2">
+                  Lütfen <b>{email}</b> adresine gönderilen 4 haneli onay kodunu girin.
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-xl blur opacity-0 group-focus-within:opacity-30 transition-opacity duration-300 -z-10" />
+                  <input
+                    type="text"
+                    required
+                    maxLength={4}
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value.replace(/[^0-9]/g, ''))}
+                    placeholder="••••"
+                    className="w-full text-center tracking-[1em] py-4 rounded-xl text-2xl font-bold text-foreground placeholder-white/20 outline-none transition-all duration-300 bg-black/40 border border-border focus:border-violet-500/50 focus:bg-black/60"
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <div className="text-xs text-red-300 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-300">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting || verificationCode.length !== 4}
+                className="w-full group relative flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-foreground transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-4 overflow-hidden bg-white/5 border border-border hover:border-violet-500/50"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600 opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative flex items-center gap-2">
+                  {submitting ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <>
+                      <span>Doğrula ve Giriş Yap</span>
+                      <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
+                    </>
+                  )}
+                </div>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => { setMode("login"); setError(""); setVerificationCode(""); }}
+                className="w-full flex items-center justify-center gap-2 py-2 text-sm text-foreground/50 hover:text-foreground transition-colors mt-2"
+              >
+                <ArrowLeft size={14} />
+                Giriş Ekranına Dön
+              </button>
+            </form>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               
