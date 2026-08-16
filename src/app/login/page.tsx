@@ -29,11 +29,7 @@ export default function LoginPage() {
       setError("");
       const res = await googleLogin(credentialResponse.credential);
       if (res.success && res.user) {
-        if (res.user.paymentStatus) {
-          router.replace("/dashboard");
-        } else {
-          router.replace("/plans");
-        }
+        router.replace("/dashboard");
       } else {
         setError(res.error || "Google girişi başarısız.");
         setSubmitting(false);
@@ -86,7 +82,7 @@ export default function LoginPage() {
         // Automatically log them in after registration to smooth the onboarding
         const loginRes = await login(email, password);
         if (loginRes.success) {
-           router.replace("/plans");
+           router.replace("/dashboard");
         } else {
            setError("Kayıt başarılı ancak giriş yapılamadı.");
         }
@@ -100,11 +96,7 @@ export default function LoginPage() {
     setSubmitting(false);
 
     if (res.success && res.user) {
-      if (res.user.paymentStatus) {
-        router.replace("/dashboard");
-      } else {
-        router.replace("/plans");
-      }
+      router.replace("/dashboard");
     } else {
       setError(res.error || t("login.errorEmpty") || "E-posta ve şifre boş bırakılamaz.");
     }

@@ -52,13 +52,11 @@ export default function Sidebar() {
     },
   ];
 
-  // Redirect to login if not authenticated, or to plans if not paid
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isLoading) {
       if (!user) {
         router.replace("/login");
-      } else if (user.plan === "none" || !user.paymentStatus) {
-        router.replace("/plans");
       }
     }
   }, [user, isLoading, router]);
