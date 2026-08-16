@@ -217,16 +217,6 @@ export default function Sidebar() {
         <div className="flex items-center justify-between px-2 gap-1 flex-wrap">
           <div className="flex items-center gap-1.5">
             <span
-              className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-              style={{
-                background: "rgba(124,106,247,0.12)",
-                color: "#9d8df5",
-                border: "1px solid rgba(124,106,247,0.2)",
-              }}
-            >
-              {planType}
-            </span>
-            <span
               className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1"
               style={{
                 background: "rgba(250,204,21,0.08)",

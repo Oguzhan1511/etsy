@@ -198,7 +198,6 @@ function SettingsContent() {
   const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: "profile", label: t("settings.tabProfile"), icon: User },
     { id: "settings", label: t("settings.tabSettings"), icon: Settings },
-    { id: "plan", label: t("settings.tabPlan"), icon: CreditCard },
   ];
 
   return (
@@ -251,16 +250,6 @@ function SettingsContent() {
             <div>
               <p className="text-sm font-bold text-foreground">{user?.name}</p>
               <p className="text-xs text-muted mt-0.5">{user?.email}</p>
-              <span
-                className="inline-block mt-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                style={{
-                  background: "rgba(124,106,247,0.12)",
-                  color: "#9d8df5",
-                  border: "1px solid rgba(124,106,247,0.2)",
-                }}
-              >
-                {user?.plan}
-              </span>
             </div>
           </div>
 
