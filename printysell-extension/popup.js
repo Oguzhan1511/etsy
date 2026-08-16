@@ -16,24 +16,19 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentTags = [];
   let authToken = null;
 
+  // Canlıya alırken IS_DEV = false yapın.
+  const IS_DEV = true;
+  const API_BASE = IS_DEV ? 'http://localhost:3005' : 'https://www.printysell.com';
+
   // Çerezleri (Cookies) kontrol ederek oturum durumunu anlama
-  // Not: Geliştirme aşamasında localhost, canlıda printysell.com domaini aranır.
   function checkAuthStatus() {
-    chrome.cookies.get({ url: 'https://www.printysell.com', name: 'auth_token' }, (cookie) => {
+    chrome.cookies.get({ url: API_BASE, name: 'auth_token' }, (cookie) => {
       if (cookie && cookie.value) {
         authToken = cookie.value;
         showMainView();
       } else {
-        // Eğer printysell.com'da yoksa localhost'a bakalım (Dev ortamı)
-        chrome.cookies.get({ url: 'http://localhost:3005', name: 'auth_token' }, (devCookie) => {
-          if (devCookie && devCookie.value) {
-            authToken = devCookie.value;
-            showMainView();
-          } else {
-            authToken = null;
-            showLoginView();
-          }
-        });
+        authToken = null;
+        showLoginView();
       }
     });
   }
@@ -43,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Siteye Yönlendir (Kayıt / Giriş İçin)
   loginBtn.addEventListener('click', () => {
-    chrome.tabs.create({ url: 'https://www.printysell.com/login' });
+    chrome.tabs.create({ url: `${API_BASE}/login` });
   });
 
   // Çıkış Yap (Sadece eklentiden log out olur, isterseniz siteye de yönlendirebilirsiniz)
@@ -65,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       resultsBox.classList.add('hidden');
 
       try {
-        const apiUrl = 'http://localhost:3005/api/extension/analyze';
+        const apiUrl = `${API_BASE}/api/extension/analyze`;
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
