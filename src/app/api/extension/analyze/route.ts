@@ -41,7 +41,8 @@ export async function POST(req: Request) {
     }
 
     try {
-      const { payload } = await jwtVerify(tokenFromHeader, JWT_SECRET);
+      const decodedToken = decodeURIComponent(tokenFromHeader);
+      const { payload } = await jwtVerify(decodedToken, JWT_SECRET);
       const userId = payload.id as string;
       const tokenRecord = await prisma.etsyToken.findUnique({ where: { userId } });
       
@@ -50,7 +51,8 @@ export async function POST(req: Request) {
       }
       
       accessToken = await getValidEtsyToken(userId);
-    } catch {
+    } catch (authErr) {
+      console.error('JWT/Auth error:', authErr);
       return NextResponse.json({ error: 'Kimlik doğrulama hatası. Lütfen tekrar giriş yapın.' }, { status: 401, headers: corsHeaders });
     }
 

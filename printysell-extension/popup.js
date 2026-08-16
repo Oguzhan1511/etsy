@@ -92,6 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (err) {
         showError(err.message);
+        if (err.message.includes('Kimlik doğrulama') || err.message.includes('Oturum')) {
+          authToken = null;
+          showLoginView();
+        }
       } finally {
         showLoading(false);
       }
