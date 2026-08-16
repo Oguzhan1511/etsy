@@ -81,9 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // İstatistikleri ekrana bas
         if (data.stats) {
-          document.getElementById('statViews').innerText = data.stats.views7d || 0;
-          document.getElementById('statSales').innerText = data.stats.sales7d || 0;
-          document.getElementById('statFavs').innerText = data.stats.favorites7d || 0;
+          document.getElementById('statViews').innerText = data.stats.views || 0;
+          document.getElementById('statSales').innerText = data.stats.sales || 0;
+          document.getElementById('statFavs').innerText = data.stats.favorites || 0;
         }
       } catch (err) {
         showError(err.message);

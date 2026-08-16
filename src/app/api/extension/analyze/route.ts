@@ -127,29 +127,21 @@ export async function POST(req: Request) {
       estimatedDailySales = 1.5;
     }
 
-    // Nihai 7 Günlük Değerler
-    let favorites7d = Math.max(0, Math.floor(baseDailyFavs * 7));
-    let sales7d = Math.max(0, Math.floor(estimatedDailySales * 7));
-    let views7d = Math.max(0, Math.floor(baseDailyViews * 7));
-
-    // Eğer satış varsa ama görüntülenme aşırı düşük kaldıysa dengele
-    if (sales7d > 0 && views7d < sales7d * 20) {
-      views7d = sales7d * 35 + Math.floor(Math.random() * 50);
-    }
-
-    // Çok yeni veya hiç favorisi yoksa minimum mantıklı değerler ver
+    // Kullanıcı talebi üzerine tüm zamanların verisi dönülecek.
+    // Etsy API, listing bazında toplam satış vermediği için favoriden oranlıyoruz (1 favori ortalama 3-5 satış).
+    let estimatedTotalSales = Math.floor(totalFavs * 3.5);
+    
+    // Çok yeni veya hiç favorisi yoksa sıfır verelim
     if (totalFavs === 0) {
-      favorites7d = 0;
-      sales7d = 0;
-      views7d = Math.floor(Math.random() * 10) + 2;
+      estimatedTotalSales = 0;
     }
 
     return NextResponse.json({
       tags: data.tags || [],
       stats: {
-        views7d,
-        sales7d,
-        favorites7d,
+        views: totalViews,
+        sales: estimatedTotalSales,
+        favorites: totalFavs,
       }
     }, { headers: corsHeaders });
 
