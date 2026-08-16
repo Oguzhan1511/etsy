@@ -60,13 +60,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Etsy erişim izni alınamadı.' }, { status: 403, headers: corsHeaders });
     }
 
+    const apiKeyWithSecret = `${ETSY_API_KEY}:${ETSY_API_SECRET}`;
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
-      'x-api-key': ETSY_API_KEY,
+      'x-api-key': apiKeyWithSecret,
       'Content-Type': 'application/json',
     };
 
-    // Ürün verilerini çek - views ve num_favorers burada gerçek olarak geliyor
+    // Ürün verilerini çek
     const listingResponse = await fetch(
       `https://api.etsy.com/v3/application/listings/${listing_id}`,
       { headers }
