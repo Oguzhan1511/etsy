@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, Globe, User, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -22,10 +23,15 @@ export default function LoginPage() {
   const [verificationCode, setVerificationCode] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     if (credentialResponse.credential) {
+      if (mode === "register" && !termsAccepted) {
+        setError("Devam etmek için Kullanıcı Sözleşmesini kabul etmelisiniz.");
+        return;
+      }
       setSubmitting(true);
       setError("");
       const res = await googleLogin(credentialResponse.credential);
@@ -77,6 +83,11 @@ export default function LoginPage() {
     }
 
     if (mode === "register") {
+      if (!termsAccepted) {
+        setError("Devam etmek için Kullanıcı Sözleşmesini kabul etmelisiniz.");
+        setSubmitting(false);
+        return;
+      }
       const res = await registerUser(name, email, password);
       setSubmitting(false);
       if (res.success) {
@@ -380,6 +391,25 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {/* Terms Checkbox (Only for Register) */}
+              <div className={`transition-all duration-500 ease-in-out overflow-hidden ${mode === "register" ? "max-h-24 opacity-100" : "max-h-0 opacity-0"}`}>
+                <div className="flex items-start gap-3 px-1 mt-2">
+                  <div className="relative flex items-center justify-center mt-1">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      checked={termsAccepted}
+                      onChange={(e) => setTermsAccepted(e.target.checked)}
+                      className="peer appearance-none w-5 h-5 border border-border rounded-md bg-black/40 checked:bg-violet-500 checked:border-violet-500 transition-colors cursor-pointer"
+                    />
+                    <CheckCircle2 size={14} className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" />
+                  </div>
+                  <label htmlFor="terms" className="text-xs text-foreground/70 leading-relaxed cursor-pointer select-none">
+                    <Link href="/terms" target="_blank" className="text-violet-400 hover:text-violet-300 hover:underline">Kullanıcı ve Abonelik Sözleşmesi</Link>'ni okudum ve kabul ediyorum.
+                  </label>
+                </div>
+              </div>
+
               {/* Error */}
               {error && (
                 <div className="text-xs text-red-300 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-300">
@@ -391,7 +421,7 @@ export default function LoginPage() {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || (mode === "register" && !termsAccepted)}
                 className="w-full group relative flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-foreground transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-4 overflow-hidden bg-white/5 border border-border hover:border-violet-500/50"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600 opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
@@ -438,17 +468,25 @@ export default function LoginPage() {
                 <div className="h-[1px] flex-1 bg-border" />
               </div>
               
-              <div className="flex justify-center mb-4">
-                <GoogleLogin
-                  onSuccess={handleGoogleSuccess}
-                  onError={() => {
-                    setError("Google ile giriş yapılamadı.");
-                  }}
-                  theme="filled_black"
-                  shape="pill"
-                  size="large"
-                  text={mode === "register" ? "signup_with" : "signin_with"}
-                />
+              <div className="flex justify-center mb-4 relative">
+                {mode === "register" && !termsAccepted && (
+                  <div 
+                    className="absolute inset-0 z-20 cursor-not-allowed" 
+                    onClick={() => setError("Google ile kayıt olmadan önce Kullanıcı Sözleşmesini kabul etmelisiniz.")}
+                  />
+                )}
+                <div className={`transition-opacity ${mode === "register" && !termsAccepted ? "opacity-50" : "opacity-100"}`}>
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => {
+                      setError("Google ile giriş yapılamadı.");
+                    }}
+                    theme="filled_black"
+                    shape="pill"
+                    size="large"
+                    text={mode === "register" ? "signup_with" : "signin_with"}
+                  />
+                </div>
               </div>
             </>
           )}
