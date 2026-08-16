@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let authToken = null;
 
   // Canlıya alırken IS_DEV = false yapın.
-  const IS_DEV = true;
+  const IS_DEV = false;
   const API_BASE = IS_DEV ? 'http://localhost:3005' : 'https://www.printysell.com';
 
   // Çerezleri (Cookies) kontrol ederek oturum durumunu anlama
