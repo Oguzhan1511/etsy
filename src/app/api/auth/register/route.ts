@@ -56,13 +56,13 @@ export async function POST(req: Request) {
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #000000; color: #ffffff; padding: 40px 20px; border-radius: 16px; border: 1px solid #333;">
           <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: #a855f7; font-size: 28px; margin: 0;">PrintySell</h1>
-            <p style="color: #888; font-size: 14px; margin-top: 5px; letter-spacing: 2px; text-transform: uppercase;">Erken Erişim Bekleme Listesi</p>
+            <p style="color: #888; font-size: 14px; margin-top: 5px; letter-spacing: 2px; text-transform: uppercase;">Demo Sürümü</p>
           </div>
           
           <div style="background-color: #111; padding: 30px; border-radius: 12px; border: 1px solid #222;">
             <h2 style="color: #fff; font-size: 22px; margin-top: 0;">Merhaba ${user.name},</h2>
             <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-              PrintySell erken erişim bekleme listesine hoş geldiniz! Ön kaydınız başarıyla alındı.
+              PrintySell demo sürümüne hoş geldiniz! Hesabınız başarıyla oluşturuldu.
             </p>
             <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
               Hesabınızı aktifleştirmek ve sisteme giriş yapabilmek için lütfen ekrandaki alana aşağıdaki 4 haneli onay kodunu girin.
@@ -75,15 +75,15 @@ export async function POST(req: Request) {
             </div>
             
             <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-              Sistemimiz çok yakında tam sürüm olarak hizmete açılacaktır. Erken erişim fırsatından yararlandığınız için hesabınıza <strong>50 Token (50 Farklı Yapay Zeka Görseli)</strong> üretim hakkı tamamen ücretsiz olarak tanımlanmıştır!
+              PrintySell'in yeteneklerini hemen test etmeniz için hesabınıza <strong>50 Token (50 Farklı Yapay Zeka Görseli)</strong> üretim hakkı tamamen ücretsiz olarak tanımlanmıştır!
             </p>
             <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-              Platform kapılarını açtığında size tekrar e-posta ile haber vereceğiz ve hemen tasarımlarınızı üretip Etsy'de satmaya başlayabileceksiniz.
+              Hemen sisteme giriş yaparak tasarımlarınızı üretmeye ve Etsy'de satmaya başlayabilirsiniz.
             </p>
             
             <div style="text-align: center; margin: 40px 0;">
               <div style="display: inline-block; background: #222; color: #ffffff; padding: 12px 24px; font-size: 14px; border-radius: 50px; border: 1px solid #444;">
-                50 Token Hesabınıza Rezerve Edildi 🎁
+                50 Token Hesabınıza Tanımlandı 🎁
               </div>
             </div>
           </div>
