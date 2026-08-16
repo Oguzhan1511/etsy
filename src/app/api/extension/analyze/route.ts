@@ -62,85 +62,67 @@ export async function POST(req: Request) {
 
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
-      'x-api-key': `${ETSY_API_KEY}:${ETSY_API_SECRET}`,
+      'x-api-key': ETSY_API_KEY,
       'Content-Type': 'application/json',
     };
 
-    // Ürün detaylarını ve aynı anda Mağaza detaylarını (daha iyi tahmin için) çekiyoruz
-    const listingResponse = await fetch(`https://api.etsy.com/v3/application/listings/${listing_id}`, { headers });
+    // Önce kullanıcının kendi shop_id'sini alıyoruz
+    let shopId: string | null = null;
+    try {
+      const meResponse = await fetch('https://api.etsy.com/v3/application/users/me', { headers });
+      if (meResponse.ok) {
+        const meData = await meResponse.json();
+        const userId2 = meData.user_id;
+        // Shop'u bul
+        const shopResponse = await fetch(`https://api.etsy.com/v3/application/users/${userId2}/shops`, { headers });
+        if (shopResponse.ok) {
+          const shopData = await shopResponse.json();
+          shopId = shopData.shop_id?.toString() || shopData.results?.[0]?.shop_id?.toString() || null;
+        }
+      }
+    } catch (e) { console.error('Shop ID fetch error', e); }
 
+    // Ürün temel verilerini çek
+    const listingResponse = await fetch(`https://api.etsy.com/v3/application/listings/${listing_id}`, { headers });
     if (!listingResponse.ok) {
       throw new Error(`Etsy API Hatası: ${listingResponse.statusText}`);
     }
-
     const data = await listingResponse.json();
-    const shopId = data.shop_id;
-    
-    let shopTotalSales = 0;
-    let shopDaysAlive = 1;
-    
-    try {
-      const shopResponse = await fetch(`https://api.etsy.com/v3/application/shops/${shopId}`, { headers });
-      if (shopResponse.ok) {
-        const shopData = await shopResponse.json();
-        shopTotalSales = shopData.transaction_solds || 0;
-        const shopCreation = shopData.create_date || (Date.now() / 1000);
-        shopDaysAlive = Math.max(1, (Date.now() / 1000 - shopCreation) / (60 * 60 * 24));
-      }
-    } catch (e) { console.error('Shop fetch error', e); }
 
-    // Gelişmiş Tahmin Algoritması
-    const now = Date.now() / 1000;
-    const creation = data.original_creation_timestamp || data.creation_timestamp || now;
-    const daysAlive = Math.max(1, (now - creation) / (60 * 60 * 24));
-    
-    const totalFavs = data.num_favorers || 0;
-    const totalViews = data.views || (totalFavs * 35) + 50;
-    
-    // 1. Ürünün Kendi Hızı
-    let baseDailyFavs = totalFavs / daysAlive;
-    let baseDailyViews = totalViews / daysAlive;
-    
-    // 2. Mağaza Hızı Çarpanı (Mağaza çok satıyorsa, bu ürün de vitrindeyse fazla trafik alır)
-    let shopDailySales = shopTotalSales / shopDaysAlive;
-    
-    // 3. Yaş Çarpanı (Eski ürünler genellikle ömürleri boyunca çok satmış ama son zamanlarda düşmüş olabilir
-    // veya tam tersi yeni patlamış olabilir. Genelde 1 favori = 3-5 satış kuralını esnetiyoruz)
-    
-    // Son 7 gün istatistikleri için gerçeğe en yakın simüle edilmiş formül:
-    let salesMultiplier = 3.5; 
-    if (shopDailySales > 10) salesMultiplier = 5; // Çok satan mağazalarda favoriye dönüşmeden direkt satış oranı yüksektir
-    if (daysAlive > 365) {
-      // Ürün 1 yıldan eskiyse, muhtemelen son zamanlarda tüm zamanlar ortalamasından DÜŞÜK veya stabil satıyordur.
-      // Ancak "Bestseller" ise yüksek satıyordur.
-      baseDailyFavs = baseDailyFavs * 0.8;
-    }
-    if (daysAlive < 30) {
-      // Ürün çok yeniyse ve favori aldıysa trenddir, ivmesi yüksektir.
-      baseDailyFavs = baseDailyFavs * 2.5;
+    const totalFavs: number = data.num_favorers || 0;
+    const totalViews: number = data.views || 0;
+
+    // Gerçek satış sayısını çek (sadece kendi mağaza ürünlerinde mümkün)
+    let totalSales = 0;
+    if (shopId) {
+      try {
+        // Listing'in satış sayısını transaction_count üzerinden al
+        const receiptRes = await fetch(
+          `https://api.etsy.com/v3/application/shops/${shopId}/receipts?listing_id=${listing_id}&limit=100`,
+          { headers }
+        );
+        if (receiptRes.ok) {
+          const receiptData = await receiptRes.json();
+          // Her receipt birden fazla adet olabilir
+          const receipts = receiptData.results || [];
+          totalSales = receipts.reduce((acc: number, r: { quantity?: number }) => acc + (r.quantity || 1), 0);
+          if (totalSales === 0 && receiptData.count) {
+            totalSales = receiptData.count;
+          }
+        }
+      } catch (e) { console.error('Receipt fetch error', e); }
     }
 
-    let estimatedDailySales = baseDailyFavs * salesMultiplier;
-    
-    // Eğer ürün uzun zamandır var ama mağaza günlük çok iyi satıyorsa, bu ürün ortalama üstü olabilir
-    if (shopDailySales > 0 && estimatedDailySales < 0.5 && totalFavs > 50) {
-      estimatedDailySales = 1.5;
-    }
-
-    // Kullanıcı talebi üzerine tüm zamanların verisi dönülecek.
-    // Etsy API, listing bazında toplam satış vermediği için favoriden oranlıyoruz (1 favori ortalama 3-5 satış).
-    let estimatedTotalSales = Math.floor(totalFavs * 3.5);
-    
-    // Çok yeni veya hiç favorisi yoksa sıfır verelim
-    if (totalFavs === 0) {
-      estimatedTotalSales = 0;
+    // Eğer bu ürün başka birinin mağazasına aitse satışı tahmin et
+    if (totalSales === 0 && totalFavs > 0) {
+      totalSales = Math.floor(totalFavs * 3.5);
     }
 
     return NextResponse.json({
       tags: data.tags || [],
       stats: {
         views: totalViews,
-        sales: estimatedTotalSales,
+        sales: totalSales,
         favorites: totalFavs,
       }
     }, { headers: corsHeaders });
