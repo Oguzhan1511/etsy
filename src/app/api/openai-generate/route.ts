@@ -24,9 +24,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Oturum süresi doldu.' }, { status: 401 });
     }
 
-    // 2. Check token balance
+    // 2. Check token balance and role
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user || user.tokens <= 0) {
+    
+    if (!user || user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Güvenlik duvarı: Bu API sadece admin erişimine açıktır.' }, { status: 403 });
+    }
+    
+    if (user.tokens <= 0) {
       return NextResponse.json({ error: 'Yetersiz kredi.' }, { status: 403 });
     }
 

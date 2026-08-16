@@ -52,6 +52,10 @@ export async function POST(req: Request) {
       if (user) userId = user.id;
     }
 
+    if (user && user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Güvenlik duvarı: Bu API sadece admin erişimine açıktır.' }, { status: 403 });
+    }
+
     const requiredTokens = angleIndex !== undefined ? 1 : 3;
     if (!user || user.tokens < requiredTokens) {
       return NextResponse.json({ 
