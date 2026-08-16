@@ -114,6 +114,34 @@ export async function POST(req: NextRequest) {
         });
         break;
         
+      case 'DELETE_USER':
+        // Delete related records manually because onDelete: Cascade is not set
+        
+        // 1. Support Tickets & Messages
+        const userTickets = await prisma.supportTicket.findMany({ where: { userId } });
+        const ticketIds = userTickets.map(t => t.id);
+        
+        if (ticketIds.length > 0) {
+          await prisma.supportMessage.deleteMany({ where: { ticketId: { in: ticketIds } } });
+        }
+        await prisma.supportMessage.deleteMany({ where: { userId } });
+        await prisma.supportTicket.deleteMany({ where: { userId } });
+        
+        // 2. Transactions & Token Usages
+        await prisma.transaction.deleteMany({ where: { userId } });
+        await prisma.tokenUsage.deleteMany({ where: { userId } });
+        
+        // 3. Etsy Stats & Token
+        // @ts-ignore - EtsyDailyStat is in schema but Prisma Client might need regeneration, just in case
+        try { await prisma.etsyDailyStat.deleteMany({ where: { userId } }); } catch(e) {}
+        try { await prisma.etsyToken.delete({ where: { userId } }); } catch(e) {}
+        
+        // 4. Finally Delete User
+        updatedUser = await prisma.user.delete({
+          where: { id: userId }
+        });
+        break;
+        
       default:
         return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });
     }

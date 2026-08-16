@@ -139,6 +139,35 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    if (!window.confirm(`${selectedUser.name} adlı kullanıcıyı tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) return;
+    
+    setIsActionLoading(true);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "DELETE_USER", userId: selectedUser.id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUsers(users.filter(u => u.id !== selectedUser.id));
+        if (summary) {
+          setSummary({ ...summary, totalUsers: summary.totalUsers - 1 });
+        }
+        setSelectedUser(null);
+      } else {
+        alert("Silme işlemi başarısız: " + data.error);
+      }
+    } catch (err) {
+      console.error("Failed to delete user", err);
+      alert("Bir hata oluştu.");
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="h-full w-full min-h-[400px] flex items-center justify-center">
@@ -598,6 +627,22 @@ export default function AdminUsersPage() {
                         Agency (₺1.299/ay)
                       </button>
                     </div>
+                  </div>
+
+                  {/* Danger Zone */}
+                  <div className="p-4 rounded-xl border border-rose-500/20 bg-rose-500/5 space-y-3 mt-4">
+                    <h4 className="text-sm font-semibold text-rose-400 flex items-center gap-2">
+                      Tehlikeli İşlemler
+                    </h4>
+                    <p className="text-xs text-rose-300/60">Bu kullanıcıyı ve hesapla ilişkili tüm verileri kalıcı olarak siler.</p>
+                    <button 
+                      onClick={handleDeleteUser}
+                      disabled={isActionLoading}
+                      className="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 w-full shadow-lg shadow-rose-600/20"
+                    >
+                      {isActionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                      Kullanıcıyı Sil
+                    </button>
                   </div>
                 </div>
               )}
