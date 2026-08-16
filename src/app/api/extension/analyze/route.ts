@@ -66,29 +66,78 @@ export async function POST(req: Request) {
       'Content-Type': 'application/json',
     };
 
-    const response = await fetch(`https://api.etsy.com/v3/application/listings/${listing_id}`, { headers });
+    // Ürün detaylarını ve aynı anda Mağaza detaylarını (daha iyi tahmin için) çekiyoruz
+    const listingResponse = await fetch(`https://api.etsy.com/v3/application/listings/${listing_id}`, { headers });
 
-    if (!response.ok) {
-      throw new Error(`Etsy API Hatası: ${response.statusText}`);
+    if (!listingResponse.ok) {
+      throw new Error(`Etsy API Hatası: ${listingResponse.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await listingResponse.json();
+    const shopId = data.shop_id;
+    
+    let shopTotalSales = 0;
+    let shopDaysAlive = 1;
+    
+    try {
+      const shopResponse = await fetch(`https://api.etsy.com/v3/application/shops/${shopId}`, { headers });
+      if (shopResponse.ok) {
+        const shopData = await shopResponse.json();
+        shopTotalSales = shopData.transaction_solds || 0;
+        const shopCreation = shopData.create_date || (Date.now() / 1000);
+        shopDaysAlive = Math.max(1, (Date.now() / 1000 - shopCreation) / (60 * 60 * 24));
+      }
+    } catch (e) { console.error('Shop fetch error', e); }
 
-    // Matematiksel tahminler (Etsy başkalarının gerçek istatistiklerini vermez, favori hızından hesaplarız)
+    // Gelişmiş Tahmin Algoritması
     const now = Date.now() / 1000;
     const creation = data.original_creation_timestamp || data.creation_timestamp || now;
     const daysAlive = Math.max(1, (now - creation) / (60 * 60 * 24));
+    
     const totalFavs = data.num_favorers || 0;
     const totalViews = data.views || (totalFavs * 35) + 50;
-
-    const favVelocity = totalFavs / daysAlive;
     
-    // Son 7 gün istatistik tahminleri
-    let favorites7d = Math.floor(favVelocity * 7);
-    let sales7d = Math.floor(favVelocity * 3.5 * 7);
-    let views7d = Math.floor((totalViews / daysAlive) * 7);
+    // 1. Ürünün Kendi Hızı
+    let baseDailyFavs = totalFavs / daysAlive;
+    let baseDailyViews = totalViews / daysAlive;
+    
+    // 2. Mağaza Hızı Çarpanı (Mağaza çok satıyorsa, bu ürün de vitrindeyse fazla trafik alır)
+    let shopDailySales = shopTotalSales / shopDaysAlive;
+    
+    // 3. Yaş Çarpanı (Eski ürünler genellikle ömürleri boyunca çok satmış ama son zamanlarda düşmüş olabilir
+    // veya tam tersi yeni patlamış olabilir. Genelde 1 favori = 3-5 satış kuralını esnetiyoruz)
+    
+    // Son 7 gün istatistikleri için gerçeğe en yakın simüle edilmiş formül:
+    let salesMultiplier = 3.5; 
+    if (shopDailySales > 10) salesMultiplier = 5; // Çok satan mağazalarda favoriye dönüşmeden direkt satış oranı yüksektir
+    if (daysAlive > 365) {
+      // Ürün 1 yıldan eskiyse, muhtemelen son zamanlarda tüm zamanlar ortalamasından DÜŞÜK veya stabil satıyordur.
+      // Ancak "Bestseller" ise yüksek satıyordur.
+      baseDailyFavs = baseDailyFavs * 0.8;
+    }
+    if (daysAlive < 30) {
+      // Ürün çok yeniyse ve favori aldıysa trenddir, ivmesi yüksektir.
+      baseDailyFavs = baseDailyFavs * 2.5;
+    }
 
-    // Çok yeni veya hiç favorisi yoksa 0
+    let estimatedDailySales = baseDailyFavs * salesMultiplier;
+    
+    // Eğer ürün uzun zamandır var ama mağaza günlük çok iyi satıyorsa, bu ürün ortalama üstü olabilir
+    if (shopDailySales > 0 && estimatedDailySales < 0.5 && totalFavs > 50) {
+      estimatedDailySales = 1.5;
+    }
+
+    // Nihai 7 Günlük Değerler
+    let favorites7d = Math.max(0, Math.floor(baseDailyFavs * 7));
+    let sales7d = Math.max(0, Math.floor(estimatedDailySales * 7));
+    let views7d = Math.max(0, Math.floor(baseDailyViews * 7));
+
+    // Eğer satış varsa ama görüntülenme aşırı düşük kaldıysa dengele
+    if (sales7d > 0 && views7d < sales7d * 20) {
+      views7d = sales7d * 35 + Math.floor(Math.random() * 50);
+    }
+
+    // Çok yeni veya hiç favorisi yoksa minimum mantıklı değerler ver
     if (totalFavs === 0) {
       favorites7d = 0;
       sales7d = 0;
