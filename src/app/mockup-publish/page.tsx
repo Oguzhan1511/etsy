@@ -3,6 +3,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Package, Search, ChevronDown, ChevronRight, Loader2, AlertCircle } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import CustomMockupStudio from "@/components/CustomMockupStudio";
 
@@ -37,6 +39,15 @@ export default function MockupPublishPage() {
     setToast({ message: msg, visible: true });
     setTimeout(() => setToast({ message: "", visible: false }), 4000);
   };
+
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && (user as any).role !== 'admin') {
+      router.replace('/dashboard');
+    }
+  }, [user, router]);
 
   useEffect(() => {
     const fetchCatalog = async () => {

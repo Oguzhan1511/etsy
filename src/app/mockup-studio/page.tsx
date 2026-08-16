@@ -22,7 +22,9 @@ import {
   Info,
   Maximize2
 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { get, set } from "idb-keyval";
+import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTokens } from "@/context/TokenContext";
 
@@ -57,6 +59,15 @@ export default function MockupStudioPage() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [savedIndex, setSavedIndex] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && (user as any).role !== 'admin') {
+      router.replace('/dashboard');
+    }
+  }, [user, router]);
 
   // Load designs and refresh tokens from DB on mount
   useEffect(() => {

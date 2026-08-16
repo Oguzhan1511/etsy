@@ -4,7 +4,9 @@ import React, { useState, useEffect } from "react";
 import { Sparkles, Wand2, Loader2, Download, Library, CheckCircle2, Image as ImageIcon, UploadCloud, X, Zap, Coins } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import { get, set } from "idb-keyval";
+import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTokens } from "@/context/TokenContext";
 
@@ -25,6 +27,14 @@ export default function AIDesignStudioPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
   const [tokenError, setTokenError] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && (user as any).role !== 'admin') {
+      router.replace('/dashboard');
+    }
+  }, [user, router]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {

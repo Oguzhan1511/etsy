@@ -4,7 +4,9 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, Download, Trash2, Edit2, Check, X, CalendarDays, ImageIcon, Eye, Sparkles } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { get, set } from "idb-keyval";
+import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface DesignItem {
@@ -30,6 +32,15 @@ export default function DesignLibraryPage() {
 
   // Sync state
   const [syncWarning, setSyncWarning] = useState<string | null>(null);
+
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && (user as any).role !== 'admin') {
+      router.replace('/dashboard');
+    }
+  }, [user, router]);
 
   useEffect(() => {
     const loadDesigns = async () => {
