@@ -90,6 +90,11 @@ export default function LoginPage() {
         setSubmitting(false);
         return;
       }
+      if (!name.trim()) {
+        setError("Lütfen ad ve soyadınızı girin.");
+        setSubmitting(false);
+        return;
+      }
       const res = await registerUser(name, email, password);
       setSubmitting(false);
       if (res.success) {
@@ -329,6 +334,7 @@ export default function LoginPage() {
                   <User size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/40 group-focus-within:text-violet-400 transition-colors duration-300" />
                   <input
                     type="text"
+                    required={mode === "register"}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
