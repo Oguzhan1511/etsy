@@ -29,7 +29,9 @@ export default function SupportWidget() {
   const fetchTickets = async () => {
     if (!user) return;
     try {
-      const res = await fetch(`/api/support/tickets?userId=${user.id}`);
+      const res = await fetch(`/api/support/tickets?userId=${user.id}&_t=${Date.now()}`, {
+        cache: 'no-store'
+      });
       const data = await res.json();
       if (data.tickets) {
         setTickets(data.tickets);
@@ -41,7 +43,9 @@ export default function SupportWidget() {
 
   const fetchMessages = async (ticketId: string) => {
     try {
-      const res = await fetch(`/api/support/tickets/${ticketId}/messages`);
+      const res = await fetch(`/api/support/tickets/${ticketId}/messages?_t=${Date.now()}`, {
+        cache: 'no-store'
+      });
       const data = await res.json();
       if (data.ticket && data.ticket.messages && activeTicketIdRef.current === ticketId) {
         setMessages(data.ticket.messages);
@@ -54,6 +58,8 @@ export default function SupportWidget() {
   useEffect(() => {
     if (user && isOpen) {
       fetchTickets();
+      const interval = setInterval(fetchTickets, 15000);
+      return () => clearInterval(interval);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isOpen]);
@@ -61,7 +67,7 @@ export default function SupportWidget() {
   useEffect(() => {
     if (selectedTicket?.id) {
       fetchMessages(selectedTicket.id);
-      const interval = setInterval(() => fetchMessages(selectedTicket.id), 10000);
+      const interval = setInterval(() => fetchMessages(selectedTicket.id), 5000);
       return () => clearInterval(interval);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
