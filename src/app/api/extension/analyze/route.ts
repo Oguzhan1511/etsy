@@ -10,11 +10,21 @@ const ETSY_API_KEY = process.env.ETSY_API_KEY || '';
 const ETSY_API_SECRET = process.env.ETSY_API_SECRET || process.env.ETSY_SHARED_SECRET || '';
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'super-secret-key-for-development');
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function POST(req: Request) {
   try {
     const { listing_id } = await req.json();
     if (!listing_id) {
-      return NextResponse.json({ error: 'Listing ID is required' }, { status: 400 });
+      return NextResponse.json({ error: 'Listing ID is required' }, { status: 400, headers: corsHeaders });
     }
 
     let accessToken: string | null = null;
@@ -27,7 +37,7 @@ export async function POST(req: Request) {
     }
 
     if (!tokenFromHeader) {
-      return NextResponse.json({ error: 'Oturum bulunamadı. Lütfen giriş yapın.' }, { status: 401 });
+      return NextResponse.json({ error: 'Oturum bulunamadı. Lütfen giriş yapın.' }, { status: 401, headers: corsHeaders });
     }
 
     try {
@@ -36,16 +46,16 @@ export async function POST(req: Request) {
       const tokenRecord = await prisma.etsyToken.findUnique({ where: { userId } });
       
       if (!tokenRecord) {
-        return NextResponse.json({ error: 'Etsy mağazanız bağlı değil.' }, { status: 403 });
+        return NextResponse.json({ error: 'Etsy mağazanız bağlı değil.' }, { status: 403, headers: corsHeaders });
       }
       
       accessToken = await getValidEtsyToken(userId);
     } catch {
-      return NextResponse.json({ error: 'Kimlik doğrulama hatası. Lütfen tekrar giriş yapın.' }, { status: 401 });
+      return NextResponse.json({ error: 'Kimlik doğrulama hatası. Lütfen tekrar giriş yapın.' }, { status: 401, headers: corsHeaders });
     }
 
     if (!accessToken) {
-      return NextResponse.json({ error: 'Etsy erişim izni alınamadı.' }, { status: 403 });
+      return NextResponse.json({ error: 'Etsy erişim izni alınamadı.' }, { status: 403, headers: corsHeaders });
     }
 
     const headers = {
@@ -90,10 +100,10 @@ export async function POST(req: Request) {
         sales7d,
         favorites7d,
       }
-    });
+    }, { headers: corsHeaders });
 
   } catch (err: unknown) {
     console.error('Extension analyze error:', err);
-    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+    return NextResponse.json({ error: (err as Error).message }, { status: 500, headers: corsHeaders });
   }
 }
