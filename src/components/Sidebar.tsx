@@ -47,12 +47,6 @@ export default function Sidebar() {
         { icon: Layers, label: t("sidebar.mockupPublish"), href: "/mockup-publish", isLocked: !isAdmin },
       ],
     },
-    {
-      label: "Hesap",
-      items: [
-        { icon: Coins, label: "Token Yönetimi", href: "/token-management", isLocked: false },
-      ],
-    },
   ];
 
   // Redirect to login if not authenticated
