@@ -37,7 +37,7 @@ export async function POST(req: Request) {
         email: email.toLowerCase(),
         password: hashedPassword,
         verificationToken,
-        tokens: 50,
+        tokens: 0,
       },
     });
 
@@ -75,15 +75,12 @@ export async function POST(req: Request) {
             </div>
             
             <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-              PrintySell'in yeteneklerini hemen test etmeniz için hesabınıza <strong>50 Token (50 Farklı Yapay Zeka Görseli)</strong> üretim hakkı tamamen ücretsiz olarak tanımlanmıştır!
-            </p>
-            <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-              Hemen sisteme giriş yaparak tasarımlarınızı üretmeye ve Etsy'de satmaya başlayabilirsiniz.
+              Hemen sisteme giriş yaparak ürün araştırma araçlarımızı kullanmaya ve potansiyel fırsatları keşfetmeye başlayabilirsiniz.
             </p>
             
             <div style="text-align: center; margin: 40px 0;">
               <div style="display: inline-block; background: #222; color: #ffffff; padding: 12px 24px; font-size: 14px; border-radius: 50px; border: 1px solid #444;">
-                50 Token Hesabınıza Tanımlandı 🎁
+                Hesabınız Aktif Edilmeye Hazır 🚀
               </div>
             </div>
           </div>

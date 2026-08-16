@@ -38,10 +38,12 @@ export default function Sidebar() {
         { icon: ShoppingBag, label: t("sidebar.orders"), href: "/orders" },
         { icon: Package, label: t("sidebar.products"), href: "/products" },
         { icon: Search, label: t("sidebar.productResearch"), href: "/product-research" },
-        { icon: Sparkles, label: t("sidebar.aiDesignStudio"), href: "/ai-design-studio" },
-        { icon: Library, label: t("sidebar.designLibrary"), href: "/design-library" },
-        { icon: Camera, label: t("sidebar.mockupStudio"), href: "/mockup-studio" },
-        { icon: Layers, label: t("sidebar.mockupPublish"), href: "/mockup-publish" },
+        ...(user?.plan === 'none' ? [] : [
+          { icon: Sparkles, label: t("sidebar.aiDesignStudio"), href: "/ai-design-studio" },
+          { icon: Library, label: t("sidebar.designLibrary"), href: "/design-library" },
+          { icon: Camera, label: t("sidebar.mockupStudio"), href: "/mockup-studio" },
+          { icon: Layers, label: t("sidebar.mockupPublish"), href: "/mockup-publish" },
+        ])
       ],
     },
     {

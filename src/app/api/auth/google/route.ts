@@ -57,6 +57,7 @@ export async function POST(req: Request) {
           authProvider: 'google',
           googleId,
           isVerified: true, // Google accounts are already verified
+          tokens: 0,
         },
       });
 
@@ -90,17 +91,11 @@ export async function POST(req: Request) {
               <div style="background-color: #111; padding: 30px; border-radius: 12px; border: 1px solid #222;">
                 <h2 style="color: #fff; font-size: 22px; margin-top: 0;">Merhaba ${user.name},</h2>
                 <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-                  PrintySell demo sürümüne (Google ile) hoş geldiniz! Hesabınız başarıyla oluşturuldu.
-                </p>
-                <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-                  PrintySell'in yeteneklerini hemen test etmeniz için hesabınıza <strong>50 Token (50 Farklı Yapay Zeka Görseli)</strong> üretim hakkı tamamen ücretsiz olarak tanımlanmıştır!
-                </p>
-                <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-                  Hemen sisteme giriş yaparak tasarımlarınızı üretmeye ve Etsy'de satmaya başlayabilirsiniz.
+                  Hemen sisteme giriş yaparak ürün araştırma araçlarımızı kullanmaya ve potansiyel fırsatları keşfetmeye başlayabilirsiniz.
                 </p>
                 <div style="text-align: center; margin: 40px 0;">
                   <div style="display: inline-block; background: linear-gradient(135deg, #7c6af7 0%, #a855f7 100%); color: #ffffff; padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 50px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);">
-                    50 Token Hesabınıza Tanımlandı 🎁
+                    Hesabınız Aktif Edilmeye Hazır 🚀
                   </div>
                 </div>
               </div>
