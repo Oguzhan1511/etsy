@@ -14,6 +14,7 @@ import {
   ExternalLink,
   Copy,
   Tags,
+  CheckCircle2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -47,6 +48,8 @@ export default function ProductResearchPage() {
   const [analyzedProduct, setAnalyzedProduct] = useState<Product | null>(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [historyProducts, setHistoryProducts] = useState<Product[]>([]);
+  const [copyToast, setCopyToast] = useState<{message: string, type: 'title' | 'tags'} | null>(null);
+  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const router = useRouter();
 
@@ -178,6 +181,16 @@ export default function ProductResearchPage() {
       setAnalyzedProduct(product);
       setAnalysisLoading(false);
     }, 1500);
+  };
+
+  const showToast = (message: string, type: 'title' | 'tags') => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+    setCopyToast({ message, type });
+    toastTimeoutRef.current = setTimeout(() => {
+      setCopyToast(null);
+    }, 2500);
   };
 
   return (
@@ -501,6 +514,7 @@ export default function ProductResearchPage() {
                         onClick={(e) => {
                           e.stopPropagation();
                           navigator.clipboard.writeText(product.title);
+                          showToast('Başlık Kopyalandı!', 'title');
                         }}
                         className="py-1.5 px-2 rounded-lg text-[10px] font-semibold text-blue-300 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors flex items-center justify-center gap-1 cursor-pointer"
                         title="Başlığı Kopyala"
@@ -514,6 +528,7 @@ export default function ProductResearchPage() {
                           e.stopPropagation();
                           if (product.tags && product.tags.length > 0) {
                             navigator.clipboard.writeText(product.tags.join(', '));
+                            showToast('Tagler Kopyalandı!', 'tags');
                           }
                         }}
                         disabled={!product.tags || product.tags.length === 0}
@@ -786,6 +801,18 @@ export default function ProductResearchPage() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {copyToast && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-fade-in pointer-events-none">
+          <div className="bg-[#1a1a24] border border-border shadow-[0_8px_30px_rgba(0,0,0,0.5)] px-4 py-2.5 rounded-xl flex items-center gap-3 backdrop-blur-md">
+            <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${copyToast.type === 'title' ? 'bg-blue-500/20 text-blue-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+            <span className="text-sm font-semibold text-foreground">{copyToast.message}</span>
           </div>
         </div>
       )}
