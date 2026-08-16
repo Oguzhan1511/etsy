@@ -103,26 +103,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const activeTab = tabs[0];
       if (!activeTab) return;
 
-      // Önce sayfadan görsel ve başlık al
+      // Sayfadan görsel ve başlık al
       chrome.tabs.sendMessage(activeTab.id, { action: 'getPageInfo' }, (pageInfo) => {
         let imageUrl = '';
         let pageTitle = '';
+        if (chrome.runtime.lastError) {
+          console.warn('getPageInfo error:', chrome.runtime.lastError.message);
+        }
         if (pageInfo) {
           imageUrl = pageInfo.imageUrl || '';
           pageTitle = pageInfo.title || '';
         }
 
-        // Prompt öneri: başlıktan kısa bir özet yap
+        console.log('[PrintySell] Found imageUrl:', imageUrl);
+
+        // Prompt öneri
         const shortTitle = pageTitle.split(',')[0].trim().slice(0, 80);
         const prompt = shortTitle
           ? `"${shortTitle}" tasarımının benzerini, ürün görseli üzerinden, yüksek kaliteli ve Etsy marka stilinde üret.`
           : 'Bu Etsy ürününün görsel tasarımının bir benzerini üret.';
 
-        // URL oluştur
-        const params = new URLSearchParams({ prompt });
-        if (imageUrl) params.set('image', imageUrl);
-
-        const studioUrl = `${API_BASE}/ai-design-studio?${params.toString()}`;
+        // URL oluştur - image parametresi encode edilmiş olarak geç
+        let studioUrl = `${API_BASE}/ai-design-studio?source=extension&prompt=${encodeURIComponent(prompt)}`;
+        if (imageUrl) {
+          studioUrl += `&image=${encodeURIComponent(imageUrl)}`;
+        }
         chrome.tabs.create({ url: studioUrl });
       });
     });
