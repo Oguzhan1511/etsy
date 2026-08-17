@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import React, { useState, useEffect } from 'react';
 
 // Custom SVGs to avoid Lucide barrel optimization errors on Vercel
 const InstagramIcon = ({ size }: { size: number }) => (
