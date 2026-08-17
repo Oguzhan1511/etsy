@@ -1,6 +1,34 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Instagram, Send, Twitter, Music2 } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+
+// Custom SVGs to avoid Lucide barrel optimization errors on Vercel
+const InstagramIcon = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+  </svg>
+);
+
+const TelegramIcon = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="22" y1="2" x2="11" y2="13"></line>
+    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+  </svg>
+);
+
+const TikTokIcon = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+  </svg>
+);
+
+const TwitterIcon = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+  </svg>
+);
 
 const SocialLink = ({ href, icon: Icon, text }: { href: string, icon: any, text: string }) => (
   <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mx-6 hover:text-white transition-colors hover:scale-105 duration-200 cursor-pointer">
@@ -85,33 +113,33 @@ export default function CountdownBanner() {
         <div className="animate-marquee group-hover:[animation-play-state:paused] inline-block text-xs font-medium tracking-wide">
           
           {/* First Set */}
-          <SocialLink href="https://instagram.com/printy.sell" icon={Instagram} text="printy.sell" />
+          <SocialLink href="https://instagram.com/printy.sell" icon={InstagramIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={Send} text="printysell" />
+          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={TelegramIcon} text="printysell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://tiktok.com/@printy.sell" icon={Music2} text="printy.sell" />
+          <SocialLink href="https://tiktok.com/@printy.sell" icon={TikTokIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://twitter.com/printy_sell" icon={Twitter} text="printy_sell" />
+          <SocialLink href="https://twitter.com/printy_sell" icon={TwitterIcon} text="printy_sell" />
           <span className="text-violet-400">•</span>
 
           {/* Second Set for Loop */}
-          <SocialLink href="https://instagram.com/printy.sell" icon={Instagram} text="printy.sell" />
+          <SocialLink href="https://instagram.com/printy.sell" icon={InstagramIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={Send} text="printysell" />
+          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={TelegramIcon} text="printysell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://tiktok.com/@printy.sell" icon={Music2} text="printy.sell" />
+          <SocialLink href="https://tiktok.com/@printy.sell" icon={TikTokIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://twitter.com/printy_sell" icon={Twitter} text="printy_sell" />
+          <SocialLink href="https://twitter.com/printy_sell" icon={TwitterIcon} text="printy_sell" />
           <span className="text-violet-400">•</span>
           
           {/* Third Set for Loop */}
-          <SocialLink href="https://instagram.com/printy.sell" icon={Instagram} text="printy.sell" />
+          <SocialLink href="https://instagram.com/printy.sell" icon={InstagramIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={Send} text="printysell" />
+          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={TelegramIcon} text="printysell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://tiktok.com/@printy.sell" icon={Music2} text="printy.sell" />
+          <SocialLink href="https://tiktok.com/@printy.sell" icon={TikTokIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://twitter.com/printy_sell" icon={Twitter} text="printy_sell" />
+          <SocialLink href="https://twitter.com/printy_sell" icon={TwitterIcon} text="printy_sell" />
           <span className="text-violet-400">•</span>
         </div>
       </div>
