@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 // Custom SVGs to avoid Lucide barrel optimization errors on Vercel
 const InstagramIcon = ({ size }: { size: number }) => (
@@ -40,6 +41,8 @@ export default function CountdownBanner() {
   const [timeLeft, setTimeLeft] = useState({ months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isClient, setIsClient] = useState(false);
 
+  const pathname = usePathname();
+
   useEffect(() => {
     setIsClient(true);
     // 15 days from Aug 17, 2026 -> Sept 1, 2026
@@ -68,7 +71,8 @@ export default function CountdownBanner() {
     return () => clearInterval(interval);
   }, []);
 
-  if (!isClient) return null;
+  // Hide on landing page and before hydration
+  if (!isClient || pathname === '/') return null;
 
   return (
     <div className="w-full z-[100] relative shadow-[0_4px_20px_rgba(139,92,246,0.3)]">
