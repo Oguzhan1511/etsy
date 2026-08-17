@@ -4,6 +4,7 @@ import { AuthProvider } from "../context/AuthContext";
 import { LanguageProvider } from "../context/LanguageContext";
 import { TokenProvider } from "../context/TokenContext";
 import ClientShell from "../components/ClientShell";
+import CountdownBanner from "../components/CountdownBanner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,12 +33,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body suppressHydrationWarning className="flex h-screen overflow-hidden bg-background text-foreground antialiased transition-colors duration-200">
+      <body suppressHydrationWarning className="flex flex-col h-screen overflow-hidden bg-background text-foreground antialiased transition-colors duration-200">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
           <LanguageProvider>
               <TokenProvider>
-                <ClientShell>{children}</ClientShell>
+                <CountdownBanner />
+                <div className="flex flex-1 overflow-hidden w-full relative">
+                  <ClientShell>{children}</ClientShell>
+                </div>
               </TokenProvider>
             </LanguageProvider>
           </AuthProvider>
