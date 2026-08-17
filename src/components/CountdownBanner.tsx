@@ -1,5 +1,13 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { Instagram, Send, Twitter, Music2 } from "lucide-react";
+
+const SocialLink = ({ href, icon: Icon, text }: { href: string, icon: any, text: string }) => (
+  <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mx-6 hover:text-white transition-colors hover:scale-105 duration-200 cursor-pointer">
+    <Icon size={14} />
+    <span className="font-bold tracking-wider">{text}</span>
+  </a>
+);
 
 export default function CountdownBanner() {
   const [timeLeft, setTimeLeft] = useState({ months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -73,19 +81,38 @@ export default function CountdownBanner() {
       </div>
 
       {/* Bottom Row: Scrolling Marquee */}
-      <div className="w-full bg-black/80 border-b border-white/5 text-gray-300 py-1 overflow-hidden whitespace-nowrap flex items-center">
-        <div className="animate-marquee inline-block text-xs font-medium tracking-wide">
-          <span className="mx-4">🔔 BİLDİRİM: Yeni özellikler yakında sizlerle...</span>
-          <span className="mx-4 text-violet-400">•</span>
-          <span className="mx-4">🔔 BİLDİRİM: PrintySell v2.0 için geri sayım başladı...</span>
-          <span className="mx-4 text-violet-400">•</span>
-          <span className="mx-4">🔔 BİLDİRİM: Hazırlıklarımız tüm hızıyla sürüyor...</span>
-          {/* Duplicate for seamless loop */}
-          <span className="mx-4">🔔 BİLDİRİM: Yeni özellikler yakında sizlerle...</span>
-          <span className="mx-4 text-violet-400">•</span>
-          <span className="mx-4">🔔 BİLDİRİM: PrintySell v2.0 için geri sayım başladı...</span>
-          <span className="mx-4 text-violet-400">•</span>
-          <span className="mx-4">🔔 BİLDİRİM: Hazırlıklarımız tüm hızıyla sürüyor...</span>
+      <div className="w-full bg-black/80 border-b border-white/5 text-gray-300 py-1.5 overflow-hidden whitespace-nowrap flex items-center group">
+        <div className="animate-marquee group-hover:[animation-play-state:paused] inline-block text-xs font-medium tracking-wide">
+          
+          {/* First Set */}
+          <SocialLink href="https://instagram.com/printy.sell" icon={Instagram} text="printy.sell" />
+          <span className="text-violet-400">•</span>
+          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={Send} text="printysell" />
+          <span className="text-violet-400">•</span>
+          <SocialLink href="https://tiktok.com/@printy.sell" icon={Music2} text="printy.sell" />
+          <span className="text-violet-400">•</span>
+          <SocialLink href="https://twitter.com/printy_sell" icon={Twitter} text="printy_sell" />
+          <span className="text-violet-400">•</span>
+
+          {/* Second Set for Loop */}
+          <SocialLink href="https://instagram.com/printy.sell" icon={Instagram} text="printy.sell" />
+          <span className="text-violet-400">•</span>
+          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={Send} text="printysell" />
+          <span className="text-violet-400">•</span>
+          <SocialLink href="https://tiktok.com/@printy.sell" icon={Music2} text="printy.sell" />
+          <span className="text-violet-400">•</span>
+          <SocialLink href="https://twitter.com/printy_sell" icon={Twitter} text="printy_sell" />
+          <span className="text-violet-400">•</span>
+          
+          {/* Third Set for Loop */}
+          <SocialLink href="https://instagram.com/printy.sell" icon={Instagram} text="printy.sell" />
+          <span className="text-violet-400">•</span>
+          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={Send} text="printysell" />
+          <span className="text-violet-400">•</span>
+          <SocialLink href="https://tiktok.com/@printy.sell" icon={Music2} text="printy.sell" />
+          <span className="text-violet-400">•</span>
+          <SocialLink href="https://twitter.com/printy_sell" icon={Twitter} text="printy_sell" />
+          <span className="text-violet-400">•</span>
         </div>
       </div>
     </div>
