@@ -118,7 +118,7 @@ export default function CountdownBanner() {
           {/* First Set */}
           <SocialLink href="https://instagram.com/printy.sell" icon={InstagramIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={TelegramIcon} text="printysell" />
+          <SocialLink href="https://t.me/printysell" icon={TelegramIcon} text="printysell" />
           <span className="text-violet-400">•</span>
           <SocialLink href="https://tiktok.com/@printy.sell" icon={TikTokIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
@@ -128,7 +128,7 @@ export default function CountdownBanner() {
           {/* Second Set for Loop */}
           <SocialLink href="https://instagram.com/printy.sell" icon={InstagramIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={TelegramIcon} text="printysell" />
+          <SocialLink href="https://t.me/printysell" icon={TelegramIcon} text="printysell" />
           <span className="text-violet-400">•</span>
           <SocialLink href="https://tiktok.com/@printy.sell" icon={TikTokIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
@@ -138,7 +138,7 @@ export default function CountdownBanner() {
           {/* Third Set for Loop */}
           <SocialLink href="https://instagram.com/printy.sell" icon={InstagramIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>
-          <SocialLink href="https://t.me/+juc6xKkTS6c3NGJk" icon={TelegramIcon} text="printysell" />
+          <SocialLink href="https://t.me/printysell" icon={TelegramIcon} text="printysell" />
           <span className="text-violet-400">•</span>
           <SocialLink href="https://tiktok.com/@printy.sell" icon={TikTokIcon} text="printy.sell" />
           <span className="text-violet-400">•</span>

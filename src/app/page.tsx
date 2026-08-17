@@ -234,7 +234,7 @@ export default function LandingPage() {
               <InstagramIcon size={20} />
               <span className="text-sm font-medium hidden lg:block">printy.sell</span>
             </a>
-            <a href="https://t.me/+juc6xKkTS6c3NGJk" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white transition-all hover:scale-110 flex items-center gap-1.5" title="Telegram">
+            <a href="https://t.me/printysell" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white transition-all hover:scale-110 flex items-center gap-1.5" title="Telegram">
               <TelegramIcon size={20} />
               <span className="text-sm font-medium hidden lg:block">printysell</span>
             </a>
