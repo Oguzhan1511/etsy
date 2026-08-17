@@ -5,6 +5,34 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Sparkles, Search, Palette, Globe, CheckCircle2, Loader2, TrendingUp } from "lucide-react";
 
+// Custom SVGs for Social Links
+const InstagramIcon = ({ size, className }: { size: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+  </svg>
+);
+
+const TelegramIcon = ({ size, className }: { size: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <line x1="22" y1="2" x2="11" y2="13"></line>
+    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+  </svg>
+);
+
+const TikTokIcon = ({ size, className }: { size: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+  </svg>
+);
+
+const TwitterIcon = ({ size, className }: { size: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+  </svg>
+);
+
 // Intersection Observer Hook for Scroll Animations
 function useOnScreen(ref: any, rootMargin = "0px") {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -36,6 +64,70 @@ const FadeInContent = ({ children, delay = 0 }: { children: React.ReactNode, del
       style={{ transitionDelay: `${delay}ms` }}
     >
       {children}
+    </div>
+  );
+};
+
+const LandingCountdown = () => {
+  const [timeLeft, setTimeLeft] = useState({ months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    const targetDate = new Date("2026-09-01T23:59:59").getTime();
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+      if (distance < 0) {
+        clearInterval(interval);
+        return;
+      }
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      const months = Math.floor(days / 30);
+      const remainingDays = days % 30;
+      setTimeLeft({ months, days: remainingDays, hours, minutes, seconds });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!isClient) return null;
+
+  return (
+    <div className="mt-12 p-6 md:p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md inline-block shadow-2xl relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-500"></div>
+      <div className="text-sm text-zinc-400 font-bold mb-6 uppercase tracking-[0.2em]">
+        🚀 V2.0 Tam Sürüm İçin Geri Sayım
+      </div>
+      <div className="flex items-center justify-center gap-3 md:gap-5 font-mono">
+        <div className="flex flex-col items-center bg-black/60 px-4 py-3 rounded-xl border border-white/5 min-w-[70px] md:min-w-[80px]">
+          <span className="text-3xl md:text-4xl font-bold text-white leading-none">{timeLeft.months}</span>
+          <span className="text-[10px] md:text-xs uppercase tracking-wider text-zinc-500 mt-2">Ay</span>
+        </div>
+        <span className="text-white/20 font-bold text-2xl md:text-3xl">:</span>
+        <div className="flex flex-col items-center bg-black/60 px-4 py-3 rounded-xl border border-white/5 min-w-[70px] md:min-w-[80px]">
+          <span className="text-3xl md:text-4xl font-bold text-white leading-none">{timeLeft.days}</span>
+          <span className="text-[10px] md:text-xs uppercase tracking-wider text-zinc-500 mt-2">Gün</span>
+        </div>
+        <span className="text-white/20 font-bold text-2xl md:text-3xl">:</span>
+        <div className="flex flex-col items-center bg-black/60 px-4 py-3 rounded-xl border border-white/5 min-w-[70px] md:min-w-[80px]">
+          <span className="text-3xl md:text-4xl font-bold text-white leading-none">{timeLeft.hours.toString().padStart(2, '0')}</span>
+          <span className="text-[10px] md:text-xs uppercase tracking-wider text-zinc-500 mt-2">Saat</span>
+        </div>
+        <span className="text-white/20 font-bold text-2xl md:text-3xl">:</span>
+        <div className="flex flex-col items-center bg-black/60 px-4 py-3 rounded-xl border border-white/5 min-w-[70px] md:min-w-[80px]">
+          <span className="text-3xl md:text-4xl font-bold text-white leading-none">{timeLeft.minutes.toString().padStart(2, '0')}</span>
+          <span className="text-[10px] md:text-xs uppercase tracking-wider text-zinc-500 mt-2">Dk</span>
+        </div>
+        <span className="text-white/20 font-bold text-2xl md:text-3xl">:</span>
+        <div className="flex flex-col items-center bg-black/60 px-4 py-3 rounded-xl border border-white/5 min-w-[70px] md:min-w-[80px]">
+          <span className="text-3xl md:text-4xl font-bold text-violet-400 leading-none">{timeLeft.seconds.toString().padStart(2, '0')}</span>
+          <span className="text-[10px] md:text-xs uppercase tracking-wider text-violet-400/70 mt-2">Sn</span>
+        </div>
+      </div>
     </div>
   );
 };
@@ -133,14 +225,35 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 relative z-20">
           <div className="flex items-center gap-3">
             <Image src="/logo.png" alt="PrintySell Logo" width={36} height={36} className="object-contain" />
-            <span className="text-xl font-bold tracking-tight text-white">PrintySell</span>
+            <span className="text-xl font-bold tracking-tight text-white hidden sm:block">PrintySell</span>
           </div>
+
+          {/* Social Media Links (Middle) */}
+          <div className="flex items-center gap-4 md:gap-8">
+            <a href="https://instagram.com/printy.sell" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white transition-all hover:scale-110 flex items-center gap-1.5" title="Instagram">
+              <InstagramIcon size={20} />
+              <span className="text-sm font-medium hidden lg:block">printy.sell</span>
+            </a>
+            <a href="https://t.me/+juc6xKkTS6c3NGJk" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white transition-all hover:scale-110 flex items-center gap-1.5" title="Telegram">
+              <TelegramIcon size={20} />
+              <span className="text-sm font-medium hidden lg:block">printysell</span>
+            </a>
+            <a href="https://tiktok.com/@printy.sell" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white transition-all hover:scale-110 flex items-center gap-1.5" title="TikTok">
+              <TikTokIcon size={20} />
+              <span className="text-sm font-medium hidden lg:block">printy.sell</span>
+            </a>
+            <a href="https://twitter.com/printy_sell" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white transition-all hover:scale-110 flex items-center gap-1.5" title="Twitter">
+              <TwitterIcon size={20} />
+              <span className="text-sm font-medium hidden lg:block">printy_sell</span>
+            </a>
+          </div>
+
           <div className="flex items-center gap-6">
             <Link
               href="/login"
               className="text-sm font-bold bg-white text-black px-6 py-2.5 rounded-full hover:bg-zinc-200 transition-transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
             >
-              Giriş Yap / Ücretsiz Dene
+              Giriş Yap
             </Link>
           </div>
         </div>
@@ -164,7 +277,7 @@ export default function LandingPage() {
               Trendleri keşfet, yapay zeka ile saniyeler içinde benzersiz tasarımlar üret ve Printify üzerinden tek tıkla satışa başla. Tasarım yeteneğine ihtiyacın yok.
             </p>
 
-            <div className="flex flex-col items-center justify-center mb-16 gap-4">
+            <div className="flex flex-col items-center justify-center gap-4 w-full">
               <Link
                 href="/login"
                 className="px-8 py-4 rounded-full bg-white hover:bg-zinc-200 text-black font-bold text-lg transition-transform hover:scale-105 flex items-center gap-2 shadow-[0_0_40px_rgba(255,255,255,0.2)]"
@@ -172,10 +285,13 @@ export default function LandingPage() {
                 Hemen Ücretsiz Denemeye Başla
                 <ArrowRight size={20} />
               </Link>
-              <div className="flex items-center gap-2 text-sm text-zinc-400 bg-zinc-900/50 border border-white/5 px-4 py-1.5 rounded-full">
+              <div className="flex items-center gap-2 text-sm text-zinc-400 bg-zinc-900/50 border border-white/5 px-4 py-1.5 rounded-full mb-4">
                 <Sparkles size={14} className="text-amber-400" />
                 <span>Demo sürümünü <strong className="text-white">hemen keşfet!</strong></span>
               </div>
+              
+              {/* Added Countdown Here */}
+              <LandingCountdown />
             </div>
           </FadeInContent>
 
