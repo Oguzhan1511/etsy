@@ -121,10 +121,18 @@ export default function TermsContent() {
       </section>
       
       <section>
-        <h2 className="text-lg font-semibold text-white mb-2">14. Kişisel Verilerin Korunması (KVKK)</h2>
-        <p>
-          Şirket, Kullanıcı'ya ait kişisel verileri 6698 sayılı Kişisel Verilerin Korunması Kanunu ve ilgili mevzuata uygun olarak işler. Veri işleme şartları, kayıt sırasında kullanıcıya sunulan <strong>Aydınlatma Metni</strong> ve <strong>Gizlilik Politikası</strong> (bu sözleşmeden bağımsız ayrı belgelerdir) içerisinde düzenlenmiştir.
-        </p>
+        <h2 className="text-lg font-semibold text-white mb-2">14. Gizlilik Politikası ve Kişisel Verilerin Korunması (Privacy Policy)</h2>
+        <div className="space-y-4">
+          <p>
+            Şirket, Kullanıcı'ya ait kişisel verileri 6698 sayılı Kişisel Verilerin Korunması Kanunu ve uluslararası gizlilik standartlarına uygun olarak işler. İşbu Gizlilik Politikası (Privacy Policy), PrintySell web uygulaması ve Chrome Eklentisi dahil tüm hizmetlerimizi kapsar.
+          </p>
+          <ul className="list-disc pl-5 space-y-2">
+            <li><strong>Toplanan Veriler:</strong> Chrome eklentimizi kullandığınızda, yalnızca görüntülediğiniz Etsy ürün sayfasındaki halka açık veriler (başlık, etiketler, görüntülenme sayısı vb.) analiz amacıyla geçici olarak işlenir. Tarayıcı geçmişiniz veya kişisel verileriniz asla toplanmaz.</li>
+            <li><strong>Verilerin Kullanımı:</strong> Toplanan bu veriler, yalnızca eklentinin temel işlevi olan "SEO Analizi" ve "Yapay Zeka ile Benzerini Üret" özelliklerinin çalışması için kullanılır. Bu veriler üçüncü şahıslara satılmaz, kiralanmaz veya paylaşılmaz.</li>
+            <li><strong>Veri Depolama ve Güvenlik:</strong> Eklenti üzerinden üretilen AI promptları ve görsel bağlantıları, tarayıcınızın yerel hafızasında (local storage) tutulur ve güvenli bir şekilde PrintySell AI Stüdyosu'na aktarılır. Kullanıcı şifreleri ve hassas kimlik doğrulama çerezleri endüstri standardı şifreleme ile korunur.</li>
+            <li><strong>İletişim:</strong> Gizlilik politikamız ve veri işleme süreçlerimizle ilgili tüm sorularınız için printysell@gmail.com adresi üzerinden bizimle iletişime geçebilirsiniz.</li>
+          </ul>
+        </div>
       </section>
 
       <section>

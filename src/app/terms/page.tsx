@@ -17,7 +17,7 @@ export default function TermsPage() {
         </Link>
 
         <h1 className="text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400">
-          Kullanıcı ve Abonelik Sözleşmesi
+          Kullanıcı Sözleşmesi ve Gizlilik Politikası
         </h1>
 
         <TermsContent />
